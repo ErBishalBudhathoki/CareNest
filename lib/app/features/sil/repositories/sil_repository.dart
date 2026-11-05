@@ -61,7 +61,10 @@ class SILRepository {
 
   // ---- Occupancy ----
 
-  Future<List<SILOccupancy>> getOccupancy({String? propertyId, String? clientId}) async {
+  Future<List<SILOccupancy>> getOccupancy({
+    String? propertyId,
+    String? clientId,
+  }) async {
     final response = await _apiMethod.getSilOccupancy(
       propertyId: propertyId,
       clientId: clientId,
@@ -206,7 +209,10 @@ class SILRepository {
 
   // Milestone 6.2: Supports ratio enforcement parameter (block on ratio breach)
   Future<SILRoster> publishRoster(String id, {bool? blockOnRatioBreach}) async {
-    final response = await _apiMethod.publishSilRoster(id, blockOnRatioBreach: blockOnRatioBreach);
+    final response = await _apiMethod.publishSilRoster(
+      id,
+      blockOnRatioBreach: blockOnRatioBreach,
+    );
     _ensureSuccess(response, 'Failed to publish roster');
     return SILRoster.fromJson(
       Map<String, dynamic>.from(response['data'] as Map),
@@ -234,7 +240,10 @@ class SILRepository {
   }
 
   // Milestone 6.1: Passes digital e-signature payload on accept
-  Future<SILQuote> acceptQuote(String id, {Map<String, dynamic>? signatureData}) async {
+  Future<SILQuote> acceptQuote(
+    String id, {
+    Map<String, dynamic>? signatureData,
+  }) async {
     final response = await _apiMethod.acceptSilQuote(id, body: signatureData);
     _ensureSuccess(response, 'Failed to accept quote');
     return SILQuote.fromJson(
@@ -247,10 +256,10 @@ class SILRepository {
     String? effectiveFrom,
     String? cadence,
   }) async {
-    final response = await _apiMethod.convertSilQuote(id, body: {
-      'effectiveFrom': ?effectiveFrom,
-      'cadence': ?cadence,
-    });
+    final response = await _apiMethod.convertSilQuote(
+      id,
+      body: {'effectiveFrom': ?effectiveFrom, 'cadence': ?cadence},
+    );
     _ensureSuccess(response, 'Failed to convert quote');
     final roc = response['data']?['rosterOfCare'];
     return SILRosterOfCare.fromJson(Map<String, dynamic>.from(roc as Map));

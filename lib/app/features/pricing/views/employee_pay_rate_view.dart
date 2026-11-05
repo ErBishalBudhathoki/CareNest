@@ -513,8 +513,7 @@ class _EmployeePayRateViewState extends ConsumerState<EmployeePayRateView> {
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: 'Standard hours per day',
-                helperText:
-                    'Ordinary hours before overtime applies (SCHADS).',
+                helperText: 'Ordinary hours before overtime applies (SCHADS).',
                 border: const OutlineInputBorder(
                   borderRadius: BorderRadius.zero,
                 ),

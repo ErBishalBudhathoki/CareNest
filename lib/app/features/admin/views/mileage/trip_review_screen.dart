@@ -257,7 +257,11 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(AppLocalizations.of(context)!.tripRejectedSuccessfully),
+                              content: Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.tripRejectedSuccessfully,
+                              ),
                             ),
                           );
                         } else {
@@ -285,7 +289,11 @@ class _TripReviewScreenState extends ConsumerState<TripReviewScreen> {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(AppLocalizations.of(context)!.tripApprovedSuccessfully),
+                              content: Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.tripApprovedSuccessfully,
+                              ),
                             ),
                           );
                         } else {

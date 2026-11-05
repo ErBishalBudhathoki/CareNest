@@ -27,7 +27,10 @@ void main() {
 
   group('hoursBetweenPerListItem', () {
     test('same-day shift', () {
-      expect(helpers.hoursBetweenPerListItem('09:00', '11:00'), closeTo(2, 1e-9));
+      expect(
+        helpers.hoursBetweenPerListItem('09:00', '11:00'),
+        closeTo(2, 1e-9),
+      );
       expect(
         helpers.hoursBetweenPerListItem('09:15', '17:45'),
         closeTo(8.5, 1e-9),
@@ -35,7 +38,10 @@ void main() {
     });
 
     test('overnight shift rolls end time to the next day', () {
-      expect(helpers.hoursBetweenPerListItem('22:00', '01:00'), closeTo(3, 1e-9));
+      expect(
+        helpers.hoursBetweenPerListItem('22:00', '01:00'),
+        closeTo(3, 1e-9),
+      );
       expect(
         helpers.hoursBetweenPerListItem('11:00 PM', '01:00 AM'),
         closeTo(2, 1e-9),
@@ -65,11 +71,9 @@ void main() {
 
   group('calculateTotalHours', () {
     test('prefers the recorded worked time', () {
-      final hours = helpers.calculateTotalHours(
-        ['09:00'],
-        ['17:00'],
-        ['02:30:00'],
-      );
+      final hours = helpers.calculateTotalHours(['09:00'], ['17:00'], [
+        '02:30:00',
+      ]);
       expect(hours.single, closeTo(2.5, 1e-9));
     });
 

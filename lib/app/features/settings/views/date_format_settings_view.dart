@@ -188,8 +188,6 @@ class DateFormatSettingsView extends ConsumerWidget {
     );
   }
 
-
-
   Widget _buildOptionCard(
     BuildContext context, {
     required String title,
@@ -250,9 +248,10 @@ class DateFormatSettingsView extends ConsumerWidget {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    style: BauhausDesign.getTextTheme(context).bodySmall
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
                 ],
               ),

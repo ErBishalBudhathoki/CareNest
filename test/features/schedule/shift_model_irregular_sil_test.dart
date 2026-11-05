@@ -14,7 +14,8 @@ void main() {
         'status': 'completed',
         'isIrregularSil': true,
         'irregularSilReason': 'crisis',
-        'crisisJustificationNotes': 'Acute behavioral incident requiring immediate 1:1 intervention',
+        'crisisJustificationNotes':
+            'Acute behavioral incident requiring immediate 1:1 intervention',
         'incidentReportReference': 'INC-2026-0042',
       };
 
@@ -46,7 +47,10 @@ void main() {
 
       expect(json['isIrregularSil'], isTrue);
       expect(json['irregularSilReason'], 'hospital_discharge');
-      expect(json['crisisJustificationNotes'], 'Emergency discharge support after surgery');
+      expect(
+        json['crisisJustificationNotes'],
+        'Emergency discharge support after surgery',
+      );
       expect(json['incidentReportReference'], 'HOSP-DIS-99');
     });
 
@@ -83,9 +87,11 @@ void main() {
 
       expect(updated.isIrregularSil, isTrue);
       expect(updated.irregularSilReason, 'prn_behavioral');
-      expect(updated.crisisJustificationNotes, 'PRN support escalated by clinician');
+      expect(
+        updated.crisisJustificationNotes,
+        'PRN support escalated by clinician',
+      );
       expect(updated.id, 'shift_copy');
     });
   });
 }
-

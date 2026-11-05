@@ -219,8 +219,7 @@ class EarningsRepository {
     // engine reads (`resolveProfile` allowances).
     if (activeAllowances != null) {
       final lowered = activeAllowances.map((a) => a.toLowerCase()).toList();
-      award['firstAidAllowance'] =
-          lowered.any((a) => a.contains('first aid'));
+      award['firstAidAllowance'] = lowered.any((a) => a.contains('first aid'));
       award['mealAllowanceEligible'] = lowered.any((a) => a.contains('meal'));
     }
 

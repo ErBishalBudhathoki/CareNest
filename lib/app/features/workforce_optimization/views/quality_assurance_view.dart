@@ -64,12 +64,18 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh, color: Theme.of(context).colorScheme.onPrimary),
+            icon: Icon(
+              Icons.refresh,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             onPressed: _loadData,
           ),
         ],
@@ -119,9 +125,9 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurfaceVariant, // Theme.of(context).colorScheme.onSurfaceVariant
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurfaceVariant, // Theme.of(context).colorScheme.onSurfaceVariant
             ),
           ),
         ],
@@ -417,7 +423,10 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
         Expanded(
           child: Text(
             label,
-            style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurface),
+            style: TextStyle(
+              fontSize: 16,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ),
         Text(
@@ -455,9 +464,9 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
               message,
               style: TextStyle(
                 fontSize: 14,
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurfaceVariant, // Theme.of(context).colorScheme.onSurfaceVariant
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurfaceVariant, // Theme.of(context).colorScheme.onSurfaceVariant
               ),
             ),
           ],
@@ -477,7 +486,11 @@ class _QualityAssuranceViewState extends ConsumerState<QualityAssuranceView> {
               if (orgId == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(AppLocalizations.of(context)!.organizationContextUnavailable),
+                    content: Text(
+                      AppLocalizations.of(
+                        context,
+                      )!.organizationContextUnavailable,
+                    ),
                   ),
                 );
                 return;

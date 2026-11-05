@@ -205,10 +205,7 @@ class _BauhausCommandCenterState extends State<BauhausCommandCenter> {
         .toList();
   }
 
-  void _onActionTap(
-    CommandCategory category,
-    CommandAction action,
-  ) {
+  void _onActionTap(CommandCategory category, CommandAction action) {
     // Navigate immediately. Recency tracking is a best-effort side effect and
     // must never block the action (SharedPreferences can be slow or fail on a
     // cold start).

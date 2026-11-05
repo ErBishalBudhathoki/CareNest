@@ -59,7 +59,10 @@ class InvoiceAIConsentView extends ConsumerWidget {
         ),
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
       ),
       body: SingleChildScrollView(

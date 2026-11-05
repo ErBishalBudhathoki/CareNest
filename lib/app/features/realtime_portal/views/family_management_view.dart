@@ -1463,22 +1463,27 @@ class _FamilyManagementViewState extends ConsumerState<FamilyManagementView> {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Family Access',
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).titleLarge?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
+              style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
             ),
             if ((widget.clientName ?? '').trim().isNotEmpty)
               Text(
                 widget.clientName!.trim(),
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               ),
           ],
         ),

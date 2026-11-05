@@ -80,10 +80,7 @@ class _LineItemsControllerState extends ConsumerState<LineItemsView> {
         systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
         shape: Border(
-          bottom: BorderSide(
-            color: colorScheme.onSurface,
-            width: 2,
-          ),
+          bottom: BorderSide(color: colorScheme.onSurface, width: 2),
         ),
       ),
       body: Center(

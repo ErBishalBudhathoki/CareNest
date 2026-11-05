@@ -142,7 +142,12 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
           scrolledUnderElevation: 0,
           systemOverlayStyle: SystemUiOverlayStyle.light,
           elevation: 0,
-          shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
+          shape: Border(
+            bottom: BorderSide(
+              color: Theme.of(context).colorScheme.onSurface,
+              width: 2,
+            ),
+          ),
           centerTitle: true,
           title: Text(
             'Live Insights',
@@ -222,7 +227,12 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
         scrolledUnderElevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
-        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
         centerTitle: true,
         title: Text(
           'Live Insights',
@@ -409,9 +419,9 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
           Icon(
             Icons.location_off,
             size: 64,
-            color: Theme.of(
-              context,
-            ).colorScheme.onSurfaceVariant, // Theme.of(context).colorScheme.onSurfaceVariant
+            color: Theme.of(context)
+                .colorScheme
+                .onSurfaceVariant, // Theme.of(context).colorScheme.onSurfaceVariant
           ),
           SizedBox(height: 16),
           Text(
@@ -427,9 +437,9 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
             'Insights will start when worker begins journey',
             style: TextStyle(
               fontSize: 14,
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurfaceVariant, // Theme.of(context).colorScheme.onSurfaceVariant
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurfaceVariant, // Theme.of(context).colorScheme.onSurfaceVariant
             ),
             textAlign: TextAlign.center,
           ),
@@ -455,9 +465,9 @@ class _LiveTrackingViewState extends ConsumerState<LiveTrackingView> {
           label,
           style: TextStyle(
             fontSize: 14,
-            color: Theme.of(
-              context,
-            ).colorScheme.onSurfaceVariant, // Theme.of(context).colorScheme.onSurfaceVariant
+            color: Theme.of(context)
+                .colorScheme
+                .onSurfaceVariant, // Theme.of(context).colorScheme.onSurfaceVariant
           ),
         ),
         const Spacer(),

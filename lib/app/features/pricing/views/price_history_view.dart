@@ -367,9 +367,12 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                       card['title'] as String,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      style: BauhausDesign.getTextTheme(context).labelSmall
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),
@@ -793,9 +796,9 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
           const SizedBox(height: 2),
           Text(
             secondary,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -840,9 +843,10 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
                   subtitle,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -909,9 +913,9 @@ class _PriceHistoryViewState extends ConsumerState<PriceHistoryView>
       child: Text(
         text,
         textAlign: TextAlign.center,
-        style: BauhausDesign.getTextTheme(
-          context,
-        ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
       ),
     );
   }

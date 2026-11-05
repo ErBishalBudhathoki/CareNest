@@ -29,7 +29,9 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
       if (orgId.isEmpty || email.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.organizationDetailsUnavailable),
+            content: Text(
+              AppLocalizations.of(context)!.organizationDetailsUnavailable,
+            ),
           ),
         );
         return;
@@ -61,10 +63,7 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
         systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
         shape: Border(
-          bottom: BorderSide(
-            color: colorScheme.onSurface,
-            width: 2,
-          ),
+          bottom: BorderSide(color: colorScheme.onSurface, width: 2),
         ),
         iconTheme: IconThemeData(color: colorScheme.onPrimary),
         actions: [
@@ -177,8 +176,11 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
                     style: TextStyle(color: BauhausTheme.white),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
+                    backgroundColor:
+                        BauhausDesign.primary, // Standardized: Bauhaus primary
+                    foregroundColor: Theme.of(
+                      context,
+                    ).colorScheme.onPrimary, // Standardized
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.zero,
                     ),
@@ -301,8 +303,11 @@ class DeprecatedWorkerDashboardView extends ConsumerWidget {
                     // Logic to acknowledge could be added here
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
+                    backgroundColor:
+                        BauhausDesign.primary, // Standardized: Bauhaus primary
+                    foregroundColor: Theme.of(
+                      context,
+                    ).colorScheme.onPrimary, // Standardized
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.zero,

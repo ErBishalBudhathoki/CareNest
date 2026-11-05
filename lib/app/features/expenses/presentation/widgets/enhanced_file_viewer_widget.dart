@@ -1094,7 +1094,9 @@ class _FullScreenImageViewer extends StatelessWidget {
                           }
                         },
                         icon: Icon(Icons.open_in_new),
-                        label: Text(AppLocalizations.of(context)!.openInBrowser),
+                        label: Text(
+                          AppLocalizations.of(context)!.openInBrowser,
+                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(
                             context,

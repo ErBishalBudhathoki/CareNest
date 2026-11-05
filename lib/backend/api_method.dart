@@ -4464,7 +4464,10 @@ class ApiMethod extends ChangeNotifier {
   }) async {
     try {
       final body = <String, dynamic>{'endDate': ?endDate};
-      return await put('sil/occupancy/$occupancyId/absences/$absenceId', body: body);
+      return await put(
+        'sil/occupancy/$occupancyId/absences/$absenceId',
+        body: body,
+      );
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
@@ -4532,7 +4535,10 @@ class ApiMethod extends ChangeNotifier {
   }
 
   // Milestone 6.2: Supports optional blockOnRatioBreach parameter for SIL ratio enforcement
-  Future<Map<String, dynamic>> publishSilRoster(String id, {bool? blockOnRatioBreach}) async {
+  Future<Map<String, dynamic>> publishSilRoster(
+    String id, {
+    bool? blockOnRatioBreach,
+  }) async {
     try {
       final body = <String, dynamic>{};
       if (blockOnRatioBreach != null) {
@@ -4564,7 +4570,10 @@ class ApiMethod extends ChangeNotifier {
   }
 
   // Milestone 6.1: Supports optional signature payload (signedBy, signatoryRole, signatureData, etc.)
-  Future<Map<String, dynamic>> acceptSilQuote(String id, {Map<String, dynamic>? body}) async {
+  Future<Map<String, dynamic>> acceptSilQuote(
+    String id, {
+    Map<String, dynamic>? body,
+  }) async {
     try {
       return await post('sil/quotes/$id/accept', body: body ?? const {});
     } catch (e) {
@@ -4604,14 +4613,20 @@ class ApiMethod extends ChangeNotifier {
     String? idempotencyKey,
   }) async {
     try {
-      final body = <String, dynamic>{'from': from, 'to': to, 'dueDate': ?dueDate};
+      final body = <String, dynamic>{
+        'from': from,
+        'to': to,
+        'dueDate': ?dueDate,
+      };
       if (idempotencyKey != null) {
         body['idempotencyKey'] = idempotencyKey;
       }
       return await post(
         'sil/rosters-of-care/$id/invoice',
         body: body,
-        headers: idempotencyKey != null ? {'x-idempotency-key': idempotencyKey} : null,
+        headers: idempotencyKey != null
+            ? {'x-idempotency-key': idempotencyKey}
+            : null,
       );
     } catch (e) {
       return {'success': false, 'message': e.toString()};
@@ -4628,10 +4643,7 @@ class ApiMethod extends ChangeNotifier {
       final body = <String, dynamic>{};
       if (dispatchMethod != null) body['dispatchMethod'] = dispatchMethod;
       if (recipientEmail != null) body['recipientEmail'] = recipientEmail;
-      return await post(
-        'sil/invoices/$id/dispatch',
-        body: body,
-      );
+      return await post('sil/invoices/$id/dispatch', body: body);
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }

@@ -58,7 +58,9 @@ class _AdminOnboardingListViewState
           : state.error != null
           ? Center(child: Text('Error: ${state.error}'))
           : state.pendingList.isEmpty
-          ? Center(child: Text(AppLocalizations.of(context)!.noPendingOnboardings))
+          ? Center(
+              child: Text(AppLocalizations.of(context)!.noPendingOnboardings),
+            )
           : ListView.builder(
               itemCount: state.pendingList.length,
               itemBuilder: (context, index) {

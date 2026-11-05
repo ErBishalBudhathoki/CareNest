@@ -1485,8 +1485,10 @@ class _AdvancedPayrollDashboardState
   /// First/last instants of a `YYYY-MM` period.
   (DateTime, DateTime) _periodDateRange(String period) {
     final parts = period.split('-');
-    final year = int.tryParse(parts.isNotEmpty ? parts[0] : '') ?? DateTime.now().year;
-    final month = int.tryParse(parts.length > 1 ? parts[1] : '') ?? DateTime.now().month;
+    final year =
+        int.tryParse(parts.isNotEmpty ? parts[0] : '') ?? DateTime.now().year;
+    final month =
+        int.tryParse(parts.length > 1 ? parts[1] : '') ?? DateTime.now().month;
     final start = DateTime(year, month, 1);
     final end = DateTime(year, month + 1, 0, 23, 59, 59);
     return (start, end);
@@ -1517,7 +1519,8 @@ class _AdvancedPayrollDashboardState
           endDate: end,
           employeeEmail: email,
         );
-        final raw = (response['shifts'] ?? response['data'] ?? const []) as List;
+        final raw =
+            (response['shifts'] ?? response['data'] ?? const []) as List;
         shifts = raw
             .whereType<Map>()
             .map((s) {

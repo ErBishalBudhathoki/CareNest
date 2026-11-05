@@ -403,7 +403,9 @@ class AutoScheduleDashboard extends ConsumerWidget {
               // In production, trigger auto-fill
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppLocalizations.of(context)!.autoFillRequiresShiftData),
+                  content: Text(
+                    AppLocalizations.of(context)!.autoFillRequiresShiftData,
+                  ),
                 ),
               );
             },

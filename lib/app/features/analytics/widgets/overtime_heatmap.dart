@@ -52,7 +52,11 @@ class OvertimeHeatmap extends StatelessWidget {
           const SizedBox(height: 16),
 
           if (!hasTemporalData && metrics.isEmpty)
-            Expanded(child: Center(child: Text(AppLocalizations.of(context)!.noOvertimeData)))
+            Expanded(
+              child: Center(
+                child: Text(AppLocalizations.of(context)!.noOvertimeData),
+              ),
+            )
           else ...[
             // 1. Temporal Analysis (Bar Chart)
             if (hasTemporalData) ...[

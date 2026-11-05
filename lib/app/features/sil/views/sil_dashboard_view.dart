@@ -25,8 +25,10 @@ class SILDashboardView extends ConsumerStatefulWidget {
 
 class _SILDashboardViewState extends ConsumerState<SILDashboardView>
     with SingleTickerProviderStateMixin {
-  late final TabController _tabController =
-      TabController(length: 3, vsync: this);
+  late final TabController _tabController = TabController(
+    length: 3,
+    vsync: this,
+  );
   List<Patient> _clients = const [];
   bool _clientsLoading = false;
 
@@ -184,7 +186,10 @@ class _PropertiesTab extends ConsumerWidget {
     );
   }
 
-  Future<void> _showCreatePropertyDialog(BuildContext context, WidgetRef ref) async {
+  Future<void> _showCreatePropertyDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
     final l10n = AppLocalizations.of(context)!;
     final nameController = TextEditingController();
     final roomsController = TextEditingController(text: '1');
@@ -208,26 +213,43 @@ class _PropertiesTab extends ConsumerWidget {
                 DropdownButtonFormField<String>(
                   initialValue: propertyType,
                   decoration: InputDecoration(labelText: l10n.silPropertyType),
-                  items: const ['house', 'townhouse', 'apartment', 'group_home', 'other']
-                      .map((t) => DropdownMenuItem(value: t, child: Text(t)))
-                      .toList(),
+                  items:
+                      const [
+                            'house',
+                            'townhouse',
+                            'apartment',
+                            'group_home',
+                            'other',
+                          ]
+                          .map(
+                            (t) => DropdownMenuItem(value: t, child: Text(t)),
+                          )
+                          .toList(),
                   onChanged: (v) => setState(() => propertyType = v ?? 'house'),
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
                   initialValue: designCategory,
-                  decoration: InputDecoration(labelText: l10n.silDesignCategory),
-                  items: const [
-                    'basic',
-                    'basic_vacancy',
-                    'improved_liveability',
-                    'robust',
-                    'fully_accessible',
-                    'high_physical_support',
-                    'high_intensity_ventilation',
-                    'custom',
-                  ].map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
-                  onChanged: (v) => setState(() => designCategory = v ?? 'basic'),
+                  decoration: InputDecoration(
+                    labelText: l10n.silDesignCategory,
+                  ),
+                  items:
+                      const [
+                            'basic',
+                            'basic_vacancy',
+                            'improved_liveability',
+                            'robust',
+                            'fully_accessible',
+                            'high_physical_support',
+                            'high_intensity_ventilation',
+                            'custom',
+                          ]
+                          .map(
+                            (t) => DropdownMenuItem(value: t, child: Text(t)),
+                          )
+                          .toList(),
+                  onChanged: (v) =>
+                      setState(() => designCategory = v ?? 'basic'),
                 ),
                 const SizedBox(height: 12),
                 TextField(
@@ -245,7 +267,8 @@ class _PropertiesTab extends ConsumerWidget {
             ),
             FilledButton(
               onPressed: () async {
-                final roomCount = int.tryParse(roomsController.text.trim()) ?? 1;
+                final roomCount =
+                    int.tryParse(roomsController.text.trim()) ?? 1;
                 final rooms = List.generate(
                   roomCount,
                   (i) => {'roomId': 'room-${i + 1}', 'label': 'Room ${i + 1}'},
@@ -253,13 +276,13 @@ class _PropertiesTab extends ConsumerWidget {
                 final ok = await ref
                     .read(silPropertiesViewModelProvider.notifier)
                     .createProperty({
-                  'name': nameController.text.trim(),
-                  'propertyType': propertyType,
-                  'silDesignCategory': designCategory,
-                  'rooms': rooms,
-                  'bedrooms': roomCount,
-                  'maxOccupancy': roomCount,
-                });
+                      'name': nameController.text.trim(),
+                      'propertyType': propertyType,
+                      'silDesignCategory': designCategory,
+                      'rooms': rooms,
+                      'bedrooms': roomCount,
+                      'maxOccupancy': roomCount,
+                    });
                 if (dialogContext.mounted) Navigator.of(dialogContext).pop(ok);
               },
               child: Text(l10n.silCreate),
@@ -272,7 +295,9 @@ class _PropertiesTab extends ConsumerWidget {
     if (created != true && context.mounted) {
       final error = ref.read(silPropertiesViewModelProvider).error;
       if (error != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(error)));
       }
     }
   }
@@ -333,7 +358,10 @@ class _QuotesTab extends ConsumerWidget {
     );
   }
 
-  Future<void> _showCreateQuoteDialog(BuildContext context, WidgetRef ref) async {
+  Future<void> _showCreateQuoteDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
     final l10n = AppLocalizations.of(context)!;
     String? clientId = clients.first.id;
     final supportController = TextEditingController();
@@ -361,13 +389,16 @@ class _QuotesTab extends ConsumerWidget {
                   decoration: InputDecoration(labelText: l10n.client),
                   items: clients
                       .where((c) => c.id != null)
-                      .map((c) => DropdownMenuItem(
-                            value: c.id,
-                            child: Text(
-                              c.clientName ??
-                                  '${c.clientFirstName ?? ''} ${c.clientLastName ?? ''}'.trim(),
-                            ),
-                          ))
+                      .map(
+                        (c) => DropdownMenuItem(
+                          value: c.id,
+                          child: Text(
+                            c.clientName ??
+                                '${c.clientFirstName ?? ''} ${c.clientLastName ?? ''}'
+                                    .trim(),
+                          ),
+                        ),
+                      )
                       .toList(),
                   onChanged: (v) => setState(() => clientId = v),
                 ),
@@ -378,7 +409,8 @@ class _QuotesTab extends ConsumerWidget {
                   items: const ['ndia_managed', 'plan_managed', 'self_managed']
                       .map((t) => DropdownMenuItem(value: t, child: Text(t)))
                       .toList(),
-                  onChanged: (v) => setState(() => fundingType = v ?? 'plan_managed'),
+                  onChanged: (v) =>
+                      setState(() => fundingType = v ?? 'plan_managed'),
                 ),
                 const SizedBox(height: 12),
                 TextField(
@@ -392,13 +424,17 @@ class _QuotesTab extends ConsumerWidget {
                 const SizedBox(height: 12),
                 TextField(
                   controller: hoursController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   decoration: InputDecoration(labelText: l10n.silHoursPerWeek),
                 ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: priceController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   decoration: InputDecoration(labelText: l10n.silUnitPrice),
                 ),
                 const SizedBox(height: 16),
@@ -414,17 +450,20 @@ class _QuotesTab extends ConsumerWidget {
                   spacing: 6,
                   // Day abbreviations double as the API `days` values
                   // ('Mon'..'Sun'), so they stay untranslated.
-                  children: const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-                      .map(
-                        (d) => FilterChip(
-                          label: Text(d),
-                          selected: selectedDays.contains(d),
-                          onSelected: (on) => setState(
-                            () => on ? selectedDays.add(d) : selectedDays.remove(d),
-                          ),
-                        ),
-                      )
-                      .toList(),
+                  children:
+                      const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                          .map(
+                            (d) => FilterChip(
+                              label: Text(d),
+                              selected: selectedDays.contains(d),
+                              onSelected: (on) => setState(
+                                () => on
+                                    ? selectedDays.add(d)
+                                    : selectedDays.remove(d),
+                              ),
+                            ),
+                          )
+                          .toList(),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -466,22 +505,26 @@ class _QuotesTab extends ConsumerWidget {
             ),
             FilledButton(
               onPressed: () async {
-                final quote = await ref.read(silQuoteViewModelProvider.notifier).create({
-                  'clientId': clientId,
-                  'fundingType': fundingType,
-                  'lines': [
-                    {
-                      'supportNumber': supportController.text.trim(),
-                      'hoursPerWeek':
-                          double.tryParse(hoursController.text.trim()) ?? 0,
-                      'unitPrice': double.tryParse(priceController.text.trim()) ?? 0,
-                      'days': selectedDays.toList(),
-                      'startTime': fmt(startTime),
-                      'endTime': fmt(endTime),
-                    },
-                  ],
-                });
-                if (dialogContext.mounted) Navigator.of(dialogContext).pop(quote != null);
+                final quote = await ref
+                    .read(silQuoteViewModelProvider.notifier)
+                    .create({
+                      'clientId': clientId,
+                      'fundingType': fundingType,
+                      'lines': [
+                        {
+                          'supportNumber': supportController.text.trim(),
+                          'hoursPerWeek':
+                              double.tryParse(hoursController.text.trim()) ?? 0,
+                          'unitPrice':
+                              double.tryParse(priceController.text.trim()) ?? 0,
+                          'days': selectedDays.toList(),
+                          'startTime': fmt(startTime),
+                          'endTime': fmt(endTime),
+                        },
+                      ],
+                    });
+                if (dialogContext.mounted)
+                  Navigator.of(dialogContext).pop(quote != null);
               },
               child: Text(l10n.silCreate),
             ),
@@ -493,7 +536,9 @@ class _QuotesTab extends ConsumerWidget {
     if (created != true && context.mounted) {
       final error = ref.read(silQuoteViewModelProvider).error;
       if (error != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(error)));
       }
     }
   }
@@ -550,10 +595,22 @@ class _QuoteActions extends ConsumerWidget {
                     isDense: true,
                   ),
                   items: [
-                    DropdownMenuItem(value: 'participant', child: Text(l10n.silRoleParticipant)),
-                    DropdownMenuItem(value: 'guardian', child: Text(l10n.silRoleGuardian)),
-                    DropdownMenuItem(value: 'plan_manager', child: Text(l10n.silRolePlanManager)),
-                    DropdownMenuItem(value: 'provider', child: Text(l10n.silRoleProviderRep)),
+                    DropdownMenuItem(
+                      value: 'participant',
+                      child: Text(l10n.silRoleParticipant),
+                    ),
+                    DropdownMenuItem(
+                      value: 'guardian',
+                      child: Text(l10n.silRoleGuardian),
+                    ),
+                    DropdownMenuItem(
+                      value: 'plan_manager',
+                      child: Text(l10n.silRolePlanManager),
+                    ),
+                    DropdownMenuItem(
+                      value: 'provider',
+                      child: Text(l10n.silRoleProviderRep),
+                    ),
                   ],
                   onChanged: (val) {
                     if (val != null) {
@@ -565,7 +622,9 @@ class _QuoteActions extends ConsumerWidget {
                 TextField(
                   key: const ValueKey('sil_quote_board_lodging_field'),
                   controller: boardCtrl,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   decoration: InputDecoration(
                     labelText: l10n.silBoardLodgingLabel,
                     hintText: l10n.silBoardLodgingHint,
@@ -578,7 +637,8 @@ class _QuoteActions extends ConsumerWidget {
                   key: const ValueKey('sil_quote_consent_checkbox'),
                   contentPadding: EdgeInsets.zero,
                   value: confirmed,
-                  onChanged: (val) => setDialogState(() => confirmed = val ?? false),
+                  onChanged: (val) =>
+                      setDialogState(() => confirmed = val ?? false),
                   title: Text(
                     l10n.silDigitalConsentConfirm,
                     style: const TextStyle(fontSize: 12),
@@ -612,7 +672,8 @@ class _QuoteActions extends ConsumerWidget {
       quote.id,
       signedBy: nameCtrl.text.trim(),
       signatoryRole: selectedRole,
-      signatureData: 'e-signed_${nameCtrl.text.trim()}_${DateTime.now().millisecondsSinceEpoch}',
+      signatureData:
+          'e-signed_${nameCtrl.text.trim()}_${DateTime.now().millisecondsSinceEpoch}',
       boardAndLodgingWeekly: double.tryParse(boardCtrl.text.trim()),
     );
 
@@ -643,17 +704,23 @@ class _QuoteActions extends ConsumerWidget {
         } else if (action == 'convert') {
           final roc = await notifier.convert(quote.id);
           if (roc != null && context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(l10n.silConvertedToRoC)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(l10n.silConvertedToRoC)));
           }
         }
       },
       itemBuilder: (context) => [
         if (quote.status == 'sent' || quote.status == 'draft')
-          PopupMenuItem(value: 'accept', child: Text(l10n.silQuoteAcceptAction)),
+          PopupMenuItem(
+            value: 'accept',
+            child: Text(l10n.silQuoteAcceptAction),
+          ),
         if (quote.status == 'accepted')
-          PopupMenuItem(value: 'convert', child: Text(l10n.silQuoteConvertAction)),
+          PopupMenuItem(
+            value: 'convert',
+            child: Text(l10n.silQuoteConvertAction),
+          ),
       ],
     );
   }
@@ -725,8 +792,7 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
   /// weekly pattern (days + start/end time); otherwise materialising produces
   /// no shifts.
   bool _hasPattern(SILRosterOfCare roc) => roc.supports.any(
-    (s) =>
-        s.days.isNotEmpty && s.startTime.isNotEmpty && s.endTime.isNotEmpty,
+    (s) => s.days.isNotEmpty && s.startTime.isNotEmpty && s.endTime.isNotEmpty,
   );
 
   /// Materialise this RoC's agreed weekly pattern into that week's shifts, then
@@ -743,8 +809,11 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
     );
     if (picked == null || !mounted) return;
 
-    final monday = DateTime(picked.year, picked.month, picked.day)
-        .subtract(Duration(days: (picked.weekday + 6) % 7));
+    final monday = DateTime(
+      picked.year,
+      picked.month,
+      picked.day,
+    ).subtract(Duration(days: (picked.weekday + 6) % 7));
     final weekIso = monday.toIso8601String().split('T').first;
 
     try {
@@ -764,9 +833,9 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
       );
       final propertyId = roc.propertyId;
       if (propertyId == null || propertyId.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.silRoCNoProperty)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.silRoCNoProperty)));
         return;
       }
       Navigator.of(context).pushNamed(
@@ -781,9 +850,9 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('$e')));
       }
     }
   }
@@ -796,18 +865,16 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
       final repo = ref.read(silRepositoryProvider);
       await repo.updateRosterOfCare(roc.id, {'status': 'active'});
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.silRoCActivated)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.silRoCActivated)));
       _load();
     } on SILConsentRequiredException catch (e) {
       if (!mounted) return;
       _showConsentRequiredDialog(roc, e.message);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$e')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
     }
   }
 
@@ -831,15 +898,15 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
               'bypassReason': reason,
             });
             if (!mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(l10n.silBypassDone)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(l10n.silBypassDone)));
             _load();
           } catch (e) {
             if (!mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('$e')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('$e')));
           }
         },
       ),
@@ -887,7 +954,10 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
                       // Milestone 4.2 Consent Gate: Activate button for draft RoCs
                       if (roc.status == 'draft')
                         IconButton(
-                          icon: const Icon(Icons.check_circle_outline, color: Colors.teal),
+                          icon: const Icon(
+                            Icons.check_circle_outline,
+                            color: Colors.teal,
+                          ),
                           tooltip: l10n.silActivateRoCTooltip,
                           onPressed: () => _activateRosterOfCare(roc),
                         ),
@@ -1047,8 +1117,9 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
         : route.recipientType == 'plan_manager'
         ? invoiceL10n.silRoutePlanManagerPdf
         : invoiceL10n.silRouteParticipantPdf;
-    final replayNote =
-        invoice.isIdempotentReplay == true ? ' · ${invoiceL10n.silReplayBadge}' : '';
+    final replayNote = invoice.isIdempotentReplay == true
+        ? ' · ${invoiceL10n.silReplayBadge}'
+        : '';
 
     await showDialog<void>(
       context: context,
@@ -1092,7 +1163,9 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(dispatchL10n.silDispatchConfirmTitle(invoice.invoiceNumber)),
+        title: Text(
+          dispatchL10n.silDispatchConfirmTitle(invoice.invoiceNumber),
+        ),
         content: Text(dispatchL10n.silDispatchConfirmBody),
         actions: [
           TextButton(
@@ -1131,14 +1204,10 @@ class _RostersOfCareTabState extends ConsumerState<_RostersOfCareTab> {
   }
 
   void _openInvoice(String invoiceId) {
-    final organizationId =
-        ref.read(app_providers.organizationIdProvider) ?? '';
+    final organizationId = ref.read(app_providers.organizationIdProvider) ?? '';
     Navigator.of(context).pushNamed(
       Routes.invoiceDetails,
-      arguments: {
-        'invoiceId': invoiceId,
-        'organizationId': organizationId,
-      },
+      arguments: {'invoiceId': invoiceId, 'organizationId': organizationId},
     );
   }
 
@@ -1201,17 +1270,17 @@ class _ConsentBypassDialogState extends State<_ConsentBypassDialog> {
           Text(
             l10n.silConsentRequiredSubtitle,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 16),
           const Divider(),
           const SizedBox(height: 8),
           Text(
             l10n.silEmergencyBypass,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 6),
           TextField(
@@ -1238,9 +1307,9 @@ class _ConsentBypassDialogState extends State<_ConsentBypassDialog> {
           onPressed: () {
             final reason = _controller.text.trim();
             if (reason.isEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.silBypassReasonHint)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(l10n.silBypassReasonHint)));
               return;
             }
             Navigator.of(context).pop();
@@ -1276,8 +1345,9 @@ class _EmptyState extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium
-                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),

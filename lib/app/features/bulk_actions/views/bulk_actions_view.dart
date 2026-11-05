@@ -1013,7 +1013,9 @@ class _BulkAssignmentTabState extends ConsumerState<_BulkAssignmentTab> {
     if (pairs.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.runSuggestFirstToPickWorkers),
+          content: Text(
+            AppLocalizations.of(context)!.runSuggestFirstToPickWorkers,
+          ),
           backgroundColor: BauhausDesign.warning,
         ),
       );

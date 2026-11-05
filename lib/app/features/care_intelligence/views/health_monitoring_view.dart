@@ -42,7 +42,9 @@ class _HealthMonitoringViewState extends ConsumerState<HealthMonitoringView> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
-        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
+        foregroundColor: Theme.of(
+          context,
+        ).colorScheme.onPrimary, // Standardized
         title: Text(
           'HEALTH MONITORING',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
@@ -55,7 +57,12 @@ class _HealthMonitoringViewState extends ConsumerState<HealthMonitoringView> {
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
       ),
       body: state.isLoading
           ? const Center(child: BauhausLoadingState())

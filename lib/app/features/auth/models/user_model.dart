@@ -174,7 +174,9 @@ class User {
             ? Map<String, dynamic>.from(json['award'] as Map)
             : null,
         standardHoursPerDay: _parseIntOrNull(
-          (json['award'] is Map ? (json['award'] as Map)['standardHoursPerDay'] : null) ??
+          (json['award'] is Map
+                  ? (json['award'] as Map)['standardHoursPerDay']
+                  : null) ??
               json['standardHoursPerDay'],
         ),
       );

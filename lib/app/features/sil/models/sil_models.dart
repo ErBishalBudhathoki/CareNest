@@ -31,7 +31,8 @@ abstract class SILRoom with _$SILRoom {
     @Default(<String>[]) List<String> accessibility,
   }) = _SILRoom;
 
-  factory SILRoom.fromJson(Map<String, dynamic> json) => _$SILRoomFromJson(json);
+  factory SILRoom.fromJson(Map<String, dynamic> json) =>
+      _$SILRoomFromJson(json);
 }
 
 @freezed
@@ -414,31 +415,33 @@ Map<String, dynamic> _normalizeServiceAgreementJson(Map<String, dynamic> json) {
   final normalized = Map<String, dynamic>.from(json);
   normalized['id'] ??= json['_id']?.toString() ?? '';
   if (json['clientId'] is Map) {
-    normalized['clientId'] = json['clientId']['_id']?.toString() ??
+    normalized['clientId'] =
+        json['clientId']['_id']?.toString() ??
         json['clientId']['id']?.toString() ??
         '';
   } else {
     normalized['clientId'] = json['clientId']?.toString() ?? '';
   }
   if (json['propertyId'] is Map) {
-    normalized['propertyId'] = json['propertyId']['_id']?.toString() ??
+    normalized['propertyId'] =
+        json['propertyId']['_id']?.toString() ??
         json['propertyId']['id']?.toString();
   }
   if (json['quoteId'] is Map) {
-    normalized['quoteId'] = json['quoteId']['_id']?.toString() ??
-        json['quoteId']['id']?.toString();
+    normalized['quoteId'] =
+        json['quoteId']['_id']?.toString() ?? json['quoteId']['id']?.toString();
   }
   if (json['rosterOfCareId'] is Map) {
     normalized['rosterOfCareId'] =
         json['rosterOfCareId']['_id']?.toString() ??
-            json['rosterOfCareId']['id']?.toString();
+        json['rosterOfCareId']['id']?.toString();
   }
   final signedBy = json['signedBy'] is Map ? json['signedBy'] as Map : null;
   if (signedBy != null) {
-    normalized['signedByName'] = signedBy['name']?.toString() ??
-        normalized['signedByName'] ??
-        '';
-    normalized['signedByRole'] = signedBy['role']?.toString() ??
+    normalized['signedByName'] =
+        signedBy['name']?.toString() ?? normalized['signedByName'] ?? '';
+    normalized['signedByRole'] =
+        signedBy['role']?.toString() ??
         normalized['signedByRole'] ??
         'participant';
   }

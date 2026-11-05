@@ -418,9 +418,9 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
         child: Text(
           'No commands yet. Ask about clients, schedule, invoices, notifications, or app navigation.',
           textAlign: TextAlign.center,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          style: BauhausDesign.getTextTheme(context).bodyLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       ),
     );
@@ -768,9 +768,9 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
           const SizedBox(height: 4),
           Text(
             label,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -781,9 +781,9 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
     if (children.isEmpty) {
       return Text(
         'No matching app data to preview.',
-        style: BauhausDesign.getTextTheme(
-          context,
-        ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
       );
     }
 
@@ -977,7 +977,9 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                       itemNumber,
                       style: BauhausDesign.getTextTheme(context).bodySmall
                           ?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w700,
                           ),
                     ),
@@ -985,9 +987,12 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
                       const SizedBox(height: 4),
                       Text(
                         subtitle,
-                        style: BauhausDesign.getTextTheme(
-                          context,
-                        ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        style: BauhausDesign.getTextTheme(context).bodySmall
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                       ),
                     ],
                   ],
@@ -1033,9 +1038,9 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
             const SizedBox(height: 4),
             Text(
               subtitle,
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ],

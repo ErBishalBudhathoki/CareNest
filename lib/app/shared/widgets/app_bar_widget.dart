@@ -105,18 +105,21 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
             : theme.colorScheme.onSurface);
 
     return AppBar(
-      title: titleWidget ?? (title != null
-          ? Text(
-              title!,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              // Match reference: titleLarge + w800 weight
-              style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
-                color: resolvedForeground,
-                fontWeight: FontWeight.w800,
-              ),
-            )
-          : null),
+      title:
+          titleWidget ??
+          (title != null
+              ? Text(
+                  title!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  // Match reference: titleLarge + w800 weight
+                  style: BauhausDesign.getTextTheme(context).titleLarge
+                      ?.copyWith(
+                        color: resolvedForeground,
+                        fontWeight: FontWeight.w800,
+                      ),
+                )
+              : null),
       centerTitle: true,
       backgroundColor: resolvedBackground,
       foregroundColor: resolvedForeground,
@@ -126,18 +129,21 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       // Match reference: 2px solid bottom border using onSurface color
       shape: Border(
-        bottom: BorderSide(
-          color: theme.colorScheme.onSurface,
-          width: 2,
-        ),
+        bottom: BorderSide(color: theme.colorScheme.onSurface, width: 2),
       ),
-      leading: leading ?? (showBackButton
-          ? IconButton(
-              tooltip: 'Back',
-              icon: Icon(Icons.arrow_back, color: resolvedForeground, size: 24),
-              onPressed: () => Navigator.of(context).pop(),
-            )
-          : null),
+      leading:
+          leading ??
+          (showBackButton
+              ? IconButton(
+                  tooltip: 'Back',
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: resolvedForeground,
+                    size: 24,
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
+                )
+              : null),
       actions: actions,
       bottom: bottom,
     );

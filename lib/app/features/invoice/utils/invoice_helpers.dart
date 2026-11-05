@@ -136,7 +136,10 @@ class InvoiceHelpers {
 
       final hourOnly = RegExp(r'^(\d{1,2})\s*([AP]M)?$').firstMatch(normalized);
       if (hourOnly != null) {
-        final hour = _to24Hour(int.parse(hourOnly.group(1)!), hourOnly.group(2));
+        final hour = _to24Hour(
+          int.parse(hourOnly.group(1)!),
+          hourOnly.group(2),
+        );
         return DateTime(1970, 1, 1, hour, 0);
       }
 

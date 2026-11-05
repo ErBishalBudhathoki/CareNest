@@ -638,7 +638,8 @@ class _ClientAndAppointmentDetailsState
           await _loadClientData();
 
           if (mounted) {
-            final isConverted = convertedToActiveNight ||
+            final isConverted =
+                convertedToActiveNight ||
                 (response is Map &&
                     response['data'] is Map &&
                     response['data']['convertedToActiveNight'] == true);
@@ -737,7 +738,11 @@ class _ClientAndAppointmentDetailsState
         timerModel.setTimerClientEmail(widget.clientEmail);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(AppLocalizations.of(context)!.timerResumedSuccessfully)),
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context)!.timerResumedSuccessfully,
+              ),
+            ),
           );
         }
       }
@@ -1246,7 +1251,8 @@ class _ClientAndAppointmentDetailsState
                               width: 1.5,
                             ),
                           ),
-                          onPressed: () => setDialogState(() => hadDisturbance = false),
+                          onPressed: () =>
+                              setDialogState(() => hadDisturbance = false),
                           child: Text(l10n.sleepoverNoQuiet),
                         ),
                       ),
@@ -1264,7 +1270,8 @@ class _ClientAndAppointmentDetailsState
                               width: 1.5,
                             ),
                           ),
-                          onPressed: () => setDialogState(() => hadDisturbance = true),
+                          onPressed: () =>
+                              setDialogState(() => hadDisturbance = true),
                           child: Text(l10n.sleepoverYesDisturbed),
                         ),
                       ),
@@ -1305,12 +1312,19 @@ class _ClientAndAppointmentDetailsState
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.warning_amber_rounded, color: BauhausDesign.warning, size: 20),
+                            const Icon(
+                              Icons.warning_amber_rounded,
+                              color: BauhausDesign.warning,
+                              size: 20,
+                            ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 l10n.sleepoverConversionWarning,
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],
@@ -1331,11 +1345,13 @@ class _ClientAndAppointmentDetailsState
                   final disturbances = hadDisturbance && durationMinutes > 0
                       ? [
                           {
-                            'startTime': DateTime.now().subtract(Duration(minutes: durationMinutes)).toIso8601String(),
+                            'startTime': DateTime.now()
+                                .subtract(Duration(minutes: durationMinutes))
+                                .toIso8601String(),
                             'endTime': DateTime.now().toIso8601String(),
                             'durationMinutes': durationMinutes,
                             'reason': reasonController.text.trim(),
-                          }
+                          },
                         ]
                       : <Map<String, dynamic>>[];
                   Navigator.of(dialogContext).pop({
@@ -1436,7 +1452,9 @@ class _ClientAndAppointmentDetailsState
               const SizedBox(height: 12),
               TextField(
                 controller: noticeController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 decoration: InputDecoration(
                   labelText: l10n.noticeHours,
                   border: const OutlineInputBorder(),
@@ -1453,7 +1471,9 @@ class _ClientAndAppointmentDetailsState
           ),
           actions: [
             TextButton(
-              onPressed: isSaving ? null : () => Navigator.of(dialogContext).pop(false),
+              onPressed: isSaving
+                  ? null
+                  : () => Navigator.of(dialogContext).pop(false),
               child: Text(l10n.cancel),
             ),
             FilledButton(
@@ -1465,16 +1485,21 @@ class _ClientAndAppointmentDetailsState
                         error = null;
                       });
                       try {
-                        final response = await apiMethod.createCancellationCharge(
-                          shiftId: shiftId,
-                          reason: reason,
-                          noticeHours: double.tryParse(noticeController.text.trim()),
-                        );
+                        final response = await apiMethod
+                            .createCancellationCharge(
+                              shiftId: shiftId,
+                              reason: reason,
+                              noticeHours: double.tryParse(
+                                noticeController.text.trim(),
+                              ),
+                            );
                         if (!dialogContext.mounted) return;
                         if (response['success'] == true) {
                           Navigator.of(dialogContext).pop(true);
                           final data = response['data'];
-                          final billable = data is Map ? data['billable'] : null;
+                          final billable = data is Map
+                              ? data['billable']
+                              : null;
                           final amount = data is Map
                               ? (data['amount'] as num?)?.toDouble()
                               : null;
@@ -1484,9 +1509,9 @@ class _ClientAndAppointmentDetailsState
                                 content: Text(
                                   billable == true
                                       ? 'Cancellation fee invoiced'
-                                          '${amount != null ? ' · \$${amount.toStringAsFixed(2)}' : ''}.'
+                                            '${amount != null ? ' · \$${amount.toStringAsFixed(2)}' : ''}.'
                                       : response['message']?.toString() ??
-                                          'Shift cancelled. No fee applied.',
+                                            'Shift cancelled. No fee applied.',
                                 ),
                               ),
                             );
@@ -1495,7 +1520,8 @@ class _ClientAndAppointmentDetailsState
                         } else {
                           setDialogState(() {
                             isSaving = false;
-                            error = response['message']?.toString() ??
+                            error =
+                                response['message']?.toString() ??
                                 l10n.cancellationBillingFailed;
                           });
                         }
@@ -1716,7 +1742,11 @@ class _ClientAndAppointmentDetailsState
                                   if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text(AppLocalizations.of(context)!.swapOfferCreated),
+                                        content: Text(
+                                          AppLocalizations.of(
+                                            context,
+                                          )!.swapOfferCreated,
+                                        ),
                                       ),
                                     );
                                   }
@@ -1773,7 +1803,8 @@ class _ClientAndAppointmentDetailsState
       } catch (_) {}
     }
 
-    final shiftId = shift['shiftId']?.toString() ??
+    final shiftId =
+        shift['shiftId']?.toString() ??
         shift['_id']?.toString() ??
         shift['id']?.toString();
 
@@ -1837,7 +1868,9 @@ class _ClientAndAppointmentDetailsState
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: isPast ? null : () => _showCancellationDialog(shift, shiftId),
+                  onTap: isPast
+                      ? null
+                      : () => _showCancellationDialog(shift, shiftId),
                   child: Icon(
                     Icons.cancel_outlined,
                     color: isPast
@@ -2191,8 +2224,7 @@ class _ClientAndAppointmentDetailsState
                   // of only after reopening the participant.
                   ListenableBuilder(
                     listenable: timerService,
-                    builder: (context, _) =>
-                        _buildTimerSection(timerService),
+                    builder: (context, _) => _buildTimerSection(timerService),
                   ),
                   const SizedBox(height: BauhausDesign.space6),
                 ],
@@ -2988,7 +3020,11 @@ class _ClientAndAppointmentDetailsState
                           if (!mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(AppLocalizations.of(context)!.timerStartedSuccessfully),
+                              content: Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.timerStartedSuccessfully,
+                              ),
                               duration: Duration(seconds: 2),
                             ),
                           );

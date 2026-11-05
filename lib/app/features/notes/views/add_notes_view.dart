@@ -165,99 +165,108 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
       body: _selectedTemplate != null
           ? _buildStructuredBody(context)
           : Padding(
-        padding: const EdgeInsets.all(BauhausDesign.space4),
-        child: Column(
-          children: [
-            Expanded(
-              child: BauhausCard(
-                padding: const EdgeInsets.all(BauhausDesign.space4),
-                child: TextField(
-                  maxLines: null,
-                  minLines: null,
-                  expands: true,
-                  textAlignVertical: TextAlignVertical.top,
-                  controller: _notesController,
-                  enableInteractiveSelection: true,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodyMedium?.copyWith(color: textColor),
-                  decoration: InputDecoration(
-                    hintText: 'Add notes...',
-                    hintStyle: BauhausDesign.getTextTheme(
-                      context,
-                    ).bodyMedium?.copyWith(color: hintColor),
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: BauhausDesign.space6),
-            BauhausActionButton(
-              text: _isSaving ? 'Saving...' : 'Save',
-              isLoading: _isSaving,
-              onPressed: _saveNotes,
-              isFullWidth: true,
-            ),
-            // button with mic icon
-            const SizedBox(height: BauhausDesign.space6),
-            Text(
-              !_isInitialized
-                  ? 'Initializing...'
-                  : _speechToText.isListening
-                  ? accumulatedText.isEmpty
-                        ? 'Listening...'
-                        : accumulatedText
-                  : _speechEnabled
-                  ? 'Tap to start listening'
-                  : 'Speech not available',
-              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                color: (!_isInitialized || !_speechEnabled)
-                    ? Theme.of(context).colorScheme.onSurfaceVariant
-                    : Theme.of(context).colorScheme.onSurface,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: BauhausDesign.space2),
-            SizedBox(
-              width: double.infinity,
-              height: 60.0,
-              child: InkWell(
-                onTap: !_isInitialized || !_speechEnabled || _isSaving
-                    ? null
-                    : _toggleSpeech,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: (!_isInitialized || !_speechEnabled || _isSaving)
-                        ? Theme.of(
+              padding: const EdgeInsets.all(BauhausDesign.space4),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: BauhausCard(
+                      padding: const EdgeInsets.all(BauhausDesign.space4),
+                      child: TextField(
+                        maxLines: null,
+                        minLines: null,
+                        expands: true,
+                        textAlignVertical: TextAlignVertical.top,
+                        controller: _notesController,
+                        enableInteractiveSelection: true,
+                        style: BauhausDesign.getTextTheme(
+                          context,
+                        ).bodyMedium?.copyWith(color: textColor),
+                        decoration: InputDecoration(
+                          hintText: 'Add notes...',
+                          hintStyle: BauhausDesign.getTextTheme(
                             context,
-                          ).colorScheme.outline.withValues(alpha: 0.3)
-                        : BauhausDesign.primary,
-                    borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.outline,
-                      width: 2,
-                    ),
-                    boxShadow: const [BauhausDesign.shadowHard],
-                  ),
-                  child: Center(
-                    child: Icon(
-                      _speechToText.isNotListening ? Icons.mic_off : Icons.mic,
-                      color: (!_isInitialized || !_speechEnabled || _isSaving)
-                          ? Theme.of(context).colorScheme.onSurfaceVariant
-                          : Theme.of(context).colorScheme.onPrimary,
-                      size: 28,
+                          ).bodyMedium?.copyWith(color: hintColor),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: BauhausDesign.space6),
+                  BauhausActionButton(
+                    text: _isSaving ? 'Saving...' : 'Save',
+                    isLoading: _isSaving,
+                    onPressed: _saveNotes,
+                    isFullWidth: true,
+                  ),
+                  // button with mic icon
+                  const SizedBox(height: BauhausDesign.space6),
+                  Text(
+                    !_isInitialized
+                        ? 'Initializing...'
+                        : _speechToText.isListening
+                        ? accumulatedText.isEmpty
+                              ? 'Listening...'
+                              : accumulatedText
+                        : _speechEnabled
+                        ? 'Tap to start listening'
+                        : 'Speech not available',
+                    style: BauhausDesign.getTextTheme(context).bodySmall
+                        ?.copyWith(
+                          color: (!_isInitialized || !_speechEnabled)
+                              ? Theme.of(context).colorScheme.onSurfaceVariant
+                              : Theme.of(context).colorScheme.onSurface,
+                        ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: BauhausDesign.space2),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 60.0,
+                    child: InkWell(
+                      onTap: !_isInitialized || !_speechEnabled || _isSaving
+                          ? null
+                          : _toggleSpeech,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color:
+                              (!_isInitialized || !_speechEnabled || _isSaving)
+                              ? Theme.of(
+                                  context,
+                                ).colorScheme.outline.withValues(alpha: 0.3)
+                              : BauhausDesign.primary,
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusMd,
+                          ),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outline,
+                            width: 2,
+                          ),
+                          boxShadow: const [BauhausDesign.shadowHard],
+                        ),
+                        child: Center(
+                          child: Icon(
+                            _speechToText.isNotListening
+                                ? Icons.mic_off
+                                : Icons.mic,
+                            color:
+                                (!_isInitialized ||
+                                    !_speechEnabled ||
+                                    _isSaving)
+                                ? Theme.of(context).colorScheme.onSurfaceVariant
+                                : Theme.of(context).colorScheme.onPrimary,
+                            size: 28,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -351,8 +360,7 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
   }
 
   Future<void> _pickTemplate() async {
-    final templates =
-        await ref.read(noteTemplatesProvider(null).future);
+    final templates = await ref.read(noteTemplatesProvider(null).future);
     if (!mounted) return;
 
     if (templates.isEmpty) {
@@ -375,7 +383,8 @@ class _AddNotesViewState extends ConsumerState<AddNotesView> {
                 ListTile(
                   leading: const Icon(Icons.description_outlined),
                   title: Text(template['name']?.toString() ?? 'Template'),
-                  subtitle: template['description']?.toString().isNotEmpty == true
+                  subtitle:
+                      template['description']?.toString().isNotEmpty == true
                       ? Text(template['description'].toString())
                       : null,
                   onTap: () => Navigator.of(sheetContext).pop(template),

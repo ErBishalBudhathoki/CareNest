@@ -129,7 +129,12 @@ class AppointmentTimelineView extends ConsumerWidget {
         backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
         elevation: 0,
         centerTitle: true,
-        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
         title: Text(
           'CLIENT APPOINTMENT TIMELINE',
           style: GoogleFonts.oswald(
@@ -139,7 +144,9 @@ class AppointmentTimelineView extends ConsumerWidget {
             letterSpacing: 1.1,
           ),
         ),
-        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
+        foregroundColor: Theme.of(
+          context,
+        ).colorScheme.onPrimary, // Standardized
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -155,11 +162,13 @@ class AppointmentTimelineView extends ConsumerWidget {
           IconButton(
             onPressed: () =>
                 ref.invalidate(timelineAppointmentsProvider(resolvedClientId)),
-            icon: Icon(Icons.refresh, color: Theme.of(context).colorScheme.onPrimary),
+            icon: Icon(
+              Icons.refresh,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             tooltip: 'Refresh Timeline',
           ),
         ],
-        
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

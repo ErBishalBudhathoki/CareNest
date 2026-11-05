@@ -596,9 +596,12 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                       stat['title'] as String,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      style: BauhausDesign.getTextTheme(context).labelSmall
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),
@@ -849,9 +852,10 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                   ),
                   Text(
                     '${_selectedItemNumbers.length} ${l10n.employeesSelected}',
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    style: BauhausDesign.getTextTheme(context).labelSmall
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
                 ],
               ),
@@ -928,7 +932,11 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
                             overflow: TextOverflow.ellipsis,
                             style: BauhausDesign.getTextTheme(context)
                                 .labelSmall
-                                ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
                           ),
                         ],
                       ),
@@ -960,9 +968,10 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
           child: _events.isEmpty
               ? Text(
                   l10n.moduleNoTrackedChanges,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 )
               : Column(
                   children: _events
@@ -986,9 +995,10 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
           child: timeline.isEmpty
               ? Text(
                   l10n.moduleNoTrackedChanges,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  style: BauhausDesign.getTextTheme(context).bodySmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 )
               : Column(
                   children: timeline
@@ -1041,9 +1051,9 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
             detail,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 2),
           Text(
@@ -1055,9 +1065,9 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
           ),
           Text(
             stamp,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -1092,9 +1102,9 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
           const SizedBox(height: 2),
           Text(
             subtitle,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            style: BauhausDesign.getTextTheme(context).labelSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 4),
           child,
@@ -1120,7 +1130,10 @@ class _BulkOperationsViewState extends ConsumerState<BulkOperationsView>
           isExpanded: true,
           items: [
             DropdownMenuItem(value: 'percentage', child: Text(l10n.percentage)),
-            DropdownMenuItem(value: 'fixed', child: Text(AppLocalizations.of(context)!.fixedRate)),
+            DropdownMenuItem(
+              value: 'fixed',
+              child: Text(AppLocalizations.of(context)!.fixedRate),
+            ),
           ],
           onChanged: (value) {
             if (value != null) {

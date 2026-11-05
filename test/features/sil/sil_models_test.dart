@@ -59,7 +59,11 @@ void main() {
           'hoursPerWeek': 10,
           'unitPrice': 80,
           'amount': 800,
-          'priceValidation': {'passed': false, 'capApplied': 50, 'errors': ['over cap']},
+          'priceValidation': {
+            'passed': false,
+            'capApplied': 50,
+            'errors': ['over cap'],
+          },
         },
       ],
       'totals': {'weeklyHours': 10, 'weeklyAmount': 800, 'annualAmount': 41600},
@@ -77,9 +81,17 @@ void main() {
       'clientId': 'c1',
       'status': 'active',
       'effectiveFrom': '2026-06-01T00:00:00.000Z',
-      'reviewSchedule': {'cadence': 'quarterly', 'nextReviewDate': '2026-09-01T00:00:00.000Z'},
+      'reviewSchedule': {
+        'cadence': 'quarterly',
+        'nextReviewDate': '2026-09-01T00:00:00.000Z',
+      },
       'supports': [
-        {'supportNumber': 'x', 'hoursPerWeek': 10, 'unitPrice': 80, 'amount': 800},
+        {
+          'supportNumber': 'x',
+          'hoursPerWeek': 10,
+          'unitPrice': 80,
+          'amount': 800,
+        },
       ],
     });
 

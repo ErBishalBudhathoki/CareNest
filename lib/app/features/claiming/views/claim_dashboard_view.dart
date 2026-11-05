@@ -60,7 +60,10 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
         actions: [
           IconButton(
             tooltip: 'Pick period & generate',
-            icon: Icon(Icons.playlist_add_check, color: Theme.of(context).colorScheme.onPrimary),
+            icon: Icon(
+              Icons.playlist_add_check,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             onPressed: state.isLoading ? null : _pickRangeAndGenerate,
           ),
         ],
@@ -185,7 +188,11 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
                 await Clipboard.setData(ClipboardData(text: csv));
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(AppLocalizations.of(context)!.csvCopiedToClipboard)),
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(context)!.csvCopiedToClipboard,
+                      ),
+                    ),
                   );
                 }
               },
@@ -456,9 +463,11 @@ class _ClaimDashboardViewState extends ConsumerState<ClaimDashboardView> {
         .read(claimViewModelProvider.notifier)
         .generate(from: _iso(picked.start), to: _iso(picked.end));
     if (csv != null && mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.claimBatchGenerated)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.claimBatchGenerated),
+        ),
+      );
     }
   }
 

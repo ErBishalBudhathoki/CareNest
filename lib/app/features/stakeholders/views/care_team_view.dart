@@ -85,8 +85,10 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
                 children: [
                   _buildFundingType(context, state),
                   const SizedBox(height: 16),
-                  Text('Care network',
-                      style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    'Care network',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 8),
                   if (state.error != null)
                     Padding(
@@ -94,7 +96,8 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
                       child: Text(
                         state.error!,
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.error),
+                          color: Theme.of(context).colorScheme.error,
+                        ),
                       ),
                     ),
                   if ((state.careTeam?.careTeam ?? []).isEmpty)
@@ -137,8 +140,9 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
             // primary stakeholder is avoided — instead persist through a link
             // call on any existing entry, or defer until next link.
             final entries = state.careTeam?.careTeam ?? [];
-            final notifier =
-                ref.read(careTeamViewModelProvider(widget.clientId).notifier);
+            final notifier = ref.read(
+              careTeamViewModelProvider(widget.clientId).notifier,
+            );
             if (entries.isNotEmpty) {
               await notifier.link(
                 stakeholderId: entries.first.stakeholder.id,
@@ -149,7 +153,11 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppLocalizations.of(context)!.linkAStakeholderToSetFundingType),
+                  content: Text(
+                    AppLocalizations.of(
+                      context,
+                    )!.linkAStakeholderToSetFundingType,
+                  ),
                 ),
               );
             }
@@ -178,7 +186,9 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
             if (entry.isPrimary)
               Chip(
                 label: Text(AppLocalizations.of(context)!.primary),
-                backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.12),
+                backgroundColor: theme.colorScheme.primary.withValues(
+                  alpha: 0.12,
+                ),
                 side: BorderSide(color: theme.colorScheme.primary),
               ),
             IconButton(
@@ -203,7 +213,9 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
           children: [
             ListTile(
               leading: const Icon(Icons.link),
-              title: Text(AppLocalizations.of(context)!.linkExistingStakeholder),
+              title: Text(
+                AppLocalizations.of(context)!.linkExistingStakeholder,
+              ),
               enabled: state.allStakeholders.isNotEmpty,
               onTap: () => Navigator.of(sheetContext).pop('link'),
             ),
@@ -244,10 +256,12 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
                 initialValue: stakeholderId,
                 decoration: const InputDecoration(labelText: 'Stakeholder'),
                 items: available
-                    .map((s) => DropdownMenuItem(
-                          value: s.id,
-                          child: Text('${s.name} (${_labelFor(s.type)})'),
-                        ))
+                    .map(
+                      (s) => DropdownMenuItem(
+                        value: s.id,
+                        child: Text('${s.name} (${_labelFor(s.type)})'),
+                      ),
+                    )
                     .toList(),
                 onChanged: (v) => setState(() => stakeholderId = v),
               ),
@@ -256,7 +270,10 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
                 initialValue: role,
                 decoration: const InputDecoration(labelText: 'Role on plan'),
                 items: _types
-                    .map((t) => DropdownMenuItem(value: t, child: Text(_labelFor(t))))
+                    .map(
+                      (t) =>
+                          DropdownMenuItem(value: t, child: Text(_labelFor(t))),
+                    )
                     .toList(),
                 onChanged: (v) => setState(() => role = v),
               ),
@@ -293,7 +310,9 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
 
     if (linked == true && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.stakeholderLinked)),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.stakeholderLinked),
+        ),
       );
     }
   }
@@ -322,7 +341,12 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
                   initialValue: type,
                   decoration: const InputDecoration(labelText: 'Type'),
                   items: _types
-                      .map((t) => DropdownMenuItem(value: t, child: Text(_labelFor(t))))
+                      .map(
+                        (t) => DropdownMenuItem(
+                          value: t,
+                          child: Text(_labelFor(t)),
+                        ),
+                      )
                       .toList(),
                   onChanged: (v) => setState(() => type = v ?? 'other'),
                 ),
@@ -350,11 +374,11 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
                 final ok = await ref
                     .read(careTeamViewModelProvider(widget.clientId).notifier)
                     .createStakeholder({
-                  'name': nameController.text.trim(),
-                  'type': type,
-                  'email': emailController.text.trim(),
-                  'company': companyController.text.trim(),
-                });
+                      'name': nameController.text.trim(),
+                      'type': type,
+                      'email': emailController.text.trim(),
+                      'company': companyController.text.trim(),
+                    });
                 if (dialogContext.mounted) Navigator.of(dialogContext).pop(ok);
               },
               child: Text(AppLocalizations.of(context)!.create),
@@ -366,7 +390,11 @@ class _CareTeamViewState extends ConsumerState<CareTeamView> {
 
     if (created == true && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.stakeholderCreatedLinkToClient)),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.stakeholderCreatedLinkToClient,
+          ),
+        ),
       );
     }
   }

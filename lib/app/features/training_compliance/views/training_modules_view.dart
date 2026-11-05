@@ -40,7 +40,9 @@ class _TrainingModulesViewState extends ConsumerState<TrainingModulesView> {
           ),
         ),
         backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
-        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
+        foregroundColor: Theme.of(
+          context,
+        ).colorScheme.onPrimary, // Standardized
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -48,7 +50,12 @@ class _TrainingModulesViewState extends ConsumerState<TrainingModulesView> {
           color: Theme.of(context).colorScheme.onPrimary,
         ),
         elevation: 0,
-        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
       ),
       body: state.isLoading
           ? const Center(
@@ -179,7 +186,9 @@ class TrainingDetailView extends ConsumerWidget {
           ),
         ),
         backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
-        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
+        foregroundColor: Theme.of(
+          context,
+        ).colorScheme.onPrimary, // Standardized
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -187,7 +196,12 @@ class TrainingDetailView extends ConsumerWidget {
           color: Theme.of(context).colorScheme.onPrimary,
         ),
         elevation: 0,
-        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(BauhausDesign.space4),

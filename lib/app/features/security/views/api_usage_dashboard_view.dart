@@ -513,19 +513,28 @@ class _ApiUsageDashboardViewState extends ConsumerState<ApiUsageDashboardView> {
         ),
       ),
       leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+        icon: Icon(
+          Icons.arrow_back,
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
         onPressed: () => Navigator.of(context).pop(),
       ),
       actions: [
         IconButton(
           tooltip: AppLocalizations.of(context)!.realTimeTooltip,
           onPressed: _refreshRealTimeData,
-          icon: Icon(Icons.refresh, color: Theme.of(context).colorScheme.onPrimary),
+          icon: Icon(
+            Icons.refresh,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
         IconButton(
           tooltip: AppLocalizations.of(context)!.reloadAllTooltip,
           onPressed: _loadAll,
-          icon: Icon(Icons.download, color: Theme.of(context).colorScheme.onPrimary),
+          icon: Icon(
+            Icons.download,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
       ],
     );

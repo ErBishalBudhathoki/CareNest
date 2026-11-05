@@ -329,26 +329,34 @@ class _ComplianceAutomationDashboardState
   }
 
   void _runComplianceScan() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.runningComplianceScan)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.runningComplianceScan),
+      ),
+    );
   }
 
   void _viewExpiringDocuments() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.loadingExpiringDocuments)),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.loadingExpiringDocuments),
+      ),
     );
   }
 
   void _generateReport() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.generatingComplianceReport)),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.generatingComplianceReport),
+      ),
     );
   }
 
   void _viewTrends() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.loadingComplianceTrends)),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.loadingComplianceTrends),
+      ),
     );
   }
 }

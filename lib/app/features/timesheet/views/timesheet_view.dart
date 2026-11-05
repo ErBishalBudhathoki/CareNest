@@ -156,7 +156,10 @@ class _TimesheetViewState extends ConsumerState<TimesheetView> {
       ),
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+        icon: Icon(
+          Icons.arrow_back,
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
       ),
       actions: [
         IconButton(
@@ -165,7 +168,10 @@ class _TimesheetViewState extends ConsumerState<TimesheetView> {
               builder: (context) => TimesheetHistoryView(email: email),
             ),
           ),
-          icon: Icon(Icons.history_rounded, color: Theme.of(context).colorScheme.onPrimary),
+          icon: Icon(
+            Icons.history_rounded,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
           tooltip: AppLocalizations.of(context)!.historyTitle,
         ),
         IconButton(
@@ -186,7 +192,10 @@ class _TimesheetViewState extends ConsumerState<TimesheetView> {
               ),
             );
           },
-          icon: Icon(Icons.file_download_outlined, color: Theme.of(context).colorScheme.onPrimary),
+          icon: Icon(
+            Icons.file_download_outlined,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
           tooltip: AppLocalizations.of(context)!.exportAction,
         ),
       ],

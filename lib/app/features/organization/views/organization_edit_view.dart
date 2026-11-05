@@ -473,7 +473,10 @@ class _OrganizationEditViewState extends ConsumerState<OrganizationEditView> {
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onPrimary),
+          icon: Icon(
+            Icons.close,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [

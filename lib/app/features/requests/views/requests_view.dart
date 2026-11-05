@@ -782,12 +782,7 @@ class RequestsAppBar extends StatelessWidget {
       elevation: 0,
       centerTitle: true,
       systemOverlayStyle: SystemUiOverlayStyle.light,
-      shape: Border(
-        bottom: BorderSide(
-          color: colorScheme.onSurface,
-          width: 2,
-        ),
-      ),
+      shape: Border(bottom: BorderSide(color: colorScheme.onSurface, width: 2)),
       leading: Navigator.canPop(context)
           ? IconButton(
               icon: Icon(

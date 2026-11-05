@@ -852,7 +852,9 @@ class _SignUpViewState extends ConsumerState<SignUpView>
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context)!.anErrorOccurredTryAgain),
+              content: Text(
+                AppLocalizations.of(context)!.anErrorOccurredTryAgain,
+              ),
               backgroundColor: BauhausDesign.error,
             ),
           );

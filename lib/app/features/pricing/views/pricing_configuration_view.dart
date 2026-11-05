@@ -535,9 +535,10 @@ class _PricingConfigurationViewState
                   const SizedBox(height: BauhausDesign.space1),
                   Text(
                     AppLocalizations.of(context)!.organizationFallbackDesc,
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    style: BauhausDesign.getTextTheme(context).bodySmall
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
                   const SizedBox(height: BauhausDesign.space3),
                   TextFormField(
@@ -587,7 +588,9 @@ class _PricingConfigurationViewState
                       suffixStyle: BauhausDesign.getTextTheme(context)
                           .bodyMedium
                           ?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w600,
                           ),
                     ),
@@ -1272,9 +1275,10 @@ class _PricingConfigurationViewState
                 const SizedBox(height: BauhausDesign.space1),
                 Text(
                   description,
-                  style: BauhausDesign.getTextTheme(
-                    context,
-                  ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  style: BauhausDesign.getTextTheme(context).labelSmall
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
               ],
             ),
@@ -1386,9 +1390,12 @@ class _PricingConfigurationViewState
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       description,
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      style: BauhausDesign.getTextTheme(context).labelSmall
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),

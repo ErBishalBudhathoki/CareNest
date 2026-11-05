@@ -4,7 +4,10 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('parseDate', () {
     test('parses ISO dates and datetimes', () {
-      expect(ScheduleTimeParser.parseDate('2026-10-23'), DateTime(2026, 10, 23));
+      expect(
+        ScheduleTimeParser.parseDate('2026-10-23'),
+        DateTime(2026, 10, 23),
+      );
       expect(
         ScheduleTimeParser.parseDate('2026-10-23T09:00:00.000Z'),
         DateTime(2026, 10, 23),
@@ -33,32 +36,38 @@ void main() {
   group('parseTimeOfDay', () {
     test('parses 24-hour times', () {
       expect(ScheduleTimeParser.parseTimeOfDay('09:00'), (hour: 9, minute: 0));
-      expect(ScheduleTimeParser.parseTimeOfDay('22:30'), (hour: 22, minute: 30));
-      expect(ScheduleTimeParser.parseTimeOfDay('09:15:45'), (hour: 9, minute: 15));
+      expect(ScheduleTimeParser.parseTimeOfDay('22:30'), (
+        hour: 22,
+        minute: 30,
+      ));
+      expect(ScheduleTimeParser.parseTimeOfDay('09:15:45'), (
+        hour: 9,
+        minute: 15,
+      ));
     });
 
     test('parses 12-hour times including ICU narrow no-break spaces', () {
-      expect(
-        ScheduleTimeParser.parseTimeOfDay('9:00 AM'),
-        (hour: 9, minute: 0),
-      );
-      expect(
-        ScheduleTimeParser.parseTimeOfDay('5:00 PM'),
-        (hour: 17, minute: 0),
-      );
+      expect(ScheduleTimeParser.parseTimeOfDay('9:00 AM'), (
+        hour: 9,
+        minute: 0,
+      ));
+      expect(ScheduleTimeParser.parseTimeOfDay('5:00 PM'), (
+        hour: 17,
+        minute: 0,
+      ));
       // U+202F is what intl/ICU emits between minutes and meridiem.
-      expect(
-        ScheduleTimeParser.parseTimeOfDay('11:00\u202FPM'),
-        (hour: 23, minute: 0),
-      );
-      expect(
-        ScheduleTimeParser.parseTimeOfDay('12:00 AM'),
-        (hour: 0, minute: 0),
-      );
-      expect(
-        ScheduleTimeParser.parseTimeOfDay('12:30 PM'),
-        (hour: 12, minute: 30),
-      );
+      expect(ScheduleTimeParser.parseTimeOfDay('11:00\u202FPM'), (
+        hour: 23,
+        minute: 0,
+      ));
+      expect(ScheduleTimeParser.parseTimeOfDay('12:00 AM'), (
+        hour: 0,
+        minute: 0,
+      ));
+      expect(ScheduleTimeParser.parseTimeOfDay('12:30 PM'), (
+        hour: 12,
+        minute: 30,
+      ));
     });
 
     test('accepts hour-only values', () {

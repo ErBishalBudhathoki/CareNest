@@ -97,11 +97,8 @@ class InvoicePdfGenerator {
         // side and locally, and deliberately non-throwing.
         try {
           await InvoiceSigningService.ensureRegistered(
-            post: (endpoint, body, headers) => _api.post(
-              endpoint,
-              body: body,
-              headers: headers,
-            ),
+            post: (endpoint, body, headers) =>
+                _api.post(endpoint, body: body, headers: headers),
             organizationId: _getSafeString(clientData['organizationId']),
             keyPair: signingKeyPair,
           );
@@ -120,17 +117,23 @@ class InvoicePdfGenerator {
             total: _getSafeDouble(clientData['total']),
             items: ((clientData['items'] as List?) ?? const [])
                 .whereType<Map>()
-                .map((m) => InvoiceSignableItem(
-                      code: _getSafeString(
-                        m['supportItemNumber'] ??
-                            m['itemCode'] ??
-                            m['ndisItemNumber'],
-                      ),
-                      date: _normaliseDay(m['date']),
-                      hours: _getSafeDouble(m['hours'] ?? m['quantity']),
-                      rate: _getSafeDouble(m['rate'] ?? m['unitPrice'] ?? m['price']),
-                      amount: _getSafeDouble(m['total'] ?? m['totalPrice'] ?? m['amount']),
-                    ))
+                .map(
+                  (m) => InvoiceSignableItem(
+                    code: _getSafeString(
+                      m['supportItemNumber'] ??
+                          m['itemCode'] ??
+                          m['ndisItemNumber'],
+                    ),
+                    date: _normaliseDay(m['date']),
+                    hours: _getSafeDouble(m['hours'] ?? m['quantity']),
+                    rate: _getSafeDouble(
+                      m['rate'] ?? m['unitPrice'] ?? m['price'],
+                    ),
+                    amount: _getSafeDouble(
+                      m['total'] ?? m['totalPrice'] ?? m['amount'],
+                    ),
+                  ),
+                )
                 .toList(),
           );
           signed = await InvoiceSigningService.buildMetadata(
@@ -325,7 +328,8 @@ class InvoicePdfGenerator {
     // device locale, and a non-Gregorian or different-propensity calendar would
     // silently change the signed bytes.
     String pad(int n) => n.toString().padLeft(2, '0');
-    if (value is DateTime) return '${value.year}-${pad(value.month)}-${pad(value.day)}';
+    if (value is DateTime)
+      return '${value.year}-${pad(value.month)}-${pad(value.day)}';
     final text = value.toString();
     if (text.isEmpty) return 'unknown';
     try {
@@ -339,7 +343,8 @@ class InvoicePdfGenerator {
     }
   }
 
-  String _getSafeString(dynamic value) {    if (value == null) return '';
+  String _getSafeString(dynamic value) {
+    if (value == null) return '';
     if (value is String) return value;
     return value.toString();
   }

@@ -32,7 +32,6 @@ import 'package:carenest/config/environment.dart';
 
 // Views
 
-
 // ... rest of imports
 
 import 'package:carenest/generated/l10n/app_localizations.dart';
@@ -368,9 +367,7 @@ class MyApp extends ConsumerWidget {
                       )
                     : null,
               ),
-              body: Center(
-                child: Text('Route not found: ${settings.name}'),
-              ),
+              body: Center(child: Text('Route not found: ${settings.name}')),
             ),
           );
         },

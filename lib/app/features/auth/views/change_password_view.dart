@@ -116,7 +116,9 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.pleaseSatisfyAllPasswordRequirements),
+          content: Text(
+            AppLocalizations.of(context)!.pleaseSatisfyAllPasswordRequirements,
+          ),
           backgroundColor: BauhausDesign.warning,
         ),
       );
@@ -229,10 +231,7 @@ class _ChangePasswordViewState extends ConsumerState<ChangePasswordView> {
         elevation: 0,
         leading: Navigator.of(context).canPop()
             ? IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: _colorScheme.surface,
-                ),
+                icon: Icon(Icons.arrow_back, color: _colorScheme.surface),
                 onPressed: () => Navigator.of(context).pop(),
               )
             : null,

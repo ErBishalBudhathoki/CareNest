@@ -172,18 +172,9 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
       scrolledUnderElevation: 0,
       elevation: 0,
       systemOverlayStyle: SystemUiOverlayStyle.light,
-      shape: Border(
-        bottom: BorderSide(
-          color: colorScheme.onSurface,
-          width: 2,
-        ),
-      ),
+      shape: Border(bottom: BorderSide(color: colorScheme.onSurface, width: 2)),
       leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back,
-          color: colorScheme.onPrimary,
-          size: 24,
-        ),
+        icon: Icon(Icons.arrow_back, color: colorScheme.onPrimary, size: 24),
         onPressed: () => Navigator.pop(context),
       ),
       title: Text(
@@ -196,11 +187,7 @@ class _TeamDashboardViewState extends ConsumerState<TeamDashboardView>
       actions: [
         IconButton(
           tooltip: 'Refresh',
-          icon: Icon(
-            Icons.refresh,
-            color: colorScheme.onPrimary,
-            size: 24,
-          ),
+          icon: Icon(Icons.refresh, color: colorScheme.onPrimary, size: 24),
           onPressed: () {
             HapticFeedback.lightImpact();
             ref.read(teamViewModelProvider.notifier).loadMyTeams();

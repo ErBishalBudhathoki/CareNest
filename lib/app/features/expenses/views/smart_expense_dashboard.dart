@@ -308,26 +308,34 @@ class _SmartExpenseDashboardState extends State<SmartExpenseDashboard> {
 
   void _scanReceipt() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.openingCameraForReceiptScan)),
+      SnackBar(
+        content: Text(
+          AppLocalizations.of(context)!.openingCameraForReceiptScan,
+        ),
+      ),
     );
   }
 
   void _categorizeExpense() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.categorizingExpense)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.categorizingExpense),
+      ),
+    );
   }
 
   void _checkPolicy() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.checkingExpensePolicy)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.checkingExpensePolicy),
+      ),
+    );
   }
 
   void _calculateMileage() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.calculatingMileage)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context)!.calculatingMileage)),
+    );
   }
 }
 

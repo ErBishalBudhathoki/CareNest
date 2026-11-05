@@ -21,7 +21,11 @@ class AdminOnboardingDetailView extends ConsumerWidget {
     }
 
     if (record == null) {
-      return Scaffold(body: Center(child: Text(AppLocalizations.of(context)!.noRecordSelected)));
+      return Scaffold(
+        body: Center(
+          child: Text(AppLocalizations.of(context)!.noRecordSelected),
+        ),
+      );
     }
 
     final name = '${user?['firstName'] ?? ''} ${user?['lastName'] ?? ''}'
@@ -79,7 +83,9 @@ class AdminOnboardingDetailView extends ConsumerWidget {
                   backgroundColor: colorScheme.secondary,
                   foregroundColor: colorScheme.onSecondary,
                 ),
-                child: Text(AppLocalizations.of(context)!.finalizeApproveOnboarding),
+                child: Text(
+                  AppLocalizations.of(context)!.finalizeApproveOnboarding,
+                ),
               ),
           ],
         ),
@@ -183,9 +189,11 @@ class AdminOnboardingDetailView extends ConsumerWidget {
         .read(adminOnboardingViewModelProvider.notifier)
         .finalizeOnboarding(userId);
     if (context.mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.onboardingFinalized)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.onboardingFinalized),
+        ),
+      );
       Navigator.of(context).pop();
     }
   }

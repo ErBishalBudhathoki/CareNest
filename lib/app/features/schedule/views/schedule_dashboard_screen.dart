@@ -259,7 +259,10 @@ class _ScheduleDashboardScreenState
       ),
       leading: IconButton(
         onPressed: () => Navigator.of(context).pop(),
-        icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+        icon: Icon(
+          Icons.arrow_back,
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
       ),
       title: Text(
         AppLocalizations.of(context)!.scheduleTitle,
@@ -881,12 +884,12 @@ class _ScheduleDashboardScreenState
                               content: Text(
                                 billable == true
                                     ? (amount != null
-                                        ? l10n.cancellationInvoicedAmount(
-                                            '\$${amount.toStringAsFixed(2)}',
-                                          )
-                                        : l10n.cancellationInvoiced)
+                                          ? l10n.cancellationInvoicedAmount(
+                                              '\$${amount.toStringAsFixed(2)}',
+                                            )
+                                          : l10n.cancellationInvoiced)
                                     : response['message']?.toString() ??
-                                        l10n.shiftCancelledNoFee,
+                                          l10n.shiftCancelledNoFee,
                               ),
                             ),
                           );
@@ -962,7 +965,11 @@ class _ScheduleDashboardScreenState
   Future<void> _showProviderTravelDialog(ShiftModel shift) async {
     if (shift.employeeId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.assignWorkerBeforeBillingTravel)),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.assignWorkerBeforeBillingTravel,
+          ),
+        ),
       );
       return;
     }
@@ -1513,361 +1520,410 @@ class _CreateShiftDialogState extends ConsumerState<_CreateShiftDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.createNewShift,
-                style: BauhausDesign.getTextTheme(context).displaySmall,
-              ),
-              const SizedBox(height: BauhausDesign.space4),
-              if (_isFetchingData)
-                const Center(child: CircularProgressIndicator())
-              else if (_clients.isEmpty)
-                Container(
-                  padding: const EdgeInsets.all(BauhausDesign.space3),
-                  decoration: BoxDecoration(
-                    color: BauhausDesign.error.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                    border: Border.all(color: BauhausDesign.error),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.error_outline,
-                        color: BauhausDesign.error,
-                      ),
-                      const SizedBox(width: BauhausDesign.space3),
-                      Expanded(
-                        child: Text(
-                          'No clients found for this organization.',
-                          style: BauhausDesign.getTextTheme(
-                            context,
-                          ).bodyMedium?.copyWith(color: BauhausDesign.error),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              else
-                DropdownButtonFormField<String>(
-                  initialValue: _selectedClientEmail,
-                  decoration:
-                      BauhausDesign.inputDecoration(
-                        context,
-                        AppLocalizations.of(context)!.clientEmailLabel,
-                      ).copyWith(
-                        prefixIcon: Icon(
-                          Icons.person,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                        filled: true,
-                        fillColor: Theme.of(context).colorScheme.surface,
-                      ),
-                  items: _clients
-                      .map((client) {
-                        final name =
-                            '${client['firstName']} ${client['lastName']}';
-                        final email =
-                            client['email'] as String?; // Handle potential null
-                        if (email == null) return null; // Skip if email is null
-
-                        return DropdownMenuItem<String>(
-                          value: email,
-                          child: Text(
-                            '$name ($email)',
-                            overflow: TextOverflow.ellipsis,
-                            style: BauhausDesign.getTextTheme(context)
-                                .bodyMedium
-                                ?.copyWith(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                ),
-                          ),
-                        );
-                      })
-                      .whereType<DropdownMenuItem<String>>()
-                      .toList(), // Filter out nulls
-                  onChanged: (value) =>
-                      setState(() => _selectedClientEmail = value),
-                  validator: (value) => value == null
-                      ? AppLocalizations.of(context)!.requiredField
-                      : null,
-                  isExpanded: true,
-                  icon: Icon(
-                    Icons.arrow_drop_down,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  style: BauhausDesign.getTextTheme(context).bodyMedium
-                      ?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                  dropdownColor: Theme.of(context).colorScheme.surface,
-                ),
-              const SizedBox(height: BauhausDesign.space4),
-              if (!_isFetchingData) ...[
-                DropdownButtonFormField<String>(
-                  initialValue: _selectedEmployeeEmail,
-                  decoration:
-                      BauhausDesign.inputDecoration(
-                        context,
-                        'Assign Employee (Optional)',
-                      ).copyWith(
-                        prefixIcon: Icon(
-                          Icons.badge,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                        filled: true,
-                        fillColor: Theme.of(context).colorScheme.surface,
-                      ),
-                  items: [
-                    DropdownMenuItem<String>(
-                      value: null,
-                      child: Text(AppLocalizations.of(context)!.unassigned),
-                    ),
-                    ..._employees.map(
-                      (emp) {
-                        final name = '${emp['firstName']} ${emp['lastName']}';
-                        final email =
-                            emp['email'] as String?; // Handle potential null
-                        if (email == null) return null; // Skip if email is null
-
-                        return DropdownMenuItem<String>(
-                          value: email,
-                          child: Text(
-                            name,
-                            overflow: TextOverflow.ellipsis,
-                            style: BauhausDesign.getTextTheme(context)
-                                .bodyMedium
-                                ?.copyWith(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                ),
-                          ),
-                        );
-                      },
-                    ).whereType<DropdownMenuItem<String>>(), // Filter out nulls
-                  ],
-                  onChanged: (value) =>
-                      setState(() => _selectedEmployeeEmail = value),
-                  isExpanded: true,
-                  icon: Icon(
-                    Icons.arrow_drop_down,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  style: BauhausDesign.getTextTheme(context).bodyMedium
-                      ?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                  dropdownColor: Theme.of(context).colorScheme.surface,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.createNewShift,
+                  style: BauhausDesign.getTextTheme(context).displaySmall,
                 ),
                 const SizedBox(height: BauhausDesign.space4),
-              ],
-              const SizedBox(height: BauhausDesign.space4),
-              Text(
-                AppLocalizations.of(context)!.dateTimeLabel,
-                style: BauhausDesign.getTextTheme(
-                  context,
-                ).labelMedium?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: BauhausDesign.space2),
-              GestureDetector(
-                onTap: () async {
-                  final date = await showBauhausDatePicker(
-                    context: context,
-                    initialDate: _selectedDate,
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 365)),
-                  );
-                  if (date != null) {
-                    setState(() => _selectedDate = date);
-                  }
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(BauhausDesign.space3),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                    borderRadius: BorderRadius.circular(BauhausDesign.radiusSm),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.calendar_today,
-                        size: 16,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                if (_isFetchingData)
+                  const Center(child: CircularProgressIndicator())
+                else if (_clients.isEmpty)
+                  Container(
+                    padding: const EdgeInsets.all(BauhausDesign.space3),
+                    decoration: BoxDecoration(
+                      color: BauhausDesign.error.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusMd,
                       ),
-                      const SizedBox(width: BauhausDesign.space2),
-                      Text(
-                        DateFormat(
-                          'MMM dd, yyyy',
-                          AppLocalizations.of(context)!.localeName,
-                        ).format(_selectedDate),
-                        style: BauhausDesign.getTextTheme(context).bodyMedium
+                      border: Border.all(color: BauhausDesign.error),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          color: BauhausDesign.error,
+                        ),
+                        const SizedBox(width: BauhausDesign.space3),
+                        Expanded(
+                          child: Text(
+                            'No clients found for this organization.',
+                            style: BauhausDesign.getTextTheme(
+                              context,
+                            ).bodyMedium?.copyWith(color: BauhausDesign.error),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  DropdownButtonFormField<String>(
+                    initialValue: _selectedClientEmail,
+                    decoration:
+                        BauhausDesign.inputDecoration(
+                          context,
+                          AppLocalizations.of(context)!.clientEmailLabel,
+                        ).copyWith(
+                          prefixIcon: Icon(
+                            Icons.person,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
+                          filled: true,
+                          fillColor: Theme.of(context).colorScheme.surface,
+                        ),
+                    items: _clients
+                        .map((client) {
+                          final name =
+                              '${client['firstName']} ${client['lastName']}';
+                          final email =
+                              client['email']
+                                  as String?; // Handle potential null
+                          if (email == null)
+                            return null; // Skip if email is null
+
+                          return DropdownMenuItem<String>(
+                            value: email,
+                            child: Text(
+                              '$name ($email)',
+                              overflow: TextOverflow.ellipsis,
+                              style: BauhausDesign.getTextTheme(context)
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
+                                  ),
+                            ),
+                          );
+                        })
+                        .whereType<DropdownMenuItem<String>>()
+                        .toList(), // Filter out nulls
+                    onChanged: (value) =>
+                        setState(() => _selectedClientEmail = value),
+                    validator: (value) => value == null
+                        ? AppLocalizations.of(context)!.requiredField
+                        : null,
+                    isExpanded: true,
+                    icon: Icon(
+                      Icons.arrow_drop_down,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                    dropdownColor: Theme.of(context).colorScheme.surface,
+                  ),
+                const SizedBox(height: BauhausDesign.space4),
+                if (!_isFetchingData) ...[
+                  DropdownButtonFormField<String>(
+                    initialValue: _selectedEmployeeEmail,
+                    decoration:
+                        BauhausDesign.inputDecoration(
+                          context,
+                          'Assign Employee (Optional)',
+                        ).copyWith(
+                          prefixIcon: Icon(
+                            Icons.badge,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
+                          filled: true,
+                          fillColor: Theme.of(context).colorScheme.surface,
+                        ),
+                    items: [
+                      DropdownMenuItem<String>(
+                        value: null,
+                        child: Text(AppLocalizations.of(context)!.unassigned),
+                      ),
+                      ..._employees
+                          .map((emp) {
+                            final name =
+                                '${emp['firstName']} ${emp['lastName']}';
+                            final email =
+                                emp['email']
+                                    as String?; // Handle potential null
+                            if (email == null)
+                              return null; // Skip if email is null
+
+                            return DropdownMenuItem<String>(
+                              value: email,
+                              child: Text(
+                                name,
+                                overflow: TextOverflow.ellipsis,
+                                style: BauhausDesign.getTextTheme(context)
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
+                                    ),
+                              ),
+                            );
+                          })
+                          .whereType<
+                            DropdownMenuItem<String>
+                          >(), // Filter out nulls
+                    ],
+                    onChanged: (value) =>
+                        setState(() => _selectedEmployeeEmail = value),
+                    isExpanded: true,
+                    icon: Icon(
+                      Icons.arrow_drop_down,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                    dropdownColor: Theme.of(context).colorScheme.surface,
+                  ),
+                  const SizedBox(height: BauhausDesign.space4),
+                ],
+                const SizedBox(height: BauhausDesign.space4),
+                Text(
+                  AppLocalizations.of(context)!.dateTimeLabel,
+                  style: BauhausDesign.getTextTheme(
+                    context,
+                  ).labelMedium?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: BauhausDesign.space2),
+                GestureDetector(
+                  onTap: () async {
+                    final date = await showBauhausDatePicker(
+                      context: context,
+                      initialDate: _selectedDate,
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                    );
+                    if (date != null) {
+                      setState(() => _selectedDate = date);
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(BauhausDesign.space3),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        BauhausDesign.radiusSm,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.calendar_today,
+                          size: 16,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: BauhausDesign.space2),
+                        Text(
+                          DateFormat(
+                            'MMM dd, yyyy',
+                            AppLocalizations.of(context)!.localeName,
+                          ).format(_selectedDate),
+                          style: BauhausDesign.getTextTheme(context).bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: BauhausDesign.space2),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildTimePicker(
+                        AppLocalizations.of(context)!.startLabel,
+                        _startTime,
+                        (time) => setState(() => _startTime = time),
+                      ),
+                    ),
+                    const SizedBox(width: BauhausDesign.space3),
+                    Expanded(
+                      child: _buildTimePicker(
+                        AppLocalizations.of(context)!.endLabel,
+                        _endTime,
+                        (time) => setState(() => _endTime = time),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: BauhausDesign.space4),
+                BauhausTextField(
+                  controller: _notesController,
+                  label: AppLocalizations.of(context)!.notesLabel,
+                  hintText: AppLocalizations.of(context)!.additionalDetailsHint,
+                  maxLines: 3,
+                ),
+                // Milestone 4.3: Irregular SIL / Crisis Support Form Section
+                const SizedBox(height: BauhausDesign.space4),
+                Container(
+                  decoration: BoxDecoration(
+                    color: _isIrregularSil
+                        ? Colors.orange.shade50
+                        : Theme.of(context).colorScheme.surface,
+                    border: Border.all(
+                      color: _isIrregularSil
+                          ? Colors.orange.shade700
+                          : Theme.of(context).dividerColor,
+                    ),
+                    borderRadius: BorderRadius.circular(BauhausDesign.space1),
+                  ),
+                  padding: const EdgeInsets.all(BauhausDesign.space3),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SwitchListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          AppLocalizations.of(context)!.irregularSilToggle,
+                          style: BauhausDesign.getTextTheme(context).labelLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: _isIrregularSil
+                                    ? Colors.orange.shade900
+                                    : null,
+                              ),
+                        ),
+                        subtitle: Text(
+                          AppLocalizations.of(
+                            context,
+                          )!.irregularSilToggleSubtitle,
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                        value: _isIrregularSil,
+                        onChanged: (val) =>
+                            setState(() => _isIrregularSil = val),
+                      ),
+                      if (_isIrregularSil) ...[
+                        const SizedBox(height: BauhausDesign.space2),
+                        DropdownButtonFormField<String>(
+                          value: _irregularSilReason,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.irregularSilReasonLabel,
+                            border: const OutlineInputBorder(),
+                            isDense: true,
+                          ),
+                          items: [
+                            DropdownMenuItem(
+                              value: 'crisis',
+                              child: Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.irregularSilCrisisEvent,
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'hospital_discharge',
+                              child: Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.irregularSilHospitalDischarge,
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'prn_behavioral',
+                              child: Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.irregularSilPrnBehavioral,
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'unplanned_absence_cover',
+                              child: Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.irregularSilUnplannedAbsenceCover,
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'other',
+                              child: Text(AppLocalizations.of(context)!.other),
+                            ),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              setState(() => _irregularSilReason = val);
+                            }
+                          },
+                        ),
+                        const SizedBox(height: BauhausDesign.space3),
+                        TextFormField(
+                          controller: _crisisJustificationController,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.paceCrisisJustificationLabel,
+                            hintText: AppLocalizations.of(
+                              context,
+                            )!.paceCrisisJustificationHint,
+                            border: const OutlineInputBorder(),
+                            isDense: true,
+                          ),
+                          maxLines: 2,
+                          validator: (value) {
+                            if (_isIrregularSil &&
+                                (value == null || value.trim().isEmpty)) {
+                              return AppLocalizations.of(
+                                context,
+                              )!.paceCrisisJustificationRequired;
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: BauhausDesign.space3),
+                        TextFormField(
+                          controller: _incidentReportRefController,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.incidentReportRefLabel,
+                            hintText: AppLocalizations.of(
+                              context,
+                            )!.incidentReportRefHint,
+                            border: const OutlineInputBorder(),
+                            isDense: true,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: BauhausDesign.space6),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text(
+                        AppLocalizations.of(context)!.cancelButton,
+                        style: BauhausDesign.getTextTheme(context).labelLarge
                             ?.copyWith(
                               color: Theme.of(context).colorScheme.onSurface,
                             ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: BauhausDesign.space2),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildTimePicker(
-                      AppLocalizations.of(context)!.startLabel,
-                      _startTime,
-                      (time) => setState(() => _startTime = time),
                     ),
-                  ),
-                  const SizedBox(width: BauhausDesign.space3),
-                  Expanded(
-                    child: _buildTimePicker(
-                      AppLocalizations.of(context)!.endLabel,
-                      _endTime,
-                      (time) => setState(() => _endTime = time),
+                    const SizedBox(width: BauhausDesign.space3),
+                    BauhausActionButton(
+                      text: AppLocalizations.of(context)!.createShift,
+                      onPressed: _isLoading ? null : _createShift,
+                      isLoading: _isLoading,
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: BauhausDesign.space4),
-              BauhausTextField(
-                controller: _notesController,
-                label: AppLocalizations.of(context)!.notesLabel,
-                hintText: AppLocalizations.of(context)!.additionalDetailsHint,
-                maxLines: 3,
-              ),
-              // Milestone 4.3: Irregular SIL / Crisis Support Form Section
-              const SizedBox(height: BauhausDesign.space4),
-              Container(
-                decoration: BoxDecoration(
-                  color: _isIrregularSil
-                      ? Colors.orange.shade50
-                      : Theme.of(context).colorScheme.surface,
-                  border: Border.all(
-                    color: _isIrregularSil
-                        ? Colors.orange.shade700
-                        : Theme.of(context).dividerColor,
-                  ),
-                  borderRadius: BorderRadius.circular(BauhausDesign.space1),
-                ),
-                padding: const EdgeInsets.all(BauhausDesign.space3),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(
-                        AppLocalizations.of(context)!.irregularSilToggle,
-                        style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: _isIrregularSil ? Colors.orange.shade900 : null,
-                            ),
-                      ),
-                      subtitle: Text(
-                        AppLocalizations.of(context)!.irregularSilToggleSubtitle,
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                      value: _isIrregularSil,
-                      onChanged: (val) => setState(() => _isIrregularSil = val),
-                    ),
-                    if (_isIrregularSil) ...[
-                      const SizedBox(height: BauhausDesign.space2),
-                      DropdownButtonFormField<String>(
-                        value: _irregularSilReason,
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.irregularSilReasonLabel,
-                          border: const OutlineInputBorder(),
-                          isDense: true,
-                        ),
-                        items: [
-                          DropdownMenuItem(
-                            value: 'crisis',
-                            child: Text(AppLocalizations.of(context)!.irregularSilCrisisEvent),
-                          ),
-                          DropdownMenuItem(
-                            value: 'hospital_discharge',
-                            child: Text(AppLocalizations.of(context)!.irregularSilHospitalDischarge),
-                          ),
-                          DropdownMenuItem(
-                            value: 'prn_behavioral',
-                            child: Text(AppLocalizations.of(context)!.irregularSilPrnBehavioral),
-                          ),
-                          DropdownMenuItem(
-                            value: 'unplanned_absence_cover',
-                            child: Text(AppLocalizations.of(context)!.irregularSilUnplannedAbsenceCover),
-                          ),
-                          DropdownMenuItem(
-                            value: 'other',
-                            child: Text(AppLocalizations.of(context)!.other),
-                          ),
-                        ],
-                        onChanged: (val) {
-                          if (val != null) {
-                            setState(() => _irregularSilReason = val);
-                          }
-                        },
-                      ),
-                      const SizedBox(height: BauhausDesign.space3),
-                      TextFormField(
-                        controller: _crisisJustificationController,
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.paceCrisisJustificationLabel,
-                          hintText: AppLocalizations.of(context)!.paceCrisisJustificationHint,
-                          border: const OutlineInputBorder(),
-                          isDense: true,
-                        ),
-                        maxLines: 2,
-                        validator: (value) {
-                          if (_isIrregularSil &&
-                              (value == null || value.trim().isEmpty)) {
-                            return AppLocalizations.of(context)!.paceCrisisJustificationRequired;
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: BauhausDesign.space3),
-                      TextFormField(
-                        controller: _incidentReportRefController,
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.incidentReportRefLabel,
-                          hintText: AppLocalizations.of(context)!.incidentReportRefHint,
-                          border: const OutlineInputBorder(),
-                          isDense: true,
-                        ),
-                      ),
-                    ],
                   ],
                 ),
-              ),
-              const SizedBox(height: BauhausDesign.space6),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(
-                      AppLocalizations.of(context)!.cancelButton,
-                      style: BauhausDesign.getTextTheme(context).labelLarge
-                          ?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
-                    ),
-                  ),
-                  const SizedBox(width: BauhausDesign.space3),
-                  BauhausActionButton(
-                    text: AppLocalizations.of(context)!.createShift,
-                    onPressed: _isLoading ? null : _createShift,
-                    isLoading: _isLoading,
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
         ),
       ),
     );

@@ -28,8 +28,10 @@ class _FakeApiMethod extends ApiMethod {
   }
 
   @override
-  Future<Map<String, dynamic>> getTimerStatus(String userEmail) async =>
-      {'success': false, 'isRunning': false};
+  Future<Map<String, dynamic>> getTimerStatus(String userEmail) async => {
+    'success': false,
+    'isRunning': false,
+  };
 }
 
 /// A clockable SIL shift plus a start-timer endpoint that succeeds, so the
@@ -106,7 +108,10 @@ class _ClockableApiMethod extends _FakeApiMethod {
   }) async {
     cancelCalls += 1;
     lastCancelReason = reason;
-    return {'success': true, 'data': {'chargeId': 'charge-123'}};
+    return {
+      'success': true,
+      'data': {'chargeId': 'charge-123'},
+    };
   }
 
   @override
@@ -143,8 +148,10 @@ class _ThrowingApiMethod extends ApiMethod {
   }
 
   @override
-  Future<Map<String, dynamic>> getTimerStatus(String userEmail) async =>
-      {'success': false, 'isRunning': false};
+  Future<Map<String, dynamic>> getTimerStatus(String userEmail) async => {
+    'success': false,
+    'isRunning': false,
+  };
 }
 
 Widget _buildApp(ApiMethod api) {
@@ -176,26 +183,24 @@ void main() {
     TimerService().stop();
   });
 
-  testWidgets('empty clientDetails ends the loading state with an error panel', (
-    tester,
-  ) async {
-    final api = _FakeApiMethod({
-      'success': false,
-      'message': 'No appointment details found',
-      'data': {
-        'clientDetails': <dynamic>[],
-        'assignedClient': null,
-      },
-    });
+  testWidgets(
+    'empty clientDetails ends the loading state with an error panel',
+    (tester) async {
+      final api = _FakeApiMethod({
+        'success': false,
+        'message': 'No appointment details found',
+        'data': {'clientDetails': <dynamic>[], 'assignedClient': null},
+      });
 
-    await tester.pumpWidget(_buildApp(api));
-    await _pumpFrames(tester);
+      await tester.pumpWidget(_buildApp(api));
+      await _pumpFrames(tester);
 
-    expect(api.detailsCalls, 1);
-    expect(find.text('LOADING APPOINTMENT DETAILS...'), findsNothing);
-    expect(find.text('NO CLIENT DETAILS FOUND'), findsOneWidget);
-    expect(find.text('Retry'), findsOneWidget);
-  });
+      expect(api.detailsCalls, 1);
+      expect(find.text('LOADING APPOINTMENT DETAILS...'), findsNothing);
+      expect(find.text('NO CLIENT DETAILS FOUND'), findsOneWidget);
+      expect(find.text('Retry'), findsOneWidget);
+    },
+  );
 
   testWidgets('a valid payload renders the client details, not a spinner', (
     tester,
@@ -246,10 +251,7 @@ void main() {
     final api = _FakeApiMethod({
       'success': false,
       'message': 'No appointment details found',
-      'data': {
-        'clientDetails': <dynamic>[],
-        'assignedClient': null,
-      },
+      'data': {'clientDetails': <dynamic>[], 'assignedClient': null},
     });
 
     await tester.pumpWidget(_buildApp(api));
@@ -332,38 +334,39 @@ void main() {
     },
   );
 
-  testWidgets('hides the clock-in control when there is no shift to log against', (
-    tester,
-  ) async {
-    // Participant exists but no shift was materialised, so `setWorkedTime` has
-    // nothing to resolve; the button would only produce "invalid shift index".
-    final api = _FakeApiMethod({
-      'success': true,
-      'data': {
-        'clientDetails': [
-          {
-            'clientFirstName': 'Nadia',
-            'clientLastName': 'NDIA',
+  testWidgets(
+    'hides the clock-in control when there is no shift to log against',
+    (tester) async {
+      // Participant exists but no shift was materialised, so `setWorkedTime` has
+      // nothing to resolve; the button would only produce "invalid shift index".
+      final api = _FakeApiMethod({
+        'success': true,
+        'data': {
+          'clientDetails': [
+            {
+              'clientFirstName': 'Nadia',
+              'clientLastName': 'NDIA',
+              'clientEmail': 'sil.ndia@mailinator.com',
+            },
+          ],
+          'assignedClient': {
             'clientEmail': 'sil.ndia@mailinator.com',
+            'isSilRosterShift': true,
+            'schedule': <dynamic>[],
+            'dateList': <dynamic>[],
+            'timeRecords': <dynamic>[],
           },
-        ],
-        'assignedClient': {
-          'clientEmail': 'sil.ndia@mailinator.com',
-          'isSilRosterShift': true,
-          'schedule': <dynamic>[],
-          'dateList': <dynamic>[],
-          'timeRecords': <dynamic>[],
         },
-      },
-    });
+      });
 
-    await tester.pumpWidget(_buildApp(api));
-    await _pumpFrames(tester);
+      await tester.pumpWidget(_buildApp(api));
+      await _pumpFrames(tester);
 
-    expect(find.text('CLIENT INFORMATION'), findsOneWidget);
-    expect(find.text('START SHIFT'), findsNothing);
-    expect(find.text('END SHIFT'), findsNothing);
-  });
+      expect(find.text('CLIENT INFORMATION'), findsOneWidget);
+      expect(find.text('START SHIFT'), findsNothing);
+      expect(find.text('END SHIFT'), findsNothing);
+    },
+  );
 
   // Milestone 3.1: Short-Notice Cancellation Dialog & Billing
   testWidgets(
@@ -403,7 +406,10 @@ void main() {
   testWidgets(
     'Milestone 3.3: sleepover shift clock-out triggers disturbance check and converts to Active Night if > 60m',
     (tester) async {
-      final api = _ClockableApiMethod(shiftType: 'sleepover', date: '2026-11-20');
+      final api = _ClockableApiMethod(
+        shiftType: 'sleepover',
+        date: '2026-11-20',
+      );
 
       await tester.pumpWidget(_buildApp(api));
       await _pumpFrames(tester);
@@ -456,7 +462,9 @@ void main() {
 
       // Verify SCHADS Award Clause 25.7 automatic conversion banner
       expect(
-        find.textContaining('Under SCHADS Clause 25.7, this converts to Active Night'),
+        find.textContaining(
+          'Under SCHADS Clause 25.7, this converts to Active Night',
+        ),
         findsOneWidget,
       );
 

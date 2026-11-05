@@ -43,8 +43,13 @@ class _StructuredNoteComposerState extends State<StructuredNoteComposer> {
   List<Map<String, dynamic>> get _sections {
     final raw = widget.template['sections'];
     if (raw is! List) return const [];
-    final sections = raw.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
-    sections.sort((a, b) => ((a['order'] ?? 0) as num).compareTo((b['order'] ?? 0) as num));
+    final sections = raw
+        .whereType<Map>()
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
+    sections.sort(
+      (a, b) => ((a['order'] ?? 0) as num).compareTo((b['order'] ?? 0) as num),
+    );
     return sections;
   }
 
@@ -89,7 +94,8 @@ class _StructuredNoteComposerState extends State<StructuredNoteComposer> {
       final controller = _textControllers[key];
       if (controller != null) {
         final separator = controller.text.isEmpty ? '' : ' ';
-        controller.text = '${controller.text}$separator${result.recognizedWords}';
+        controller.text =
+            '${controller.text}$separator${result.recognizedWords}';
       }
     }
   }
@@ -136,14 +142,17 @@ class _StructuredNoteComposerState extends State<StructuredNoteComposer> {
           : type == 'select'
           ? _values[key]
           : _textControllers[key]?.text.trim();
-      final empty = value == null ||
+      final empty =
+          value == null ||
           (value is String && value.isEmpty) ||
           (type == 'checkbox' && value != true);
       if (empty) errors[key] = 'This field is required';
     }
-    setState(() => _errors
-      ..clear()
-      ..addAll(errors));
+    setState(
+      () => _errors
+        ..clear()
+        ..addAll(errors),
+    );
     return errors.isEmpty;
   }
 
@@ -206,7 +215,9 @@ class _StructuredNoteComposerState extends State<StructuredNoteComposer> {
         );
         break;
       case 'select':
-        final options = (section['options'] as List?)?.map((e) => e.toString()).toList() ?? [];
+        final options =
+            (section['options'] as List?)?.map((e) => e.toString()).toList() ??
+            [];
         field = DropdownButtonFormField<String>(
           initialValue: _values[key] as String?,
           decoration: InputDecoration(
@@ -224,7 +235,9 @@ class _StructuredNoteComposerState extends State<StructuredNoteComposer> {
         field = TextField(
           controller: _textControllers[key],
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+          ],
           decoration: InputDecoration(
             labelText: required ? '$label *' : label,
             border: const OutlineInputBorder(),
@@ -245,12 +258,15 @@ class _StructuredNoteComposerState extends State<StructuredNoteComposer> {
             labelText: required ? '$label *' : label,
             border: const OutlineInputBorder(),
             errorText: error,
-            suffixIcon: (type == 'voice' || type == 'longText') && _speechAvailable
+            suffixIcon:
+                (type == 'voice' || type == 'longText') && _speechAvailable
                 ? IconButton(
                     tooltip: 'Dictate',
                     icon: Icon(
                       _listeningKey == key ? Icons.mic : Icons.mic_none,
-                      color: _listeningKey == key ? theme.colorScheme.primary : null,
+                      color: _listeningKey == key
+                          ? theme.colorScheme.primary
+                          : null,
                     ),
                     onPressed: () => _toggleSpeech(key),
                   )

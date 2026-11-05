@@ -197,12 +197,18 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.share_rounded, color: Theme.of(context).colorScheme.onPrimary),
+            icon: Icon(
+              Icons.share_rounded,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             onPressed: _shareAssignment,
           ),
         ],
@@ -246,9 +252,9 @@ class _ShiftAssignmentSuccessViewState extends State<ShiftAssignmentSuccessView>
           const SizedBox(height: BauhausDesign.space3),
           Text(
             AppLocalizations.of(context)!.processingAssignment,
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -585,7 +591,9 @@ ${AppLocalizations.of(context)!.assignmentId}: ${assignment.assignmentId}
                       style: BauhausDesign.getTextTheme(context).labelMedium
                           ?.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                     ),
                     Text(

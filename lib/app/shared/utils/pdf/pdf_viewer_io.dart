@@ -404,10 +404,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         shape: Border(
-          bottom: BorderSide(
-            color: colorScheme.onSurface,
-            width: 2,
-          ),
+          bottom: BorderSide(color: colorScheme.onSurface, width: 2),
         ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: colorScheme.onPrimary),

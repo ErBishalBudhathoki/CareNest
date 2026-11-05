@@ -435,9 +435,7 @@ class MyApp extends ConsumerWidget {
                       )
                     : null,
               ),
-              body: Center(
-                child: Text('Route not found: ${settings.name}'),
-              ),
+              body: Center(child: Text('Route not found: ${settings.name}')),
             ),
           );
         },

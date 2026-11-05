@@ -613,7 +613,9 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
                   : 'WORKER COMMUNICATION',
               style: BauhausDesign.neoMonoStyle(
                 context,
-                color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.8),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onPrimary.withValues(alpha: 0.8),
                 fontSize: 10,
               ),
             ),
@@ -642,11 +644,17 @@ class _SecureMessagingViewState extends ConsumerState<SecureMessagingView> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh, color: Theme.of(context).colorScheme.onPrimary),
+            icon: Icon(
+              Icons.refresh,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             onPressed: _loadConversations,
           ),
           IconButton(
-            icon: Icon(Icons.info_outline, color: Theme.of(context).colorScheme.onPrimary),
+            icon: Icon(
+              Icons.info_outline,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             onPressed: _showEncryptionInfo,
           ),
         ],

@@ -68,12 +68,18 @@ class _ResourceAllocationViewState
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh, color: Theme.of(context).colorScheme.onPrimary),
+            icon: Icon(
+              Icons.refresh,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             onPressed: _loadData,
           ),
         ],
@@ -260,7 +266,10 @@ class _ResourceAllocationViewState
         Expanded(
           child: Text(
             label,
-            style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurface),
+            style: TextStyle(
+              fontSize: 16,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ),
         Text(
@@ -439,7 +448,11 @@ class _ResourceAllocationViewState
     final orgId = orgState.currentOrganization?.id;
     if (orgId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.organizationContextUnavailable)),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.organizationContextUnavailable,
+          ),
+        ),
       );
       return;
     }

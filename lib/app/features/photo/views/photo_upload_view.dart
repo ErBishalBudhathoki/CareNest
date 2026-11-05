@@ -104,7 +104,8 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
             cropGridStrokeWidth: 1,
             cropGridRowCount: 3,
             cropGridColumnCount: 3,
-            backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary (amber/yellow)
+            backgroundColor: BauhausDesign
+                .primary, // Standardized: Bauhaus primary (amber/yellow)
           ),
           IOSUiSettings(
             title: 'Crop Photo',
@@ -406,7 +407,9 @@ class _PhotoUploadScreenState extends ConsumerState<PhotoUploadScreen> {
                 child: Text(
                   'A Few Quick Tips',
                   style: BauhausDesign.getTextTheme(context).headlineSmall
-                      ?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+                      ?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
               ),
             ],

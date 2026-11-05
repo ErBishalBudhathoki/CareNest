@@ -42,7 +42,10 @@ class InvoiceAIDashboard extends ConsumerWidget {
         ),
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -414,7 +417,9 @@ class InvoiceAIDashboard extends ConsumerWidget {
                             Text(
                               description,
                               style: textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ],
@@ -450,7 +455,9 @@ class InvoiceAIDashboard extends ConsumerWidget {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.generatingInvoicesPleaseWait),
+            content: Text(
+              AppLocalizations.of(context)!.generatingInvoicesPleaseWait,
+            ),
             backgroundColor: Theme.of(context).colorScheme.onSurface,
           ),
         );

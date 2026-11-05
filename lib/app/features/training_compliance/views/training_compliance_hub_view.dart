@@ -17,7 +17,9 @@ class TrainingComplianceHubView extends ConsumerWidget {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
-        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
+        foregroundColor: Theme.of(
+          context,
+        ).colorScheme.onPrimary, // Standardized
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,

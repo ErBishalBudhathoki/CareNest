@@ -55,7 +55,12 @@ class AdminServiceConfirmationsView extends ConsumerWidget {
         backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
         elevation: 0,
         centerTitle: true,
-        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
         title: Text(
           'Service Confirmation Ledger',
           style: GoogleFonts.oswald(
@@ -65,7 +70,9 @@ class AdminServiceConfirmationsView extends ConsumerWidget {
             letterSpacing: 1.1,
           ),
         ),
-        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
+        foregroundColor: Theme.of(
+          context,
+        ).colorScheme.onPrimary, // Standardized
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -85,7 +92,6 @@ class AdminServiceConfirmationsView extends ConsumerWidget {
             tooltip: 'Refresh Ledger',
           ),
         ],
-        
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

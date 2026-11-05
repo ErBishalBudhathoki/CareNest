@@ -709,9 +709,12 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                                     : '${AppLocalizations.of(context)!.versionLabel} $_version')
                               : AppLocalizations.of(context)!.versionLabel,
                           textAlign: TextAlign.center,
-                          style: BauhausDesign.getTextTheme(
-                            context,
-                          ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                          style: BauhausDesign.getTextTheme(context).bodySmall
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                         ),
                       ),
                       const SizedBox(height: BauhausDesign.space8),

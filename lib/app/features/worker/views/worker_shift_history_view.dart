@@ -78,10 +78,7 @@ class _WorkerShiftHistoryViewState
         systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
         shape: Border(
-          bottom: BorderSide(
-            color: colorScheme.onSurface,
-            width: 2,
-          ),
+          bottom: BorderSide(color: colorScheme.onSurface, width: 2),
         ),
         iconTheme: IconThemeData(color: colorScheme.onPrimary),
         actions: [

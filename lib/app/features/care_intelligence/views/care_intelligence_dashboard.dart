@@ -346,7 +346,12 @@ class _CareIntelligenceDashboardState
         ),
         onPressed: () => Navigator.pop(context),
       ),
-      shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
+      shape: Border(
+        bottom: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface,
+          width: 2,
+        ),
+      ),
     );
   }
 

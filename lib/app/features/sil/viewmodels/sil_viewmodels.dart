@@ -295,7 +295,10 @@ class SILQuoteViewModel extends Notifier<SILQuoteState> {
       if (boardAndLodgingWeekly != null) {
         payload['boardAndLodgingWeekly'] = boardAndLodgingWeekly;
       }
-      await _repository.acceptQuote(id, signatureData: payload.isNotEmpty ? payload : null);
+      await _repository.acceptQuote(
+        id,
+        signatureData: payload.isNotEmpty ? payload : null,
+      );
       await load();
       return true;
     } catch (e) {

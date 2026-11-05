@@ -202,7 +202,11 @@ class ImageErrorHandler {
         shape: BoxShape.circle,
         color: surfaceColor ?? BauhausDesign.surfaceOffWhite,
       ),
-      child: Icon(icon, size: size * 0.6, color: iconColor ?? BauhausDesign.textMuted),
+      child: Icon(
+        icon,
+        size: size * 0.6,
+        color: iconColor ?? BauhausDesign.textMuted,
+      ),
     );
   }
 

@@ -458,7 +458,9 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                           labelText: l10n.expenseCategoryLabel,
                           prefixIcon: Icon(
                             Icons.category,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                     items: _categories.map((category) {
@@ -521,7 +523,9 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                               labelText: l10n.expenseClientLabel,
                               prefixIcon: Icon(
                                 Icons.person,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                               ),
                               suffixIcon: isLoading
                                   ? const SizedBox(
@@ -537,7 +541,11 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                         hint: Text(
                           l10n.expenseClientHint,
                           style: BauhausDesign.getTextTheme(context).bodyMedium
-                              ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                         ),
                         items: clients.map((client) {
                           return DropdownMenuItem<Patient>(
@@ -642,7 +650,9 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
                             labelText: l10n.expenseFrequencyLabel,
                             prefixIcon: Icon(
                               Icons.repeat,
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                           ),
                       items: _frequencies.map((frequency) {

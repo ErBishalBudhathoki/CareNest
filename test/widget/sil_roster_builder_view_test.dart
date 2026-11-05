@@ -1,4 +1,5 @@
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/features/sil/models/sil_models.dart';
 import 'package:carenest/app/features/sil/repositories/sil_repository.dart';
 import 'package:carenest/app/features/sil/views/sil_roster_builder_view.dart';
@@ -22,15 +23,13 @@ class _FakeSILRepository extends SILRepository {
   Future<SILRoster?> getRoster({
     required String propertyId,
     required String weekStarting,
-  }) async =>
-      roster;
+  }) async => roster;
 
   @override
   Future<SILRoster> buildRoster({
     required String propertyId,
     required String weekStarting,
-  }) async =>
-      roster ?? (throw Exception('build unavailable in test'));
+  }) async => roster ?? (throw Exception('build unavailable in test'));
 
   @override
   Future<SILRoster> publishRoster(String id, {bool? blockOnRatioBreach}) async {
@@ -44,32 +43,32 @@ class _FakeSILRepository extends SILRepository {
 // ---------------------------------------------------------------------------
 
 SILRoster _draftRoster({required List<SILRatioWarning> warnings}) => SILRoster(
-      id: 'roster-1',
-      propertyId: 'prop-1',
-      status: 'draft',
-      weekStarting: '2026-10-12',
-      ratioWarnings: warnings,
-      entries: const [
-        SILRosterEntry(
-          shiftId: 'shift-1',
-          shiftType: 'day',
-          requiredStaff: 1,
-          assignedStaff: 1,
-          compliance: 'ok',
-          startTime: '2026-10-12T09:00:00',
-          endTime: '2026-10-12T17:00:00',
-        ),
-        SILRosterEntry(
-          shiftId: 'shift-2',
-          shiftType: 'active_night',
-          requiredStaff: 2,
-          assignedStaff: 0,
-          compliance: 'understaffed',
-          startTime: '2026-10-12T22:00:00',
-          endTime: '2026-10-13T06:00:00',
-        ),
-      ],
-    );
+  id: 'roster-1',
+  propertyId: 'prop-1',
+  status: 'draft',
+  weekStarting: '2026-10-12',
+  ratioWarnings: warnings,
+  entries: const [
+    SILRosterEntry(
+      shiftId: 'shift-1',
+      shiftType: 'day',
+      requiredStaff: 1,
+      assignedStaff: 1,
+      compliance: 'ok',
+      startTime: '2026-10-12T09:00:00',
+      endTime: '2026-10-12T17:00:00',
+    ),
+    SILRosterEntry(
+      shiftId: 'shift-2',
+      shiftType: 'active_night',
+      requiredStaff: 2,
+      assignedStaff: 0,
+      compliance: 'understaffed',
+      startTime: '2026-10-12T22:00:00',
+      endTime: '2026-10-13T06:00:00',
+    ),
+  ],
+);
 
 Widget _buildApp(SILRepository repo) {
   return ProviderScope(
@@ -92,12 +91,17 @@ void main() {
   testWidgets(
     'renders title, week, entries and understaffed ratio warning for a draft roster',
     (tester) async {
-      final repo = _FakeSILRepository(_draftRoster(warnings: const [
-        SILRatioWarning(
-          role: 'ratio',
-          message: 'active_night shift on 2026-10-12 is understaffed (required 2, assigned 0).',
+      final repo = _FakeSILRepository(
+        _draftRoster(
+          warnings: const [
+            SILRatioWarning(
+              role: 'ratio',
+              message:
+                  'active_night shift on 2026-10-12 is understaffed (required 2, assigned 0).',
+            ),
+          ],
         ),
-      ]));
+      );
       await tester.pumpWidget(_buildApp(repo));
       await tester.pumpAndSettle();
 
@@ -109,7 +113,8 @@ void main() {
       expect(find.text('Ratio warnings'), findsOneWidget);
       expect(
         find.text(
-            '• active_night shift on 2026-10-12 is understaffed (required 2, assigned 0).'),
+          '• active_night shift on 2026-10-12 is understaffed (required 2, assigned 0).',
+        ),
         findsOneWidget,
       );
       // Fully staffed day entry renders at 1/1 with its compliance chip.
@@ -145,18 +150,12 @@ void main() {
     },
   );
 
-  testWidgets(
-    'empty week shows the build-from-shifts hint',
-    (tester) async {
-      final repo = _FakeSILRepository(null);
-      await tester.pumpWidget(_buildApp(repo));
-      await tester.pumpAndSettle();
+  testWidgets('empty week shows the build-from-shifts hint', (tester) async {
+    final repo = _FakeSILRepository(null);
+    await tester.pumpWidget(_buildApp(repo));
+    await tester.pumpAndSettle();
 
-      expect(
-        find.textContaining('No roster for this week'),
-        findsOneWidget,
-      );
-      expect(find.text('Publish'), findsNothing);
-    },
-  );
+    expect(find.textContaining('No roster for this week'), findsOneWidget);
+    expect(find.text('Publish'), findsNothing);
+  });
 }

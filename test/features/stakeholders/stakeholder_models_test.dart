@@ -30,7 +30,11 @@ void main() {
         {
           'linkRole': 'support_coordinator',
           'isPrimary': true,
-          'stakeholder': {'id': 's2', 'type': 'support_coordinator', 'name': 'SC Co'},
+          'stakeholder': {
+            'id': 's2',
+            'type': 'support_coordinator',
+            'name': 'SC Co',
+          },
         },
       ],
     });

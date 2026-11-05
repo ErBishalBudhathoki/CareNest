@@ -1,4 +1,5 @@
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/app/features/sil/models/sil_models.dart';
 import 'package:carenest/app/features/sil/repositories/sil_repository.dart';
@@ -16,15 +17,15 @@ class _FakeApiMethod extends ApiMethod {
 
   @override
   Future<Map<String, dynamic>> getSilProperties() async => {
-        'success': true,
-        'data': {'properties': []},
-      };
+    'success': true,
+    'data': {'properties': []},
+  };
 
   @override
   Future<Map<String, dynamic>> getSilQuotes({String? clientId}) async => {
-        'success': true,
-        'data': {'quotes': []},
-      };
+    'success': true,
+    'data': {'quotes': []},
+  };
 }
 
 class _FakeBillingRepository extends SILRepository {
@@ -92,25 +93,25 @@ class _FakeBillingRepository extends SILRepository {
 }
 
 SILRosterOfCare activeRoc() => SILRosterOfCare(
-      id: 'roc_active_101',
-      clientId: 'client_ada',
-      propertyId: 'prop_sunshine',
-      status: 'active',
-      effectiveFrom: '2026-04-01T00:00:00.000Z',
-      supports: const [
-        SILRocSupport(
-          supportNumber: '01_011_0107_1_1',
-          supportName: 'SIL Shared Support',
-          shiftType: 'day',
-          hoursPerWeek: 14.0,
-          unitPrice: 65.0,
-          amount: 910.0,
-          days: ['Monday', 'Tuesday'],
-          startTime: '09:00',
-          endTime: '16:00',
-        ),
-      ],
-    );
+  id: 'roc_active_101',
+  clientId: 'client_ada',
+  propertyId: 'prop_sunshine',
+  status: 'active',
+  effectiveFrom: '2026-04-01T00:00:00.000Z',
+  supports: const [
+    SILRocSupport(
+      supportNumber: '01_011_0107_1_1',
+      supportName: 'SIL Shared Support',
+      shiftType: 'day',
+      hoursPerWeek: 14.0,
+      unitPrice: 65.0,
+      amount: 910.0,
+      days: ['Monday', 'Tuesday'],
+      startTime: '09:00',
+      endTime: '16:00',
+    ),
+  ],
+);
 
 Widget pumpView(_FakeBillingRepository repo) {
   return ProviderScope(
@@ -166,7 +167,9 @@ void main() {
 
       // The invoice-ready dialog must offer dispatch.
       expect(find.text('SIL invoice ready'), findsOneWidget);
-      await tester.tap(find.byKey(const ValueKey('sil_invoice_dispatch_button')));
+      await tester.tap(
+        find.byKey(const ValueKey('sil_invoice_dispatch_button')),
+      );
       await _pumpFrames(tester);
 
       // Confirm the dispatch.

@@ -46,7 +46,9 @@ class _AdminCertificationAuditViewState
           ),
         ),
         backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
-        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
+        foregroundColor: Theme.of(
+          context,
+        ).colorScheme.onPrimary, // Standardized
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -54,7 +56,12 @@ class _AdminCertificationAuditViewState
           color: Theme.of(context).colorScheme.onPrimary,
         ),
         elevation: 0,
-        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
       ),
       body: state.isLoading
           ? const Center(
@@ -155,7 +162,8 @@ class _AdminCertificationAuditViewState
                 child: BauhausButton(
                   text: 'View File',
                   icon: Icons.visibility,
-                  backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
+                  backgroundColor:
+                      BauhausDesign.primary, // Standardized: Bauhaus primary
                   onPressed: () async {
                     final uri = Uri.parse(cert.fileUrl);
                     if (await canLaunchUrl(uri)) {
@@ -164,7 +172,9 @@ class _AdminCertificationAuditViewState
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(AppLocalizations.of(context)!.couldNotLaunchFileUrl),
+                          content: Text(
+                            AppLocalizations.of(context)!.couldNotLaunchFileUrl,
+                          ),
                         ),
                       );
                     }

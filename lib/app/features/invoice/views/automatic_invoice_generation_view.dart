@@ -604,7 +604,9 @@ class _AutomaticInvoiceGenerationViewState
                         subtitle,
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                               fontWeight: FontWeight.w700,
                             ),
                       ),
@@ -888,9 +890,10 @@ class _AutomaticInvoiceGenerationViewState
                 Expanded(
                   child: Text(
                     state.currentStep,
-                    style: BauhausDesign.getTextTheme(
-                      context,
-                    ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    style: BauhausDesign.getTextTheme(context).bodyMedium
+                        ?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -965,9 +968,12 @@ class _AutomaticInvoiceGenerationViewState
                     const SizedBox(height: BauhausDesign.space2),
                     Text(
                       AppLocalizations.of(context)!.generationCompleteDesc,
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),
@@ -1314,7 +1320,11 @@ class _AutomaticInvoiceGenerationViewState
                           subtitle: Text(
                             emp.email,
                             style: BauhausDesign.getTextTheme(context).bodySmall
-                                ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
                           ),
                           value: isChecked,
                           activeColor: BauhausDesign.primary,
@@ -1574,7 +1584,11 @@ class _AutomaticInvoiceGenerationViewState
                               clientEmail,
                               style: BauhausDesign.getTextTheme(context)
                                   .bodySmall
-                                  ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
                             ),
                             value: isChecked,
                             activeColor: BauhausDesign.primary,
@@ -1659,9 +1673,12 @@ class _AutomaticInvoiceGenerationViewState
                       AppLocalizations.of(
                         context,
                       )!.invoicesReadyCount(generatedPdfs.length),
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      style: BauhausDesign.getTextTheme(context).labelSmall
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),
@@ -1729,7 +1746,11 @@ class _AutomaticInvoiceGenerationViewState
                                 AppLocalizations.of(context)!.tapToViewPdf,
                                 style: BauhausDesign.getTextTheme(context)
                                     .labelSmall
-                                    ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
                               ),
                             ],
                           ),

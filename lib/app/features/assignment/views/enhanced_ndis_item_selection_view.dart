@@ -936,7 +936,9 @@ class _EnhancedNdisItemSelectionViewState
               : Expanded(
                   child: _filteredNdisItems.isEmpty && _searchQuery.isNotEmpty
                       ? Center(
-                          child: Text(AppLocalizations.of(context)!.noMatchingNdisItems),
+                          child: Text(
+                            AppLocalizations.of(context)!.noMatchingNdisItems,
+                          ),
                         )
                       : ListView.builder(
                           controller: _listScrollController,
@@ -1513,7 +1515,11 @@ class _EnhancedNdisItemSelectionViewState
                         if (price == null || price <= 0) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(AppLocalizations.of(context)!.pleaseEnterValidPrice),
+                              content: Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.pleaseEnterValidPrice,
+                              ),
                             ),
                           );
                           return;

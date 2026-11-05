@@ -44,14 +44,18 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedLeaveType == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.pleaseSelectLeaveType)),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.pleaseSelectLeaveType),
+        ),
       );
       return;
     }
     if (_selectedDateRange == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.pleaseSelectDates)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.pleaseSelectDates),
+        ),
+      );
       return;
     }
 
@@ -69,7 +73,9 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
     if (mounted) {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.leaveRequestSubmitted)),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.leaveRequestSubmitted),
+          ),
         );
         Navigator.pop(context);
       } else {
@@ -128,7 +134,10 @@ class _LeaveRequestFormState extends ConsumerState<LeaveRequestForm> {
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onPrimary),
+          icon: Icon(
+            Icons.close,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),

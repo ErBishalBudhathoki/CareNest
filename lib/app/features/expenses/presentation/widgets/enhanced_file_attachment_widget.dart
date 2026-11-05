@@ -379,9 +379,9 @@ class _EnhancedFileAttachmentWidgetState
             const Spacer(),
             Text(
               '${_selectedFiles.length}/${widget.maxFiles}',
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),

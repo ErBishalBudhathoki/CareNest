@@ -288,7 +288,9 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
         const SizedBox(height: 8),
         CheckboxListTile(
           title: Text(AppLocalizations.of(context)!.saveAsCustomPricing),
-          subtitle: Text(AppLocalizations.of(context)!.saveThisPriceForFutureUse),
+          subtitle: Text(
+            AppLocalizations.of(context)!.saveThisPriceForFutureUse,
+          ),
           value: _saveAsCustomPricing,
           onChanged: (value) {
             setState(() {
@@ -309,7 +311,9 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
               children: [
                 if (hasClientContext)
                   CheckboxListTile(
-                    title: Text(AppLocalizations.of(context)!.applyToThisClientOnly),
+                    title: Text(
+                      AppLocalizations.of(context)!.applyToThisClientOnly,
+                    ),
                     value: _applyToClient,
                     onChanged: (value) {
                       setState(() {
@@ -323,7 +327,9 @@ class _PricePromptDialogState extends State<PricePromptDialog> {
                     dense: true,
                   ),
                 CheckboxListTile(
-                  title: Text(AppLocalizations.of(context)!.applyToEntireOrganization),
+                  title: Text(
+                    AppLocalizations.of(context)!.applyToEntireOrganization,
+                  ),
                   value: _applyToOrganization,
                   onChanged: (value) {
                     setState(() {

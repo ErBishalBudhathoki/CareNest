@@ -63,7 +63,9 @@ class _EnhancedPredictiveInsightsViewState
                 horizontal: BauhausDesign.space3,
               ),
               labelColor: BauhausDesign.primary,
-              unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
+              unselectedLabelColor: Theme.of(
+                context,
+              ).colorScheme.onSurfaceVariant,
               indicatorColor: BauhausDesign.primary,
               indicatorWeight: 3,
               labelStyle: GoogleFonts.inter(
@@ -109,7 +111,9 @@ class _EnhancedPredictiveInsightsViewState
   // Revenue Forecast Tab
   Widget _buildRevenueForecastTab(PredictiveInsightsState state) {
     if (state.revenueForecast.isEmpty) {
-      return Center(child: Text(AppLocalizations.of(context)!.noRevenueForecastAvailable));
+      return Center(
+        child: Text(AppLocalizations.of(context)!.noRevenueForecastAvailable),
+      );
     }
 
     final firstMetric = state.revenueForecast.first;
@@ -240,7 +244,9 @@ class _EnhancedPredictiveInsightsViewState
                           'Confidence',
                           style: GoogleFonts.inter(
                             fontSize: 12,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                         Container(
@@ -421,7 +427,9 @@ class _EnhancedPredictiveInsightsViewState
                                 prediction.workerEmail,
                                 style: GoogleFonts.inter(
                                   fontSize: 12,
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                 ),
                               ),
                             ],
@@ -555,7 +563,9 @@ class _EnhancedPredictiveInsightsViewState
   // Demand Forecast Tab
   Widget _buildDemandForecastTab(PredictiveInsightsState state) {
     if (state.demandForecast.isEmpty) {
-      return Center(child: Text(AppLocalizations.of(context)!.noDemandForecastAvailable));
+      return Center(
+        child: Text(AppLocalizations.of(context)!.noDemandForecastAvailable),
+      );
     }
 
     return SingleChildScrollView(
@@ -707,7 +717,9 @@ class _EnhancedPredictiveInsightsViewState
     final risk = state.complianceRisk;
 
     if (risk == null) {
-      return Center(child: Text(AppLocalizations.of(context)!.noComplianceDataAvailable));
+      return Center(
+        child: Text(AppLocalizations.of(context)!.noComplianceDataAvailable),
+      );
     }
 
     final riskColor = _getRiskColor(risk.riskLevel);
@@ -878,7 +890,9 @@ class _EnhancedPredictiveInsightsViewState
                               style: GoogleFonts.inter(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                                 letterSpacing: 0.5,
                               ),
                             ),

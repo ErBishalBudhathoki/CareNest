@@ -7,7 +7,8 @@ import 'package:carenest/app/features/realtime_portal/viewmodels/family_access_v
 import 'package:carenest/app/features/realtime_portal/models/realtime_portal_models.dart';
 import 'package:carenest/app/features/client/providers/client_provider.dart';
 import 'package:carenest/generated/l10n/app_localizations.dart';
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 
 class AdminFamilyManagementView extends ConsumerStatefulWidget {
   final String clientId;
@@ -47,9 +48,8 @@ class _AdminFamilyManagementViewState
     final state = ref.watch(familyAccessViewModelProvider);
     final textTheme = BauhausDesign.getTextTheme(context);
     final clientState = ref.watch(clientProvider);
-    final client = clientState.clients
-            .where((c) => c.id == widget.clientId)
-            .firstOrNull ??
+    final client =
+        clientState.clients.where((c) => c.id == widget.clientId).firstOrNull ??
         clientState.clients.firstOrNull;
 
     return Scaffold(
@@ -111,7 +111,8 @@ class _AdminFamilyManagementViewState
 
   Widget _buildClientHeader(dynamic client) {
     final textTheme = BauhausDesign.getTextTheme(context);
-    final String displayName = client?.displayName ??
+    final String displayName =
+        client?.displayName ??
         (widget.clientId.isNotEmpty ? widget.clientId : 'Participant');
     final String email = client?.clientEmail ?? '';
     return Container(

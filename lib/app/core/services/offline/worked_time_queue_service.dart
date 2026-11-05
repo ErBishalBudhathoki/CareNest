@@ -124,8 +124,8 @@ class WorkedTimeQueueService {
           shiftType: entry['shiftType']?.toString(),
           disturbances: entry['disturbances'] is List
               ? (entry['disturbances'] as List)
-                  .map((e) => Map<String, dynamic>.from(e as Map))
-                  .toList()
+                    .map((e) => Map<String, dynamic>.from(e as Map))
+                    .toList()
               : null,
           convertedToActiveNight: entry['convertedToActiveNight'] as bool?,
         );

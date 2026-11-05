@@ -29,11 +29,7 @@ class _Recorder {
     Map<String, dynamic> body,
     Map<String, String> headers,
   ) async {
-    calls.add({
-      'endpoint': endpoint,
-      'body': body,
-      'headers': headers,
-    });
+    calls.add({'endpoint': endpoint, 'body': body, 'headers': headers});
     if (error != null) throw error!;
     return reply ?? {'success': true, 'data': {}};
   }
@@ -84,26 +80,29 @@ void main() {
     expect(base64.decode(sig), hasLength(64));
   });
 
-  test('registration is attempted against the right endpoint and tenant', () async {
-    final poster = _Recorder();
-    final ok = await InvoiceSigningService.ensureRegistered(
-      post: poster.poster,
-      organizationId: 'org-abc-123',
-      keyPair: sharedKeyPair,
-    );
+  test(
+    'registration is attempted against the right endpoint and tenant',
+    () async {
+      final poster = _Recorder();
+      final ok = await InvoiceSigningService.ensureRegistered(
+        post: poster.poster,
+        organizationId: 'org-abc-123',
+        keyPair: sharedKeyPair,
+      );
 
-    expect(ok, isTrue);
-    expect(poster.calls, isNotEmpty);
-    final call = poster.calls.first;
-    expect(call['endpoint'], 'invoice-signing/register');
-    // The backend requires this header to resolve the caller's organization.
-    expect(call['headers']['x-organization-id'], 'org-abc-123');
+      expect(ok, isTrue);
+      expect(poster.calls, isNotEmpty);
+      final call = poster.calls.first;
+      expect(call['endpoint'], 'invoice-signing/register');
+      // The backend requires this header to resolve the caller's organization.
+      expect(call['headers']['x-organization-id'], 'org-abc-123');
 
-    final body = call['body'] as Map<String, dynamic>;
-    expect(body['deviceKeyId'], isA<String>());
-    expect(body['publicKeyBase64'], isA<String>());
-    expect(base64.decode(body['publicKeyBase64'] as String), hasLength(32));
-  });
+      final body = call['body'] as Map<String, dynamic>;
+      expect(body['deviceKeyId'], isA<String>());
+      expect(body['publicKeyBase64'], isA<String>());
+      expect(base64.decode(body['publicKeyBase64'] as String), hasLength(32));
+    },
+  );
 
   test('registration is cached, so it does not fire per invoice', () async {
     final poster = _Recorder();
@@ -132,17 +131,20 @@ void main() {
     expect(poster.calls.length, firstCount);
   });
 
-  test('registration is skipped entirely with no organisation context', () async {
-    final poster = _Recorder();
-    // Guessing an organisation and binding a signing key to it is what the
-    // backend guard rejects; refusing to register is the safe failure.
-    final ok = await InvoiceSigningService.ensureRegistered(
-      post: poster.poster,
-      organizationId: '',
-    );
-    expect(ok, isFalse);
-    expect(poster.calls, isEmpty);
-  });
+  test(
+    'registration is skipped entirely with no organisation context',
+    () async {
+      final poster = _Recorder();
+      // Guessing an organisation and binding a signing key to it is what the
+      // backend guard rejects; refusing to register is the safe failure.
+      final ok = await InvoiceSigningService.ensureRegistered(
+        post: poster.poster,
+        organizationId: '',
+      );
+      expect(ok, isFalse);
+      expect(poster.calls, isEmpty);
+    },
+  );
 
   test('a rejected registration fails soft rather than throwing', () async {
     final poster = _Recorder()

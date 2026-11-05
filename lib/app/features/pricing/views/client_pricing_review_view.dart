@@ -478,9 +478,12 @@ class _ClientPricingReviewViewState
                     const SizedBox(height: BauhausDesign.space1),
                     Text(
                       client['clientEmail'] ?? '',
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      style: BauhausDesign.getTextTheme(context).bodySmall
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: BauhausDesign.space2),
@@ -624,9 +627,12 @@ class _ClientPricingReviewViewState
                   Expanded(
                     child: Text(
                       client['clientEmail'] ?? '',
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      style: BauhausDesign.getTextTheme(context).bodySmall
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -1480,7 +1486,9 @@ class _ClientPricingDetailPageState
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.2,
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                 ),
                           ),
                           const SizedBox(height: BauhausDesign.space1),
@@ -1524,7 +1532,9 @@ class _ClientPricingDetailPageState
                                         .labelSmall
                                         ?.copyWith(
                                           fontWeight: FontWeight.bold,
-                                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
                                         ),
                                   ),
                                   const SizedBox(height: BauhausDesign.space1),
@@ -1568,7 +1578,9 @@ class _ClientPricingDetailPageState
                                         .labelSmall
                                         ?.copyWith(
                                           fontWeight: FontWeight.bold,
-                                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
                                         ),
                                   ),
                                   const SizedBox(height: BauhausDesign.space1),
@@ -1636,7 +1648,9 @@ class _ClientPricingDetailPageState
                                 .labelSmall
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                 ),
                           ),
                           const SizedBox(width: BauhausDesign.space3),

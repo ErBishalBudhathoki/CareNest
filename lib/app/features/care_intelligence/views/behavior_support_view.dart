@@ -44,7 +44,9 @@ class _BehaviorSupportViewState extends ConsumerState<BehaviorSupportView> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
-        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
+        foregroundColor: Theme.of(
+          context,
+        ).colorScheme.onPrimary, // Standardized
         title: Text(
           'BEHAVIOR SUPPORT',
           style: BauhausDesign.getTextTheme(context).titleLarge?.copyWith(
@@ -57,7 +59,12 @@ class _BehaviorSupportViewState extends ConsumerState<BehaviorSupportView> {
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
       ),
       body: state.isLoading
           ? const Center(child: BauhausLoadingState())
@@ -167,7 +174,9 @@ class _BehaviorSupportViewState extends ConsumerState<BehaviorSupportView> {
               'Anxiety Trigger',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            subtitle: Text(AppLocalizations.of(context)!.identifiedThreeTimesThisWeek),
+            subtitle: Text(
+              AppLocalizations.of(context)!.identifiedThreeTimesThisWeek,
+            ),
             trailing: Icon(
               Icons.chevron_right,
               color: Theme.of(context).colorScheme.onSurface,

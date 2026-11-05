@@ -354,7 +354,10 @@ class _WorkforceOptimizationDashboardState
         ),
       ),
       leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+        icon: Icon(
+          Icons.arrow_back,
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
         onPressed: () => Navigator.pop(context),
       ),
     );

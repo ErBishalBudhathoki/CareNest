@@ -85,8 +85,7 @@ class _NoteTemplatesViewState extends ConsumerState<NoteTemplatesView> {
                 separatorBuilder: (_, _) => const SizedBox(height: 8),
                 itemBuilder: (context, index) {
                   final template = state.templates[index];
-                  final sections =
-                      (template['sections'] as List?)?.length ?? 0;
+                  final sections = (template['sections'] as List?)?.length ?? 0;
                   final active = template['active'] != false;
                   return Card(
                     child: ListTile(
@@ -97,7 +96,7 @@ class _NoteTemplatesViewState extends ConsumerState<NoteTemplatesView> {
                       title: Text(template['name']?.toString() ?? 'Template'),
                       subtitle: Text(
                         '${template['description'] ?? ''}\n$sections section(s)'
-                            '${active ? '' : ' · inactive'}',
+                        '${active ? '' : ' · inactive'}',
                       ),
                       isThreeLine: true,
                       onTap: () => _openEditor(template),
@@ -106,8 +105,8 @@ class _NoteTemplatesViewState extends ConsumerState<NoteTemplatesView> {
                         icon: const Icon(Icons.delete_outline),
                         onPressed: active
                             ? () => _confirmDeactivate(
-                                  template['id']?.toString() ?? '',
-                                )
+                                template['id']?.toString() ?? '',
+                              )
                             : null,
                       ),
                     ),
@@ -197,20 +196,23 @@ class _TemplateEditorDialogState extends State<_TemplateEditorDialog> {
     super.initState();
     final t = widget.template;
     _nameController = TextEditingController(text: t?['name']?.toString() ?? '');
-    _descriptionController =
-        TextEditingController(text: t?['description']?.toString() ?? '');
+    _descriptionController = TextEditingController(
+      text: t?['description']?.toString() ?? '',
+    );
     _sections = ((t?['sections'] as List?) ?? const [])
         .whereType<Map>()
-        .map((e) => <String, dynamic>{
-              'key': e['key']?.toString() ?? '',
-              'label': e['label']?.toString() ?? '',
-              'type': e['type']?.toString() ?? 'text',
-              'required': e['required'] == true,
-              'options': ((e['options'] as List?) ?? const [])
-                  .map((o) => o.toString())
-                  .join(', '),
-              'helpText': e['helpText']?.toString() ?? '',
-            })
+        .map(
+          (e) => <String, dynamic>{
+            'key': e['key']?.toString() ?? '',
+            'label': e['label']?.toString() ?? '',
+            'type': e['type']?.toString() ?? 'text',
+            'required': e['required'] == true,
+            'options': ((e['options'] as List?) ?? const [])
+                .map((o) => o.toString())
+                .join(', '),
+            'helpText': e['helpText']?.toString() ?? '',
+          },
+        )
         .toList();
   }
 
@@ -237,7 +239,9 @@ class _TemplateEditorDialogState extends State<_TemplateEditorDialog> {
   void _submit() {
     if (_nameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.templateNameRequired)),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.templateNameRequired),
+        ),
       );
       return;
     }
@@ -313,7 +317,10 @@ class _TemplateEditorDialogState extends State<_TemplateEditorDialog> {
           onPressed: () => Navigator.of(context).pop(),
           child: Text(AppLocalizations.of(context)!.cancel),
         ),
-        FilledButton(onPressed: _submit, child: Text(AppLocalizations.of(context)!.save)),
+        FilledButton(
+          onPressed: _submit,
+          child: Text(AppLocalizations.of(context)!.save),
+        ),
       ],
     );
   }
@@ -365,7 +372,10 @@ class _TemplateEditorDialogState extends State<_TemplateEditorDialog> {
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
               initialValue: widget.sectionTypes.contains(type) ? type : 'text',
-              decoration: const InputDecoration(labelText: 'Type', isDense: true),
+              decoration: const InputDecoration(
+                labelText: 'Type',
+                isDense: true,
+              ),
               items: widget.sectionTypes
                   .map((t) => DropdownMenuItem(value: t, child: Text(t)))
                   .toList(),
@@ -387,7 +397,9 @@ class _TemplateEditorDialogState extends State<_TemplateEditorDialog> {
             ],
             Row(
               children: [
-                Expanded(child: Text(AppLocalizations.of(context)!.requiredLabel)),
+                Expanded(
+                  child: Text(AppLocalizations.of(context)!.requiredLabel),
+                ),
                 BauhausSwitch(
                   value: section['required'] == true,
                   onChanged: (v) => setState(() => section['required'] = v),

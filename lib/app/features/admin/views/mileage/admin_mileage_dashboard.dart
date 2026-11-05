@@ -46,7 +46,10 @@ class AdminMileageDashboard extends ConsumerWidget {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.settings, color: Theme.of(context).colorScheme.onPrimary),
+            icon: Icon(
+              Icons.settings,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             onPressed: () {
               Navigator.push(
                 context,

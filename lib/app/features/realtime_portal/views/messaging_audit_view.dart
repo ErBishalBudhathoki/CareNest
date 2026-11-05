@@ -158,17 +158,10 @@ class _MessagingAuditViewState extends ConsumerState<MessagingAuditView> {
         systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
         shape: Border(
-          bottom: BorderSide(
-            color: colorScheme.onSurface,
-            width: 2,
-          ),
+          bottom: BorderSide(color: colorScheme.onSurface, width: 2),
         ),
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: colorScheme.onPrimary,
-            size: 24,
-          ),
+          icon: Icon(Icons.arrow_back, color: colorScheme.onPrimary, size: 24),
           onPressed: () {
             if (isViewingChat) {
               ref

@@ -12,7 +12,7 @@ class _NoopApiMethod extends ApiMethod {}
 /// Fake repository returning canned absence rows; records calls for assertions.
 class _FakeAbsenceRepository extends SILRepository {
   _FakeAbsenceRepository({this.rows = const [], this.throwOnLoad = false})
-      : super(_NoopApiMethod());
+    : super(_NoopApiMethod());
 
   List<Map<String, dynamic>> rows;
   final bool throwOnLoad;
@@ -67,9 +67,14 @@ class _FakeAbsenceRepository extends SILRepository {
       'endDate': endDate,
     });
     rows = rows
-        .map((row) => row['_id'] == absenceId
-            ? {...row, 'endDate': (endDate ?? DateTime.now()).toIso8601String()}
-            : row)
+        .map(
+          (row) => row['_id'] == absenceId
+              ? {
+                  ...row,
+                  'endDate': (endDate ?? DateTime.now()).toIso8601String(),
+                }
+              : row,
+        )
         .toList();
     return {'_id': absenceId};
   }
@@ -80,17 +85,16 @@ Map<String, dynamic> hospitalAbsence({
   String? endDate,
   int maxClaimableDays = 28,
   int claimedDays = 3,
-}) =>
-    {
-      '_id': id,
-      'occupancyId': 'occ_1',
-      'startDate': '2026-10-01T00:00:00.000Z',
-      'endDate': endDate,
-      'reason': 'hospital',
-      'notes': 'Admitted — cardiology',
-      'maxClaimableDays': maxClaimableDays,
-      'claimedDays': claimedDays,
-    };
+}) => {
+  '_id': id,
+  'occupancyId': 'occ_1',
+  'startDate': '2026-10-01T00:00:00.000Z',
+  'endDate': endDate,
+  'reason': 'hospital',
+  'notes': 'Admitted — cardiology',
+  'maxClaimableDays': maxClaimableDays,
+  'claimedDays': claimedDays,
+};
 
 Widget pumpSheet(_FakeAbsenceRepository repo) {
   return ProviderScope(
@@ -99,17 +103,16 @@ Widget pumpSheet(_FakeAbsenceRepository repo) {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
-        body: SilAbsenceSheet(
-          occupancyId: 'occ_1',
-          residentLabel: 'Room 2',
-        ),
+        body: SilAbsenceSheet(occupancyId: 'occ_1', residentLabel: 'Room 2'),
       ),
     ),
   );
 }
 
 void main() {
-  testWidgets('lists existing absences with remaining leave allowance', (tester) async {
+  testWidgets('lists existing absences with remaining leave allowance', (
+    tester,
+  ) async {
     final repo = _FakeAbsenceRepository(rows: [hospitalAbsence()]);
 
     await tester.pumpWidget(pumpSheet(repo));
@@ -121,13 +124,18 @@ void main() {
     expect(find.textContaining('cardiology'), findsOneWidget);
   });
 
-  testWidgets('record flow posts a new absence and refreshes the list', (tester) async {
+  testWidgets('record flow posts a new absence and refreshes the list', (
+    tester,
+  ) async {
     final repo = _FakeAbsenceRepository();
 
     await tester.pumpWidget(pumpSheet(repo));
     await tester.pumpAndSettle();
 
-    expect(find.text('No absences recorded for this resident.'), findsOneWidget);
+    expect(
+      find.text('No absences recorded for this resident.'),
+      findsOneWidget,
+    );
 
     await tester.tap(find.widgetWithText(FilledButton, 'Record absence'));
     await tester.pumpAndSettle();
@@ -143,7 +151,9 @@ void main() {
     expect(find.text('Absence recorded'), findsOneWidget);
   });
 
-  testWidgets('end flow closes an ongoing absence after confirmation', (tester) async {
+  testWidgets('end flow closes an ongoing absence after confirmation', (
+    tester,
+  ) async {
     final repo = _FakeAbsenceRepository(rows: [hospitalAbsence()]);
 
     await tester.pumpWidget(pumpSheet(repo));
@@ -156,7 +166,10 @@ void main() {
     final dialog = find.byType(AlertDialog);
     expect(dialog, findsOneWidget);
     await tester.tap(
-      find.descendant(of: dialog, matching: find.widgetWithText(FilledButton, 'End absence')),
+      find.descendant(
+        of: dialog,
+        matching: find.widgetWithText(FilledButton, 'End absence'),
+      ),
     );
     await tester.pumpAndSettle();
 

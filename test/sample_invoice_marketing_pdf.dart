@@ -60,123 +60,133 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   PathProviderPlatform.instance = _RepoPathProvider();
 
-  test('produces a marketing sample invoice from synthetic data', () async {
-    final payload = SampleInvoiceFixture.buildInvoicePayload();
-    final generator = InvoicePdfGenerator(api: _NoNetworkApiMethod());
+  test(
+    'produces a marketing sample invoice from synthetic data',
+    () async {
+      final payload = SampleInvoiceFixture.buildInvoicePayload();
+      final generator = InvoicePdfGenerator(api: _NoNetworkApiMethod());
 
-    final paths = await generator.generatePdfs(
-      payload,
-      showTax: true,
-      taxRate: 0.0,
-    );
-
-    expect(paths, hasLength(1));
-    expect(File(paths.first).existsSync(), isTrue);
-    expect(File(paths.first).lengthSync(), greaterThan(1000));
-
-    final outDir = Directory('marketing');
-    if (!outDir.existsSync()) outDir.createSync(recursive: true);
-    final target = File('marketing/INVOICE-SAMPLE.pdf');
-    await File(paths.first).copy(target.path);
-
-    // --- safety: nothing real survives into the artefact -------------------
-    // The dev database contains one real tenant. None of these strings may
-    // appear anywhere in the generated file.
-    final banned = <String>[
-      'Pari Care',
-      'AKM71X',
-      'ErBishal',
-      'deverbishal331',
-      'budhathokib085',
-      'invoice-660f3',
-    ];
-
-    final bytes = await target.readAsBytes();
-    expect(bytes.length, greaterThan(1000));
-    expect(String.fromCharCodes(bytes.sublist(0, 5)), '%PDF-',
-        reason: 'output must be a real PDF, not an error page');
-    for (final needle in banned) {
-      expect(
-        bytesContainsString(bytes, needle),
-        isFalse,
-        reason: 'sample invoice must not contain "$needle"',
+      final paths = await generator.generatePdfs(
+        payload,
+        showTax: true,
+        taxRate: 0.0,
       );
-    }
-  }, timeout: const Timeout(Duration(minutes: 2)));
 
-  test('signs the invoice and embeds the signature in XMP metadata', () async {
+      expect(paths, hasLength(1));
+      expect(File(paths.first).existsSync(), isTrue);
+      expect(File(paths.first).lengthSync(), greaterThan(1000));
 
-    // This is the language-boundary test. A Dart Ed25519 signature is worthless
-    // unless Node's Ed25519 accepts it, and the canonical serialisation that
-    // was signed has to be byte-identical on both sides. The fixture written
-    // here is what the backend interop test in
-    // backend/tests/invoice-signature-interop.test.js verifies.
-    final payload = SampleInvoiceFixture.buildInvoicePayload();
-    final client = payload['clients'].first as Map<String, dynamic>;
-    final generator = InvoicePdfGenerator(api: _NoNetworkApiMethod());
+      final outDir = Directory('marketing');
+      if (!outDir.existsSync()) outDir.createSync(recursive: true);
+      final target = File('marketing/INVOICE-SAMPLE.pdf');
+      await File(paths.first).copy(target.path);
 
-    final keyPair0 = await InvoiceSigningService.loadOrCreateKeyPair();
-    final paths = await generator.generatePdfs(
-      payload,
-      showTax: true,
-      taxRate: 0.0,
-      signingKeyPair: keyPair0,
-    );
-    expect(paths, hasLength(1));
+      // --- safety: nothing real survives into the artefact -------------------
+      // The dev database contains one real tenant. None of these strings may
+      // appear anywhere in the generated file.
+      final banned = <String>[
+        'Pari Care',
+        'AKM71X',
+        'ErBishal',
+        'deverbishal331',
+        'budhathokib085',
+        'invoice-660f3',
+      ];
 
-    InvoiceSignableItem item(Map<String, dynamic> m) => InvoiceSignableItem(
-          code: m['ndisItemNumber'] as String,
-          date: m['date'] as String,
-          hours: m['hours'] as double,
-          rate: m['rate'] as double,
-          amount: m['amount'] as double,
+      final bytes = await target.readAsBytes();
+      expect(bytes.length, greaterThan(1000));
+      expect(
+        String.fromCharCodes(bytes.sublist(0, 5)),
+        '%PDF-',
+        reason: 'output must be a real PDF, not an error page',
+      );
+      for (final needle in banned) {
+        expect(
+          bytesContainsString(bytes, needle),
+          isFalse,
+          reason: 'sample invoice must not contain "$needle"',
         );
+      }
+    },
+    timeout: const Timeout(Duration(minutes: 2)),
+  );
 
-    final items = (client['items'] as List).cast<Map<String, dynamic>>();
+  test(
+    'signs the invoice and embeds the signature in XMP metadata',
+    () async {
+      // This is the language-boundary test. A Dart Ed25519 signature is worthless
+      // unless Node's Ed25519 accepts it, and the canonical serialisation that
+      // was signed has to be byte-identical on both sides. The fixture written
+      // here is what the backend interop test in
+      // backend/tests/invoice-signature-interop.test.js verifies.
+      final payload = SampleInvoiceFixture.buildInvoicePayload();
+      final client = payload['clients'].first as Map<String, dynamic>;
+      final generator = InvoicePdfGenerator(api: _NoNetworkApiMethod());
 
-    final canonical = InvoiceSigningService.canonicalInvoiceForm(
-      invoiceNumber: client['invoiceNumber'] as String,
-      periodStart: client['startDate'] as String,
-      periodEnd: client['endDate'] as String,
-      subtotal: client['subtotal'] as double,
-      tax: client['tax'] as double,
-      total: client['total'] as double,
-      items: items.map(item).toList(),
-    );
+      final keyPair0 = await InvoiceSigningService.loadOrCreateKeyPair();
+      final paths = await generator.generatePdfs(
+        payload,
+        showTax: true,
+        taxRate: 0.0,
+        signingKeyPair: keyPair0,
+      );
+      expect(paths, hasLength(1));
 
-    // Key material is taken from a single keypair object rather than through
-    // the storage-backed helpers: flutter_secure_storage does not persist across
-    // calls in this environment, so loadOrCreateKeyPair() twice can return two
-    // different keys and the signature would be published against the wrong one.
-    final keyPair = keyPair0;
-    final pub = base64.encode((await keyPair.extractPublicKey()).bytes);
-    final signatureBase64 =
-        await InvoiceSigningService.signWith(canonical, Future.value(keyPair));
-    final keyId = await InvoiceSigningService.getDeviceKeyIdFromKey(keyPair);
+      InvoiceSignableItem item(Map<String, dynamic> m) => InvoiceSignableItem(
+        code: m['ndisItemNumber'] as String,
+        date: m['date'] as String,
+        hours: m['hours'] as double,
+        rate: m['rate'] as double,
+        amount: m['amount'] as double,
+      );
 
-    // Copy the PDF this same test produced, so the embedded signature and the
-    // fixture below are guaranteed to come from the same key. Copying the file
-    // written by the other test would pair a signature with the wrong public key
-    // and the interop test would fail for a reason that is not the scheme.
-    await File(paths.first).copy('marketing/INVOICE-SAMPLE.pdf');
+      final items = (client['items'] as List).cast<Map<String, dynamic>>();
 
-    await File('marketing/signing-fixture.json').writeAsString(jsonEncode({
-      'canonicalForm': canonical,
-      'signatureBase64': signatureBase64,
-      'deviceKeyId': keyId,
-      'publicKeyBase64': pub,
-      'fingerprint': InvoiceSigningService.fingerprint(canonical),
-      'record': {
-        'invoiceNumber': client['invoiceNumber'],
-        'startDate': client['startDate'],
-        'endDate': client['endDate'],
-        'financialSummary': {
-          'subtotal': client['subtotal'],
-          'taxAmount': client['tax'],
-          'totalAmount': client['total'],
-        },
-        'lineItems': items
-            .map((m) {
+      final canonical = InvoiceSigningService.canonicalInvoiceForm(
+        invoiceNumber: client['invoiceNumber'] as String,
+        periodStart: client['startDate'] as String,
+        periodEnd: client['endDate'] as String,
+        subtotal: client['subtotal'] as double,
+        tax: client['tax'] as double,
+        total: client['total'] as double,
+        items: items.map(item).toList(),
+      );
+
+      // Key material is taken from a single keypair object rather than through
+      // the storage-backed helpers: flutter_secure_storage does not persist across
+      // calls in this environment, so loadOrCreateKeyPair() twice can return two
+      // different keys and the signature would be published against the wrong one.
+      final keyPair = keyPair0;
+      final pub = base64.encode((await keyPair.extractPublicKey()).bytes);
+      final signatureBase64 = await InvoiceSigningService.signWith(
+        canonical,
+        Future.value(keyPair),
+      );
+      final keyId = await InvoiceSigningService.getDeviceKeyIdFromKey(keyPair);
+
+      // Copy the PDF this same test produced, so the embedded signature and the
+      // fixture below are guaranteed to come from the same key. Copying the file
+      // written by the other test would pair a signature with the wrong public key
+      // and the interop test would fail for a reason that is not the scheme.
+      await File(paths.first).copy('marketing/INVOICE-SAMPLE.pdf');
+
+      await File('marketing/signing-fixture.json').writeAsString(
+        jsonEncode({
+          'canonicalForm': canonical,
+          'signatureBase64': signatureBase64,
+          'deviceKeyId': keyId,
+          'publicKeyBase64': pub,
+          'fingerprint': InvoiceSigningService.fingerprint(canonical),
+          'record': {
+            'invoiceNumber': client['invoiceNumber'],
+            'startDate': client['startDate'],
+            'endDate': client['endDate'],
+            'financialSummary': {
+              'subtotal': client['subtotal'],
+              'taxAmount': client['tax'],
+              'totalAmount': client['total'],
+            },
+            'lineItems': items.map((m) {
               final qty = (m['hours'] as num?)?.toDouble() ?? 0;
               final rate = (m['rate'] as num?)?.toDouble() ?? 0;
               return {
@@ -186,11 +196,13 @@ void main() {
                 'totalPrice': (m['amount'] as num?)?.toDouble() ?? (qty * rate),
                 'date': m['date'],
               };
-            })
-            .toList(),
-      },
-    }));
-  }, timeout: const Timeout(Duration(minutes: 2)));
+            }).toList(),
+          },
+        }),
+      );
+    },
+    timeout: const Timeout(Duration(minutes: 2)),
+  );
 }
 
 /// PDF content is compressed, so a plain substring test does not work. This

@@ -211,7 +211,11 @@ class _EditAssignmentViewState extends ConsumerState<EditAssignmentView> {
         if (mounted) {
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(AppLocalizations.of(context)!.assignmentUpdatedSuccessfully)),
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context)!.assignmentUpdatedSuccessfully,
+              ),
+            ),
           );
         }
       } else {

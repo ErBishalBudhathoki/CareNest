@@ -455,11 +455,8 @@ class BauhausDesign {
         actionsIconTheme: const IconThemeData(color: textDark, size: 24),
       ),
       actionIconTheme: ActionIconThemeData(
-        backButtonIconBuilder: (BuildContext context) => const Icon(
-          Icons.arrow_back,
-          color: textDark,
-          size: 24,
-        ),
+        backButtonIconBuilder: (BuildContext context) =>
+            const Icon(Icons.arrow_back, color: textDark, size: 24),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -750,11 +747,8 @@ class BauhausDesign {
         actionsIconTheme: const IconThemeData(color: textDark, size: 24),
       ),
       actionIconTheme: ActionIconThemeData(
-        backButtonIconBuilder: (BuildContext context) => const Icon(
-          Icons.arrow_back,
-          color: textDark,
-          size: 24,
-        ),
+        backButtonIconBuilder: (BuildContext context) =>
+            const Icon(Icons.arrow_back, color: textDark, size: 24),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(

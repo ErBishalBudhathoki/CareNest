@@ -195,7 +195,11 @@ class GeofenceService {
               children: [
                 Icon(Icons.location_on, color: Colors.blue, size: 28),
                 SizedBox(width: 12),
-                Expanded(child: Text(AppLocalizations.of(context)!.locationAccessNeeded)),
+                Expanded(
+                  child: Text(
+                    AppLocalizations.of(context)!.locationAccessNeeded,
+                  ),
+                ),
               ],
             ),
             content: Column(
@@ -257,7 +261,9 @@ class GeofenceService {
               children: [
                 Icon(Icons.location_searching, color: Colors.orange, size: 28),
                 SizedBox(width: 12),
-                Expanded(child: Text(AppLocalizations.of(context)!.backgroundLocation)),
+                Expanded(
+                  child: Text(AppLocalizations.of(context)!.backgroundLocation),
+                ),
               ],
             ),
             content: const Column(

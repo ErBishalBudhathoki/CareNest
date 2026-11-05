@@ -31,7 +31,8 @@ class _AbsenceRow {
   final Map<String, dynamic> raw;
 
   String get id => (raw['_id'] ?? raw['id'] ?? '').toString();
-  DateTime? get startDate => DateTime.tryParse(raw['startDate']?.toString() ?? '');
+  DateTime? get startDate =>
+      DateTime.tryParse(raw['startDate']?.toString() ?? '');
   DateTime? get endDate => DateTime.tryParse(raw['endDate']?.toString() ?? '');
   String get reason => (raw['reason'] ?? 'hospital').toString();
   String? get notes => raw['notes']?.toString();
@@ -59,9 +60,9 @@ class _SilAbsenceSheetState extends ConsumerState<SilAbsenceSheet> {
       _error = null;
     });
     try {
-      final rows = (await _repo.listSilAbsences(occupancyId: widget.occupancyId))
-          .map(_AbsenceRow.new)
-          .toList();
+      final rows = (await _repo.listSilAbsences(
+        occupancyId: widget.occupancyId,
+      )).map(_AbsenceRow.new).toList();
       if (!mounted) return;
       setState(() {
         _rows = rows;
@@ -77,20 +78,20 @@ class _SilAbsenceSheetState extends ConsumerState<SilAbsenceSheet> {
   }
 
   String _reasonLabel(AppLocalizations l10n, String reason) => switch (reason) {
-        'hospital' => l10n.silAbsenceReasonHospital,
-        'family_leave' => l10n.silAbsenceReasonFamilyLeave,
-        'holiday' => l10n.silAbsenceReasonHoliday,
-        'transition' => l10n.silAbsenceReasonTransition,
-        _ => l10n.other,
-      };
+    'hospital' => l10n.silAbsenceReasonHospital,
+    'family_leave' => l10n.silAbsenceReasonFamilyLeave,
+    'holiday' => l10n.silAbsenceReasonHoliday,
+    'transition' => l10n.silAbsenceReasonTransition,
+    _ => l10n.other,
+  };
 
   IconData _reasonIcon(String reason) => switch (reason) {
-        'hospital' => Icons.local_hospital_outlined,
-        'family_leave' => Icons.family_restroom_outlined,
-        'holiday' => Icons.beach_access_outlined,
-        'transition' => Icons.home_work_outlined,
-        _ => Icons.event_note_outlined,
-      };
+    'hospital' => Icons.local_hospital_outlined,
+    'family_leave' => Icons.family_restroom_outlined,
+    'holiday' => Icons.beach_access_outlined,
+    'transition' => Icons.home_work_outlined,
+    _ => Icons.event_note_outlined,
+  };
 
   String _fmtDate(DateTime? date) =>
       date == null ? '—' : DateFormat('d MMM yyyy').format(date.toLocal());
@@ -113,9 +114,9 @@ class _SilAbsenceSheetState extends ConsumerState<SilAbsenceSheet> {
         maxClaimableDays: result['maxClaimableDays'] as int?,
       );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.silAbsenceRecorded)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.silAbsenceRecorded)));
       await _load();
     } catch (e) {
       if (!mounted) return;
@@ -153,9 +154,9 @@ class _SilAbsenceSheetState extends ConsumerState<SilAbsenceSheet> {
         endDate: DateTime.now(),
       );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.silAbsenceEnded)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.silAbsenceEnded)));
       await _load();
     } catch (e) {
       if (!mounted) return;
@@ -189,9 +190,8 @@ class _SilAbsenceSheetState extends ConsumerState<SilAbsenceSheet> {
                     Expanded(
                       child: Text(
                         '${l10n.silAbsencesTitle} — ${widget.residentLabel}',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                            ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w700),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -203,9 +203,7 @@ class _SilAbsenceSheetState extends ConsumerState<SilAbsenceSheet> {
                   ],
                 ),
               ),
-              Expanded(
-                child: _buildBody(context, l10n, scrollController),
-              ),
+              Expanded(child: _buildBody(context, l10n, scrollController)),
               SafeArea(
                 top: false,
                 child: Padding(
@@ -269,7 +267,11 @@ class _SilAbsenceSheetState extends ConsumerState<SilAbsenceSheet> {
     );
   }
 
-  Widget _buildRow(BuildContext context, AppLocalizations l10n, _AbsenceRow row) {
+  Widget _buildRow(
+    BuildContext context,
+    AppLocalizations l10n,
+    _AbsenceRow row,
+  ) {
     final theme = Theme.of(context);
     final range = row.isOngoing
         ? '${_fmtDate(row.startDate)} → ${l10n.silAbsenceOngoing}'
@@ -286,10 +288,7 @@ class _SilAbsenceSheetState extends ConsumerState<SilAbsenceSheet> {
           children: [
             Text(range),
             Text(
-              l10n.silAbsenceClaimedDays(
-                row.claimedDays,
-                row.maxClaimableDays,
-              ),
+              l10n.silAbsenceClaimedDays(row.claimedDays, row.maxClaimableDays),
               style: theme.textTheme.bodySmall,
             ),
             if ((row.notes ?? '').isNotEmpty)
@@ -397,10 +396,22 @@ class _RecordAbsenceDialogState extends State<_RecordAbsenceDialog> {
                 isDense: true,
               ),
               items: [
-                DropdownMenuItem(value: 'hospital', child: Text(l10n.silAbsenceReasonHospital)),
-                DropdownMenuItem(value: 'family_leave', child: Text(l10n.silAbsenceReasonFamilyLeave)),
-                DropdownMenuItem(value: 'holiday', child: Text(l10n.silAbsenceReasonHoliday)),
-                DropdownMenuItem(value: 'transition', child: Text(l10n.silAbsenceReasonTransition)),
+                DropdownMenuItem(
+                  value: 'hospital',
+                  child: Text(l10n.silAbsenceReasonHospital),
+                ),
+                DropdownMenuItem(
+                  value: 'family_leave',
+                  child: Text(l10n.silAbsenceReasonFamilyLeave),
+                ),
+                DropdownMenuItem(
+                  value: 'holiday',
+                  child: Text(l10n.silAbsenceReasonHoliday),
+                ),
+                DropdownMenuItem(
+                  value: 'transition',
+                  child: Text(l10n.silAbsenceReasonTransition),
+                ),
                 DropdownMenuItem(value: 'other', child: Text(l10n.other)),
               ],
               onChanged: (value) {
@@ -443,10 +454,7 @@ class _RecordAbsenceDialogState extends State<_RecordAbsenceDialog> {
           onPressed: () => Navigator.of(context).pop(null),
           child: Text(l10n.cancel),
         ),
-        FilledButton(
-          onPressed: _submit,
-          child: Text(l10n.save),
-        ),
+        FilledButton(onPressed: _submit, child: Text(l10n.save)),
       ],
     );
   }

@@ -41,6 +41,12 @@ jobs:
       - name: Generate .env from example
         run: cp .env.example .env
 
+      # sync_manager_test.dart imports sync_manager_test.mocks.dart, which
+      # mockito generates and .gitignore excludes. The analyzer resolves
+      # imports at a fresh checkout, so it must run after codegen.
+      - name: Generate mockito mocks
+        run: dart run build_runner build --delete-conflicting-outputs
+
       - name: Run Flutter analyze
         run: flutter analyze --fatal-infos
 

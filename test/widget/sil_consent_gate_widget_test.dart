@@ -1,4 +1,5 @@
-import 'package:carenest/app/core/providers/app_providers.dart' as app_providers;
+import 'package:carenest/app/core/providers/app_providers.dart'
+    as app_providers;
 import 'package:carenest/app/features/client/models/client_model.dart';
 import 'package:carenest/app/features/sil/models/sil_models.dart';
 import 'package:carenest/app/features/sil/repositories/sil_repository.dart';
@@ -16,18 +17,19 @@ class _FakeApiMethod extends ApiMethod {
 
   @override
   Future<Map<String, dynamic>> getSilProperties() async => {
-        'success': true,
-        'data': {'properties': []},
-      };
+    'success': true,
+    'data': {'properties': []},
+  };
 
   @override
   Future<Map<String, dynamic>> getSilQuotes({String? clientId}) async => {
-        'success': true,
-        'data': {'quotes': []},
-      };
+    'success': true,
+    'data': {'quotes': []},
+  };
 
   @override
-  Future<Map<String, dynamic>> getSilRostersOfCare({String? clientId}) async => {
+  Future<Map<String, dynamic>> getSilRostersOfCare({String? clientId}) async =>
+      {
         'success': true,
         'data': {'rostersOfCare': []},
       };
@@ -73,7 +75,8 @@ class _FakeConsentGateSILRepository extends SILRepository {
 
     if (shouldThrowConsent) {
       throw const SILConsentRequiredException(
-        message: 'No active signed Service Agreement exists for this participant.',
+        message:
+            'No active signed Service Agreement exists for this participant.',
         code: 'SERVICE_AGREEMENT_REQUIRED',
       );
     }
@@ -167,7 +170,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // 7. Tap "Emergency Bypass" action button
-      final bypassButton = find.widgetWithText(ElevatedButton, 'Emergency Consent Bypass');
+      final bypassButton = find.widgetWithText(
+        ElevatedButton,
+        'Emergency Consent Bypass',
+      );
       expect(bypassButton, findsOneWidget);
       await tester.tap(bypassButton);
       await tester.pumpAndSettle();

@@ -9,20 +9,23 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('All registered routes can instantiate and produce a non-null widget', () {
-    final routes = AppPages.buildRoutes();
-    expect(routes.isNotEmpty, isTrue);
+  test(
+    'All registered routes can instantiate and produce a non-null widget',
+    () {
+      final routes = AppPages.buildRoutes();
+      expect(routes.isNotEmpty, isTrue);
 
-    // Verify key routes required by user
-    expect(routes.containsKey(Routes.adminRequests), isTrue);
-    expect(routes.containsKey(Routes.assignmentList), isTrue);
-    expect(routes.containsKey(Routes.teamDashboard), isTrue);
-    expect(routes.containsKey(Routes.requests), isTrue);
-    expect(routes.containsKey(Routes.timesheet), isTrue);
-    expect(routes.containsKey(Routes.workforceOptimization), isTrue);
-    expect(routes.containsKey(Routes.revenueForecasting), isTrue);
-    expect(routes.containsKey(Routes.financialCompliance), isTrue);
-  });
+      // Verify key routes required by user
+      expect(routes.containsKey(Routes.adminRequests), isTrue);
+      expect(routes.containsKey(Routes.assignmentList), isTrue);
+      expect(routes.containsKey(Routes.teamDashboard), isTrue);
+      expect(routes.containsKey(Routes.requests), isTrue);
+      expect(routes.containsKey(Routes.timesheet), isTrue);
+      expect(routes.containsKey(Routes.workforceOptimization), isTrue);
+      expect(routes.containsKey(Routes.revenueForecasting), isTrue);
+      expect(routes.containsKey(Routes.financialCompliance), isTrue);
+    },
+  );
 
   final testRoutes = [
     Routes.adminRequests,
@@ -84,7 +87,11 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       final builder = routes[routeName];
-      expect(builder, isNotNull, reason: 'Route $routeName must have a builder');
+      expect(
+        builder,
+        isNotNull,
+        reason: 'Route $routeName must have a builder',
+      );
 
       await tester.pumpWidget(
         ProviderScope(
@@ -102,9 +109,14 @@ void main() {
         ),
       );
 
-      final hasAppBar = find.byType(AppBar).evaluate().isNotEmpty ||
+      final hasAppBar =
+          find.byType(AppBar).evaluate().isNotEmpty ||
           find.byType(SliverAppBar).evaluate().isNotEmpty;
-      expect(hasAppBar, isTrue, reason: 'Route $routeName must render an AppBar');
+      expect(
+        hasAppBar,
+        isTrue,
+        reason: 'Route $routeName must render an AppBar',
+      );
 
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pumpWidget(const SizedBox.shrink());

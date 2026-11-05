@@ -112,9 +112,9 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
     if (entry.shiftId == null) return;
     final l10n = AppLocalizations.of(context)!;
     if (_employees.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.silRosterNoEmployees)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.silRosterNoEmployees)));
       return;
     }
     final selected = await showDialog<Map<String, dynamic>>(
@@ -139,17 +139,25 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
       if (!mounted) return;
       if (response['success'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.silRosterAssignedTo(_employeeLabel(selected)))),
+          SnackBar(
+            content: Text(l10n.silRosterAssignedTo(_employeeLabel(selected))),
+          ),
         );
         await _build();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response['error']?.toString() ?? l10n.silRosterAssignFailed)),
+          SnackBar(
+            content: Text(
+              response['error']?.toString() ?? l10n.silRosterAssignFailed,
+            ),
+          ),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('$e')));
       }
     }
   }
@@ -208,7 +216,8 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
     } catch (e) {
       final errStr = e.toString();
       if (mounted) {
-        if (errStr.contains('RATIO_BREACH') || errStr.toLowerCase().contains('understaffed')) {
+        if (errStr.contains('RATIO_BREACH') ||
+            errStr.toLowerCase().contains('understaffed')) {
           showDialog<void>(
             context: context,
             builder: (ctx) => AlertDialog(
@@ -241,7 +250,9 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
             ),
           );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('$e')));
         }
       }
     }
@@ -275,7 +286,10 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
         ),
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
         actions: [
           if (roster != null && roster.status == 'draft')
@@ -306,16 +320,22 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
                 IconButton(
                   icon: const Icon(Icons.chevron_left),
                   onPressed: () {
-                    setState(() =>
-                        _weekStarting = _weekStarting.subtract(const Duration(days: 7)));
+                    setState(
+                      () => _weekStarting = _weekStarting.subtract(
+                        const Duration(days: 7),
+                      ),
+                    );
                     _load();
                   },
                 ),
                 IconButton(
                   icon: const Icon(Icons.chevron_right),
                   onPressed: () {
-                    setState(() =>
-                        _weekStarting = _weekStarting.add(const Duration(days: 7)));
+                    setState(
+                      () => _weekStarting = _weekStarting.add(
+                        const Duration(days: 7),
+                      ),
+                    );
                     _load();
                   },
                 ),
@@ -330,7 +350,10 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
           if (_error != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              child: Text(
+                _error!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
             ),
           Expanded(
             child: _loading
@@ -358,18 +381,21 @@ class _SILRosterBuilderViewState extends ConsumerState<SILRosterBuilderView> {
                               // onSurface — the default would render
                               // near-white text on the pale error background
                               // in dark mode and become unreadable.
-                              final warnColor =
-                                  Theme.of(context).colorScheme.onErrorContainer;
+                              final warnColor = Theme.of(
+                                context,
+                              ).colorScheme.onErrorContainer;
                               return Padding(
                                 padding: const EdgeInsets.all(12),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(l10n.silRosterWarnings,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: warnColor,
-                                        )),
+                                    Text(
+                                      l10n.silRosterWarnings,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: warnColor,
+                                      ),
+                                    ),
                                     const SizedBox(height: 4),
                                     ...roster.ratioWarnings.map(
                                       (w) => Text(

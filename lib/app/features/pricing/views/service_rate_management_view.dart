@@ -287,9 +287,10 @@ class _ServiceRateManagementViewState
             controller: _searchController,
             decoration: InputDecoration(
               hintText: l10n.searchServiceRatesHint,
-              hintStyle: BauhausDesign.getTextTheme(
-                context,
-              ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              hintStyle: BauhausDesign.getTextTheme(context).bodySmall
+                  ?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
               prefixIcon: Icon(
                 Icons.search,
                 color: Theme.of(context).colorScheme.onSurface,
@@ -484,9 +485,12 @@ class _ServiceRateManagementViewState
                       stat['title'] as String,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      style: BauhausDesign.getTextTheme(context).labelSmall
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),
@@ -544,9 +548,9 @@ class _ServiceRateManagementViewState
       return Center(
         child: Text(
           emptyTitle ?? l10n.moduleNoDataYet,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       );
     }
@@ -589,9 +593,12 @@ class _ServiceRateManagementViewState
                       employee.email,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      style: BauhausDesign.getTextTheme(context).labelSmall
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -667,9 +674,9 @@ class _ServiceRateManagementViewState
       return Center(
         child: Text(
           l10n.moduleNoDataYet,
-          style: BauhausDesign.getTextTheme(
-            context,
-          ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       );
     }

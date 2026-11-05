@@ -786,7 +786,9 @@ class _SubscriptionViewState extends ConsumerState<SubscriptionView> {
                         borderRadius: BorderRadius.zero,
                       ),
                     ),
-                    child: Text(AppLocalizations.of(context)!.resetSubscriptionDev),
+                    child: Text(
+                      AppLocalizations.of(context)!.resetSubscriptionDev,
+                    ),
                   ),
                 ),
               ],

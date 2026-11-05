@@ -187,7 +187,9 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
     if (business.id == null || business.id!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.cannotEditBusinessMissingId),
+          content: Text(
+            AppLocalizations.of(context)!.cannotEditBusinessMissingId,
+          ),
           backgroundColor: BauhausDesign.error,
         ),
       );
@@ -480,7 +482,9 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
     if (business.id == null || business.id!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.cannotDeleteBusinessMissingId),
+          content: Text(
+            AppLocalizations.of(context)!.cannotDeleteBusinessMissingId,
+          ),
           backgroundColor: BauhausDesign.error,
         ),
       );
@@ -664,9 +668,12 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
                     SizedBox(height: BauhausDesign.space1),
                     Text(
                       business.businessEmail,
-                      style: BauhausDesign.getTextTheme(
-                        context,
-                      ).bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      style: BauhausDesign.getTextTheme(context).bodyMedium
+                          ?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),
@@ -740,7 +747,11 @@ class _BusinessListViewState extends ConsumerState<BusinessListView> {
   Widget _buildInfoRow(BuildContext context, IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
+        Icon(
+          icon,
+          size: 16,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
         SizedBox(width: BauhausDesign.space2),
         Expanded(
           child: Text(

@@ -50,11 +50,12 @@ const String kSigningVersionElement = 'carenest:v';
 /// Injected rather than hard-coding ApiMethod so the registration path is
 /// testable without the network, and so a backend change does not require
 /// touching the crypto.
-typedef KeyRegistrationPoster = Future<Map<String, dynamic>> Function(
-  String endpoint,
-  Map<String, dynamic> body,
-  Map<String, String> headers,
-);
+typedef KeyRegistrationPoster =
+    Future<Map<String, dynamic>> Function(
+      String endpoint,
+      Map<String, dynamic> body,
+      Map<String, String> headers,
+    );
 
 class InvoiceSigningService {
   InvoiceSigningService._();
@@ -76,7 +77,8 @@ class InvoiceSigningService {
   static final Set<String> _registeredThisSession = <String>{};
 
   static const String _privateSeedKey = 'carenest.invoice.signing.seed';
-  static const String _registeredKeyPrefix = 'carenest.invoice.signing.registered.';
+  static const String _registeredKeyPrefix =
+      'carenest.invoice.signing.registered.';
 
   /// Endpoint the backend exposes for public-key registration.
   static const String _registerEndpoint = 'invoice-signing/register';
@@ -126,7 +128,10 @@ class InvoiceSigningService {
   ///
   /// Used when the caller already holds the key pair — signing and publishing the
   /// public key must come from the same object, or the signature is unverifiable.
-  static Future<String> signWith(String canonicalForm, Future<SimpleKeyPair> keyPairFuture) async {
+  static Future<String> signWith(
+    String canonicalForm,
+    Future<SimpleKeyPair> keyPairFuture,
+  ) async {
     final keyPair = await keyPairFuture;
     final signature = await _algorithm.sign(
       utf8.encode(canonicalForm),
@@ -245,7 +250,8 @@ class InvoiceSigningService {
       // Comparing the stored key rather than just its presence: a different key
       // under the same key id must be re-registered.
       final cacheKey = '$_registeredKeyPrefix$keyId';
-      final known = _registeredThisSession.contains(cacheKey) ||
+      final known =
+          _registeredThisSession.contains(cacheKey) ||
           (await _storage.read(key: cacheKey)) == pub;
       if (known) return true;
 
@@ -260,7 +266,9 @@ class InvoiceSigningService {
         await _storage.write(key: cacheKey, value: pub);
         return true;
       }
-      debugPrint('Device key registration rejected: ${res['message'] ?? res['error']}');
+      debugPrint(
+        'Device key registration rejected: ${res['message'] ?? res['error']}',
+      );
       return false;
     } catch (e) {
       debugPrint('Device key registration failed: $e');
@@ -334,6 +342,7 @@ class InvoiceSignableItem {
   });
 
   final String code;
+
   /// `yyyy-MM-dd`, already normalised.
   final String date;
   final num hours;

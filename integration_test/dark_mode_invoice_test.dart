@@ -80,7 +80,10 @@ void main() {
       await tester.tap(signInBtn.first, warnIfMissed: false);
     } else {
       print('STATE|btn=${find.byType(BauhausActionButton).evaluate().length}');
-      await tester.tap(find.byType(BauhausActionButton).first, warnIfMissed: false);
+      await tester.tap(
+        find.byType(BauhausActionButton).first,
+        warnIfMissed: false,
+      );
     }
     await pumpFor(tester, 3);
 
@@ -165,15 +168,16 @@ void main() {
     }
 
     final state2 = empNotifier.state;
-    if (state2.employees.isEmpty ||
-        state2.employees.first.clients.isEmpty) {
+    if (state2.employees.isEmpty || state2.employees.first.clients.isEmpty) {
       print('STATE|no clients after fetch');
       debugDumpApp();
       fail('No clients');
     }
 
-    final emp = state2.employees
-        .firstWhere((e) => e.clients.isNotEmpty, orElse: () => state2.employees.first);
+    final emp = state2.employees.firstWhere(
+      (e) => e.clients.isNotEmpty,
+      orElse: () => state2.employees.first,
+    );
     final client = emp.clients.first;
     empNotifier.toggleClientSelection(emp.email, client.id);
     await pumpFor(tester, 2);
@@ -194,9 +198,7 @@ void main() {
     );
     await pumpFor(tester, 25);
 
-    final taxField = find.textContaining(
-      RegExp(r'tax', caseSensitive: false),
-    );
+    final taxField = find.textContaining(RegExp(r'tax', caseSensitive: false));
     print('STATE|taxMatches=${taxField.evaluate().length}');
 
     final ctx3 = tester.element(find.byType(Scaffold).last);

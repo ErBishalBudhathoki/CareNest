@@ -6,8 +6,16 @@ void main() {
     test('is deterministic for the same roster and period', () {
       final from = DateTime(2026, 10, 1);
       final to = DateTime(2026, 10, 31);
-      final a = buildRocInvoiceIdempotencyKey(rocId: 'roc_abc', from: from, to: to);
-      final b = buildRocInvoiceIdempotencyKey(rocId: 'roc_abc', from: from, to: to);
+      final a = buildRocInvoiceIdempotencyKey(
+        rocId: 'roc_abc',
+        from: from,
+        to: to,
+      );
+      final b = buildRocInvoiceIdempotencyKey(
+        rocId: 'roc_abc',
+        from: from,
+        to: to,
+      );
       expect(a, equals(b));
     });
 
@@ -23,11 +31,21 @@ void main() {
     test('differs by roster id and by period', () {
       final from = DateTime(2026, 10, 1);
       final to = DateTime(2026, 10, 7);
-      final base = buildRocInvoiceIdempotencyKey(rocId: 'roc_a', from: from, to: to);
-      final otherRoc =
-          buildRocInvoiceIdempotencyKey(rocId: 'roc_b', from: from, to: to);
-      final otherPeriod =
-          buildRocInvoiceIdempotencyKey(rocId: 'roc_a', from: from, to: DateTime(2026, 10, 8));
+      final base = buildRocInvoiceIdempotencyKey(
+        rocId: 'roc_a',
+        from: from,
+        to: to,
+      );
+      final otherRoc = buildRocInvoiceIdempotencyKey(
+        rocId: 'roc_b',
+        from: from,
+        to: to,
+      );
+      final otherPeriod = buildRocInvoiceIdempotencyKey(
+        rocId: 'roc_a',
+        from: from,
+        to: DateTime(2026, 10, 8),
+      );
       expect(base, isNot(equals(otherRoc)));
       expect(base, isNot(equals(otherPeriod)));
     });

@@ -50,7 +50,12 @@ class _AdminCertificationRequirementsViewState
           color: Theme.of(context).colorScheme.onPrimary,
         ),
         elevation: 0,
-        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showEditDialog(context),
@@ -187,7 +192,9 @@ class _AdminCertificationRequirementsViewState
       context: context,
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context)!.deleteButton),
-        content: Text(AppLocalizations.of(context)!.deleteThisRequirementQuestion),
+        content: Text(
+          AppLocalizations.of(context)!.deleteThisRequirementQuestion,
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),

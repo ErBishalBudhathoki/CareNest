@@ -54,7 +54,9 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
           ),
         ),
         backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
-        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
+        foregroundColor: Theme.of(
+          context,
+        ).colorScheme.onPrimary, // Standardized
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -62,7 +64,12 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
           color: Theme.of(context).colorScheme.onPrimary,
         ),
         elevation: 0,
-        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
       ),
       body: state.isLoading
           ? const Center(
@@ -187,7 +194,9 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
                                       Icons.visibility,
                                       size: 18,
                                     ),
-                                    label: Text(AppLocalizations.of(context)!.viewFile),
+                                    label: Text(
+                                      AppLocalizations.of(context)!.viewFile,
+                                    ),
                                   ),
                                   const SizedBox(width: BauhausDesign.space2),
                                 ],
@@ -195,14 +204,18 @@ class _CertificationsViewState extends ConsumerState<CertificationsView> {
                                   onPressed: () =>
                                       _showEditDialog(context, cert),
                                   icon: const Icon(Icons.edit, size: 18),
-                                  label: Text(AppLocalizations.of(context)!.edit),
+                                  label: Text(
+                                    AppLocalizations.of(context)!.edit,
+                                  ),
                                 ),
                                 const SizedBox(width: BauhausDesign.space2),
                                 TextButton.icon(
                                   onPressed: () =>
                                       _confirmDelete(context, cert),
                                   icon: const Icon(Icons.delete, size: 18),
-                                  label: Text(AppLocalizations.of(context)!.delete),
+                                  label: Text(
+                                    AppLocalizations.of(context)!.delete,
+                                  ),
                                   style: TextButton.styleFrom(
                                     foregroundColor: BauhausDesign.error,
                                   ),

@@ -559,7 +559,9 @@ class _BauhausPricingDashboardViewState
                             style: BauhausDesign.getTextTheme(context)
                                 .labelSmall
                                 ?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                   fontWeight: FontWeight.w700,
                                 ),
                           ),
@@ -704,9 +706,9 @@ class _BauhausPricingDashboardViewState
           else if (changes.isEmpty)
             Text(
               l10n.moduleNoTrackedChanges,
-              style: BauhausDesign.getTextTheme(
-                context,
-              ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             )
           else
             ...changes.map((record) {
@@ -754,7 +756,9 @@ class _BauhausPricingDashboardViewState
                       dateText,
                       style: BauhausDesign.getTextTheme(context).labelSmall
                           ?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w700,
                           ),
                     ),

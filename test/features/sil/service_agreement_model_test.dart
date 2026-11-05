@@ -42,41 +42,44 @@ void main() {
       expect(agreement.notes, 'Participant agreed to weekly room fee.');
     });
 
-    test('normalizes MongoDB _id and nested signedBy and participantContribution structures', () {
-      final json = {
-        '_id': 'mongo_obj_id_999',
-        'organizationId': 'org_test_1',
-        'clientId': {'_id': 'client_bob_nested', 'name': 'Bob'},
-        'propertyId': {'_id': 'prop_sydney'},
-        'quoteId': {'_id': 'quote_88'},
-        'rosterOfCareId': {'_id': 'roc_77'},
-        'agreementNumber': 'SA-2026-002',
-        'status': 'signed',
-        'effectiveFrom': '2026-04-01T00:00:00.000Z',
-        'signedBy': {
-          'name': 'Bob Nominee',
-          'role': 'nominee',
-          'signatureData': 'data:image/png;base64,mockSig',
-          'ipAddress': '192.168.1.1',
-        },
-        'participantContribution': {
-          'boardAndLodgingWeekly': 310.0,
-          'paymentFrequency': 'fortnightly',
-        },
-      };
+    test(
+      'normalizes MongoDB _id and nested signedBy and participantContribution structures',
+      () {
+        final json = {
+          '_id': 'mongo_obj_id_999',
+          'organizationId': 'org_test_1',
+          'clientId': {'_id': 'client_bob_nested', 'name': 'Bob'},
+          'propertyId': {'_id': 'prop_sydney'},
+          'quoteId': {'_id': 'quote_88'},
+          'rosterOfCareId': {'_id': 'roc_77'},
+          'agreementNumber': 'SA-2026-002',
+          'status': 'signed',
+          'effectiveFrom': '2026-04-01T00:00:00.000Z',
+          'signedBy': {
+            'name': 'Bob Nominee',
+            'role': 'nominee',
+            'signatureData': 'data:image/png;base64,mockSig',
+            'ipAddress': '192.168.1.1',
+          },
+          'participantContribution': {
+            'boardAndLodgingWeekly': 310.0,
+            'paymentFrequency': 'fortnightly',
+          },
+        };
 
-      final agreement = SILServiceAgreement.fromJson(json);
+        final agreement = SILServiceAgreement.fromJson(json);
 
-      expect(agreement.id, 'mongo_obj_id_999');
-      expect(agreement.clientId, 'client_bob_nested');
-      expect(agreement.propertyId, 'prop_sydney');
-      expect(agreement.quoteId, 'quote_88');
-      expect(agreement.rosterOfCareId, 'roc_77');
-      expect(agreement.signedByName, 'Bob Nominee');
-      expect(agreement.signedByRole, 'nominee');
-      expect(agreement.boardAndLodgingWeekly, 310.0);
-      expect(agreement.status, 'signed');
-    });
+        expect(agreement.id, 'mongo_obj_id_999');
+        expect(agreement.clientId, 'client_bob_nested');
+        expect(agreement.propertyId, 'prop_sydney');
+        expect(agreement.quoteId, 'quote_88');
+        expect(agreement.rosterOfCareId, 'roc_77');
+        expect(agreement.signedByName, 'Bob Nominee');
+        expect(agreement.signedByRole, 'nominee');
+        expect(agreement.boardAndLodgingWeekly, 310.0);
+        expect(agreement.status, 'signed');
+      },
+    );
 
     test('applies sensible defaults when optional fields are omitted', () {
       final json = {
@@ -100,4 +103,3 @@ void main() {
     });
   });
 }
-

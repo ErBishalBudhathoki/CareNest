@@ -64,7 +64,10 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -445,7 +448,10 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
             width: selected ? 3 : 2,
           ),
           boxShadow: [
-            BoxShadow(color: BauhausDesign.shadowColor, offset: const Offset(0, 2)),
+            BoxShadow(
+              color: BauhausDesign.shadowColor,
+              offset: const Offset(0, 2),
+            ),
           ],
         ),
         child: Column(
@@ -578,9 +584,11 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
       );
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.reportExportFailed)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.reportExportFailed),
+        ),
+      );
     }
   }
 }

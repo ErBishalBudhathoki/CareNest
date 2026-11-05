@@ -83,7 +83,8 @@ class ProfileImageWidget extends StatelessWidget {
         decoration: BoxDecoration(
           shape: shape,
           borderRadius: shape == BoxShape.rectangle ? borderRadius : null,
-          color: surfaceColor ?? Theme.of(context).colorScheme.surfaceContainerLow,
+          color:
+              surfaceColor ?? Theme.of(context).colorScheme.surfaceContainerLow,
           border: Border.all(color: borderColor, width: borderWidth),
           boxShadow: elevation > 0
               ? [

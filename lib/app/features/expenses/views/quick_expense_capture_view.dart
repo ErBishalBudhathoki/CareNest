@@ -217,7 +217,8 @@ class _QuickExpenseCaptureViewState
             child: ElevatedButton(
               onPressed: _navigateToAddExpenseFromState,
               style: ElevatedButton.styleFrom(
-                backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary (amber/yellow)
+                backgroundColor: BauhausDesign
+                    .primary, // Standardized: Bauhaus primary (amber/yellow)
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(0),
                 ),
@@ -396,7 +397,8 @@ class _QuickExpenseCaptureViewState
     final result = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary (amber/yellow)
+      backgroundColor:
+          BauhausDesign.primary, // Standardized: Bauhaus primary (amber/yellow)
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       builder: (ctx) {
         return SafeArea(
@@ -489,7 +491,8 @@ class _QuickExpenseCaptureViewState
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary (amber/yellow)
+      backgroundColor:
+          BauhausDesign.primary, // Standardized: Bauhaus primary (amber/yellow)
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       builder: (ctx) {
         return SafeArea(

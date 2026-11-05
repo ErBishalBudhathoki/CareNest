@@ -569,7 +569,9 @@ class _InvoiceDetailViewState extends ConsumerState<InvoiceDetailView>
             style: BauhausDesign.getTextTheme(context).bodyMedium?.copyWith(
               fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
               fontSize: isTotal ? 16 : 14,
-              color: isTotal ? BauhausDesign.primary : Theme.of(context).colorScheme.onSurfaceVariant,
+              color: isTotal
+                  ? BauhausDesign.primary
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
           Text(

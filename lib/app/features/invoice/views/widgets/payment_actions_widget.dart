@@ -73,7 +73,11 @@ class PaymentActionsWidget extends ConsumerWidget {
                         if (organization == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(AppLocalizations.of(context)!.organizationDataUnavailable),
+                              content: Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.organizationDataUnavailable,
+                              ),
                             ),
                           );
                           return;
@@ -89,7 +93,11 @@ class PaymentActionsWidget extends ConsumerWidget {
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(AppLocalizations.of(context)!.paymentSubmittedSuccessfully),
+                                content: Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.paymentSubmittedSuccessfully,
+                                ),
                               ),
                             );
                           }

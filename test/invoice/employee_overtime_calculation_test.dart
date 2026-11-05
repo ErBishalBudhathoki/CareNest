@@ -52,113 +52,116 @@ class FakeApiMethod extends ApiMethod {
 
 void main() {
   group('Employee Overtime Calculation Test', () {
-    test('processInvoiceData splits a >8h weekday shift into 8h + 2h OT1 + rest OT2', () async {
-      final container = ProviderContainer(
-        overrides: [
-          app_providers.apiMethodProvider.overrideWithValue(FakeApiMethod()),
-        ],
-      );
+    test(
+      'processInvoiceData splits a >8h weekday shift into 8h + 2h OT1 + rest OT2',
+      () async {
+        final container = ProviderContainer(
+          overrides: [
+            app_providers.apiMethodProvider.overrideWithValue(FakeApiMethod()),
+          ],
+        );
 
-      final processor = container.read(invoiceDataProcessorProvider);
+        final processor = container.read(invoiceDataProcessorProvider);
 
-      // Construct assignedClients with a shift of 10.1814 hours
-      final assignedClients = {
-        'clients': [
-          {
-            'clientId': 'client_123',
-            'clientEmail': 'client@example.com',
-            'clientFirstName': 'Client',
-            'clientLastName': 'Name',
-            'workedTimeData': {
-              'success': true,
-              'workedTimes': [
-                {
-                  'actualWorkedTime': 10.1814,
-                  'correspondingSchedule': {
-                    'date': '2026-05-20', // Wednesday
-                    'startTime': '08:00',
-                    'endTime': '18:10', // ~10 hours worked
-                    'ndisItem': {
-                      'itemNumber': '01_011_0107_1_1',
-                      'itemName': 'Assistance with self-care',
-                    },
-                  },
-                },
-              ],
-            },
-            'assignments': [
-              {
-                'clientEmail': 'client@example.com',
-                'userEmail': 'employee@example.com',
-                'schedule': [
+        // Construct assignedClients with a shift of 10.1814 hours
+        final assignedClients = {
+          'clients': [
+            {
+              'clientId': 'client_123',
+              'clientEmail': 'client@example.com',
+              'clientFirstName': 'Client',
+              'clientLastName': 'Name',
+              'workedTimeData': {
+                'success': true,
+                'workedTimes': [
                   {
-                    'date': '2026-05-20',
-                    'startTime': '08:00',
-                    'endTime': '18:10',
-                    'ndisItem': {
-                      'itemNumber': '01_011_0107_1_1',
-                      'itemName': 'Assistance with self-care',
+                    'actualWorkedTime': 10.1814,
+                    'correspondingSchedule': {
+                      'date': '2026-05-20', // Wednesday
+                      'startTime': '08:00',
+                      'endTime': '18:10', // ~10 hours worked
+                      'ndisItem': {
+                        'itemNumber': '01_011_0107_1_1',
+                        'itemName': 'Assistance with self-care',
+                      },
                     },
                   },
                 ],
               },
-            ],
-          },
-        ],
-        'clientDetail': <Map<String, dynamic>>[
-          {
-            'clientEmail': 'client@example.com',
-            'firstName': 'Client',
-            'lastName': 'Name',
-          },
-        ],
-      };
+              'assignments': [
+                {
+                  'clientEmail': 'client@example.com',
+                  'userEmail': 'employee@example.com',
+                  'schedule': [
+                    {
+                      'date': '2026-05-20',
+                      'startTime': '08:00',
+                      'endTime': '18:10',
+                      'ndisItem': {
+                        'itemNumber': '01_011_0107_1_1',
+                        'itemName': 'Assistance with self-care',
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          'clientDetail': <Map<String, dynamic>>[
+            {
+              'clientEmail': 'client@example.com',
+              'firstName': 'Client',
+              'lastName': 'Name',
+            },
+          ],
+        };
 
-      final result = await processor.processInvoiceData(
-        assignedClients: assignedClients,
-        lineItems: [],
-        invoiceType: 'employee',
-      );
-
-      expect(result.containsKey('clients'), isTrue);
-      final clientsResult = result['clients'] as List;
-      expect(clientsResult.length, equals(1));
-
-      final clientData = clientsResult.first as Map<String, dynamic>;
-      expect(clientData.containsKey('items'), isTrue);
-
-      final items = clientData['items'] as List;
-      print('Generated items count: ${items.length}');
-      for (var item in items) {
-        print(
-          'Item: ${item['itemName']}, hours: ${item['hours']}, rate: ${item['rate']}, amount: ${item['amount']}',
+        final result = await processor.processInvoiceData(
+          assignedClients: assignedClients,
+          lineItems: [],
+          invoiceType: 'employee',
         );
-      }
 
-      // Standard weekday: 8h ordinary, first 2h of OT, remainder at OT2.
-      expect(items.length, equals(3));
+        expect(result.containsKey('clients'), isTrue);
+        final clientsResult = result['clients'] as List;
+        expect(clientsResult.length, equals(1));
 
-      final ordinaryItem = items.firstWhere(
-        (i) => i['itemName'] == 'Evening Shift',
-      );
-      expect(ordinaryItem['hours'], equals(8.0));
-      expect(ordinaryItem['rate'], equals(38.75));
-      expect(ordinaryItem['amount'], closeTo(310.0, 0.01));
+        final clientData = clientsResult.first as Map<String, dynamic>;
+        expect(clientData.containsKey('items'), isTrue);
 
-      final overtimeFirst = items.firstWhere(
-        (i) => i['itemName'] == 'Overtime (first 2h)',
-      );
-      expect(overtimeFirst['hours'], equals(2.0));
-      expect(overtimeFirst['rate'], equals(48.22));
-      expect(overtimeFirst['amount'], closeTo(96.44, 0.01));
+        final items = clientData['items'] as List;
+        print('Generated items count: ${items.length}');
+        for (var item in items) {
+          print(
+            'Item: ${item['itemName']}, hours: ${item['hours']}, rate: ${item['rate']}, amount: ${item['amount']}',
+          );
+        }
 
-      final overtimeSecond = items.firstWhere(
-        (i) => i['itemName'] == 'Overtime (>2h)',
-      );
-      expect(overtimeSecond['hours'], closeTo(0.18, 0.01));
-      expect(overtimeSecond['rate'], equals(68.88));
-      expect(overtimeSecond['amount'], closeTo(12.40, 0.05));
-    });
+        // Standard weekday: 8h ordinary, first 2h of OT, remainder at OT2.
+        expect(items.length, equals(3));
+
+        final ordinaryItem = items.firstWhere(
+          (i) => i['itemName'] == 'Evening Shift',
+        );
+        expect(ordinaryItem['hours'], equals(8.0));
+        expect(ordinaryItem['rate'], equals(38.75));
+        expect(ordinaryItem['amount'], closeTo(310.0, 0.01));
+
+        final overtimeFirst = items.firstWhere(
+          (i) => i['itemName'] == 'Overtime (first 2h)',
+        );
+        expect(overtimeFirst['hours'], equals(2.0));
+        expect(overtimeFirst['rate'], equals(48.22));
+        expect(overtimeFirst['amount'], closeTo(96.44, 0.01));
+
+        final overtimeSecond = items.firstWhere(
+          (i) => i['itemName'] == 'Overtime (>2h)',
+        );
+        expect(overtimeSecond['hours'], closeTo(0.18, 0.01));
+        expect(overtimeSecond['rate'], equals(68.88));
+        expect(overtimeSecond['amount'], closeTo(12.40, 0.05));
+      },
+    );
 
     test('weekend shifts are not overtime-split', () async {
       final container = ProviderContainer(
@@ -221,8 +224,7 @@ void main() {
         invoiceType: 'employee',
       );
 
-      final items =
-          (result['clients'] as List).first['items'] as List;
+      final items = (result['clients'] as List).first['items'] as List;
       final overtime = items.where((i) => i['rateSource'] == 'EMP_OVERTIME');
       expect(overtime, isEmpty);
       expect(items, hasLength(1));

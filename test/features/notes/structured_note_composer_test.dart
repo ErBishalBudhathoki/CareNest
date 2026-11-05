@@ -30,12 +30,7 @@ void main() {
         'type': 'checkbox',
         'order': 3,
       },
-      {
-        'key': 'hours',
-        'label': 'Hours',
-        'type': 'number',
-        'order': 4,
-      },
+      {'key': 'hours', 'label': 'Hours', 'type': 'number', 'order': 4},
     ],
   };
 
@@ -45,7 +40,9 @@ void main() {
     home: Scaffold(body: child),
   );
 
-  testWidgets('renders all sections and collects entered values', (tester) async {
+  testWidgets('renders all sections and collects entered values', (
+    tester,
+  ) async {
     Map<String, dynamic>? submitted;
 
     await tester.pumpWidget(

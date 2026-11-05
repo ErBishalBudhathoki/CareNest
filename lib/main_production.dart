@@ -33,7 +33,6 @@ import 'package:carenest/generated/l10n/app_localizations.dart';
 
 // Views
 
-
 // Note: navigation.dart is exported or imported via other files, ensuring we use the same key?
 // No, DeepLinkHandler imports it. main.dart imports DeepLinkHandler.
 // But we need to IMPORT it explicitly here to use it in MaterialApp.
@@ -385,9 +384,7 @@ class MyApp extends ConsumerWidget {
                       )
                     : null,
               ),
-              body: Center(
-                child: Text('Route not found: ${settings.name}'),
-              ),
+              body: Center(child: Text('Route not found: ${settings.name}')),
             ),
           );
         },

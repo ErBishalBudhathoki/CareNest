@@ -44,7 +44,9 @@ class _AdminPayrollExportViewState
       if (!next.isLoading && !next.hasError && prevLoading) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.exportGeneratedSuccessfully),
+            content: Text(
+              AppLocalizations.of(context)!.exportGeneratedSuccessfully,
+            ),
             backgroundColor: BauhausDesign.success,
           ),
         );
@@ -77,7 +79,10 @@ class _AdminPayrollExportViewState
         ),
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
       ),
       body: Padding(

@@ -17,10 +17,7 @@ class MockApiMethod extends ApiMethod {
     String? dueDate,
     String? idempotencyKey,
   }) async {
-    final body = <String, dynamic>{
-      'from': from,
-      'to': to,
-    };
+    final body = <String, dynamic>{'from': from, 'to': to};
     if (dueDate != null) body['dueDate'] = dueDate;
     if (idempotencyKey != null) body['idempotencyKey'] = idempotencyKey;
     lastInvoiceBody = body;
@@ -90,38 +87,53 @@ void main() {
       expect(invoice.billing?.isClaim, isFalse);
     });
 
-    test('SILRepository passes idempotencyKey to API and parses response', () async {
-      final mockApi = MockApiMethod();
-      final repository = SILRepository(mockApi);
+    test(
+      'SILRepository passes idempotencyKey to API and parses response',
+      () async {
+        final mockApi = MockApiMethod();
+        final repository = SILRepository(mockApi);
 
-      final result = await repository.invoiceRosterOfCare(
-        'roc_123',
-        from: '2026-04-01',
-        to: '2026-04-07',
-        idempotencyKey: 'test-idemp-key-xyz',
-      );
+        final result = await repository.invoiceRosterOfCare(
+          'roc_123',
+          from: '2026-04-01',
+          to: '2026-04-07',
+          idempotencyKey: 'test-idemp-key-xyz',
+        );
 
-      expect(mockApi.lastInvoiceBody?['idempotencyKey'], equals('test-idemp-key-xyz'));
-      expect(mockApi.lastInvoiceHeaders?['x-idempotency-key'], equals('test-idemp-key-xyz'));
-      expect(result.invoiceId, equals('inv_sil_777'));
-      expect(result.isIdempotentReplay, isTrue);
-    });
+        expect(
+          mockApi.lastInvoiceBody?['idempotencyKey'],
+          equals('test-idemp-key-xyz'),
+        );
+        expect(
+          mockApi.lastInvoiceHeaders?['x-idempotency-key'],
+          equals('test-idemp-key-xyz'),
+        );
+        expect(result.invoiceId, equals('inv_sil_777'));
+        expect(result.isIdempotentReplay, isTrue);
+      },
+    );
 
-    test('SILRepository calls dispatchInvoice and receives dispatch summary', () async {
-      final mockApi = MockApiMethod();
-      final repository = SILRepository(mockApi);
+    test(
+      'SILRepository calls dispatchInvoice and receives dispatch summary',
+      () async {
+        final mockApi = MockApiMethod();
+        final repository = SILRepository(mockApi);
 
-      final dispatchResult = await repository.dispatchInvoice(
-        'inv_sil_777',
-        dispatchMethod: 'email',
-        recipientEmail: 'pm@myplan.com.au',
-      );
+        final dispatchResult = await repository.dispatchInvoice(
+          'inv_sil_777',
+          dispatchMethod: 'email',
+          recipientEmail: 'pm@myplan.com.au',
+        );
 
-      expect(mockApi.lastDispatchId, equals('inv_sil_777'));
-      expect(mockApi.lastDispatchBody?['recipientEmail'], equals('pm@myplan.com.au'));
-      expect(dispatchResult['status'], equals('sent'));
-      expect(dispatchResult['recipientEmail'], equals('pm@myplan.com.au'));
-      expect(dispatchResult['emailSent'], isTrue);
-    });
+        expect(mockApi.lastDispatchId, equals('inv_sil_777'));
+        expect(
+          mockApi.lastDispatchBody?['recipientEmail'],
+          equals('pm@myplan.com.au'),
+        );
+        expect(dispatchResult['status'], equals('sent'));
+        expect(dispatchResult['recipientEmail'], equals('pm@myplan.com.au'));
+        expect(dispatchResult['emailSent'], isTrue);
+      },
+    );
   });
 }

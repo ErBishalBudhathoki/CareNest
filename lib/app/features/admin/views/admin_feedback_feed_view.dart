@@ -60,7 +60,10 @@ class AdminFeedbackFeedView extends ConsumerWidget {
         actions: [
           IconButton(
             onPressed: () => ref.invalidate(adminFeedbackFeedProvider),
-            icon: Icon(Icons.refresh, color: Theme.of(context).colorScheme.onPrimary),
+            icon: Icon(
+              Icons.refresh,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             tooltip: 'Refresh',
           ),
         ],

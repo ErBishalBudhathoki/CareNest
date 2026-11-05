@@ -88,12 +88,19 @@ class _ServiceConfirmationViewState
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
         backgroundColor: BauhausDesign.primary, // Standardized: Bauhaus primary
-        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Standardized
+        foregroundColor: Theme.of(
+          context,
+        ).colorScheme.onPrimary, // Standardized
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        shape: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 2)),
+        shape: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 2,
+          ),
+        ),
         centerTitle: true,
         title: Text(
           'Service Confirmation',
@@ -111,7 +118,6 @@ class _ServiceConfirmationViewState
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        
       ),
       body: state.isLoading
           ? const Center(

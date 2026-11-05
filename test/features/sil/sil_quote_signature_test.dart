@@ -51,25 +51,30 @@ void main() {
       expect(quote.signature, isNotNull);
       expect(quote.signature!.signedBy, 'Sarah Connor');
       expect(quote.signature!.signatoryRole, 'guardian');
-      expect(quote.signature!.signatureData, 'data:image/png;base64,signatureBytes123');
+      expect(
+        quote.signature!.signatureData,
+        'data:image/png;base64,signatureBytes123',
+      );
       expect(quote.signature!.signedAt, '2026-11-03T10:30:00.000Z');
       expect(quote.signature!.ipAddress, '192.168.1.50');
     });
 
-    test('parses SILQuote without signature gracefully (draft/sent status)', () {
-      final json = {
-        'id': 'quote_m6_02',
-        'clientId': 'client_bob',
-        'status': 'sent',
-      };
+    test(
+      'parses SILQuote without signature gracefully (draft/sent status)',
+      () {
+        final json = {
+          'id': 'quote_m6_02',
+          'clientId': 'client_bob',
+          'status': 'sent',
+        };
 
-      final quote = SILQuote.fromJson(json);
+        final quote = SILQuote.fromJson(json);
 
-      expect(quote.id, 'quote_m6_02');
-      expect(quote.clientId, 'client_bob');
-      expect(quote.status, 'sent');
-      expect(quote.signature, isNull);
-    });
+        expect(quote.id, 'quote_m6_02');
+        expect(quote.clientId, 'client_bob');
+        expect(quote.status, 'sent');
+        expect(quote.signature, isNull);
+      },
+    );
   });
 }
-

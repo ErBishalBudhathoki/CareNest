@@ -126,7 +126,10 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
                 children: [
                   if (_board != null) _buildSummary(context, _board!),
                   const SizedBox(height: 16),
-                  Text(l10n.silPropertyRooms, style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    l10n.silPropertyRooms,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 8),
                   ..._buildRooms(context, _board),
                 ],
@@ -171,7 +174,9 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
       return [Text(AppLocalizations.of(context)!.silPropertyNoRooms)];
     }
     return board.rooms.map((room) {
-      final occupancy = _occupancy.where((o) => o.roomId == room.roomId).toList();
+      final occupancy = _occupancy
+          .where((o) => o.roomId == room.roomId)
+          .toList();
       final occupied = occupancy.isNotEmpty;
       return Card(
         child: ListTile(
@@ -202,7 +207,9 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
                     ),
                     TextButton(
                       onPressed: () => _endOccupancy(occupancy.first),
-                      child: Text(AppLocalizations.of(context)!.silPropertyVacate),
+                      child: Text(
+                        AppLocalizations.of(context)!.silPropertyVacate,
+                      ),
                     ),
                   ],
                 )
@@ -234,7 +241,9 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
       await _load();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('$e')));
       }
     }
   }
@@ -242,19 +251,23 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
   Future<void> _showCreateOccupancyDialog() async {
     final l10n = AppLocalizations.of(context)!;
     if (_clients.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.silPropertyNoClients)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.silPropertyNoClients)));
       return;
     }
-    String? clientId = _clients.firstWhere((c) => c.id != null, orElse: () => _clients.first).id;
-    final vacantRooms = (_board?.rooms ?? []).where((r) => !r.occupied).toList();
+    String? clientId = _clients
+        .firstWhere((c) => c.id != null, orElse: () => _clients.first)
+        .id;
+    final vacantRooms = (_board?.rooms ?? [])
+        .where((r) => !r.occupied)
+        .toList();
     String? roomId = vacantRooms.isNotEmpty ? vacantRooms.first.roomId : null;
 
     if (vacantRooms.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.silPropertyNoVacantRooms)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.silPropertyNoVacantRooms)));
       return;
     }
 
@@ -271,25 +284,32 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
                 decoration: InputDecoration(labelText: l10n.client),
                 items: _clients
                     .where((c) => c.id != null)
-                    .map((c) => DropdownMenuItem(
-                          value: c.id,
-                          child: Text(
-                            c.clientName ??
-                                '${c.clientFirstName ?? ''} ${c.clientLastName ?? ''}'.trim(),
-                          ),
-                        ))
+                    .map(
+                      (c) => DropdownMenuItem(
+                        value: c.id,
+                        child: Text(
+                          c.clientName ??
+                              '${c.clientFirstName ?? ''} ${c.clientLastName ?? ''}'
+                                  .trim(),
+                        ),
+                      ),
+                    )
                     .toList(),
                 onChanged: (v) => setState(() => clientId = v),
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 initialValue: roomId,
-                decoration: InputDecoration(labelText: l10n.silPropertyRoomLabel),
+                decoration: InputDecoration(
+                  labelText: l10n.silPropertyRoomLabel,
+                ),
                 items: vacantRooms
-                    .map((r) => DropdownMenuItem(
-                          value: r.roomId,
-                          child: Text(r.label.isNotEmpty ? r.label : r.roomId),
-                        ))
+                    .map(
+                      (r) => DropdownMenuItem(
+                        value: r.roomId,
+                        child: Text(r.label.isNotEmpty ? r.label : r.roomId),
+                      ),
+                    )
                     .toList(),
                 onChanged: (v) => setState(() => roomId = v),
               ),
@@ -308,11 +328,13 @@ class _SILPropertyDetailViewState extends ConsumerState<SILPropertyDetailView> {
                     'roomId': roomId,
                     'clientId': clientId,
                   });
-                  if (dialogContext.mounted) Navigator.of(dialogContext).pop(true);
+                  if (dialogContext.mounted)
+                    Navigator.of(dialogContext).pop(true);
                 } catch (e) {
                   if (dialogContext.mounted) {
-                    ScaffoldMessenger.of(dialogContext)
-                        .showSnackBar(SnackBar(content: Text('$e')));
+                    ScaffoldMessenger.of(
+                      dialogContext,
+                    ).showSnackBar(SnackBar(content: Text('$e')));
                   }
                 }
               },

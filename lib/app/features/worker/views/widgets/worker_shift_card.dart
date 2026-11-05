@@ -100,17 +100,27 @@ class WorkerShiftCard extends StatelessWidget {
                   const SizedBox(height: 12),
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.amber.shade100,
-                      border: Border.all(color: Colors.amber.shade800, width: 1.5),
+                      border: Border.all(
+                        color: Colors.amber.shade800,
+                        width: 1.5,
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.warning_amber_rounded, size: 16, color: Colors.amber.shade900),
+                            Icon(
+                              Icons.warning_amber_rounded,
+                              size: 16,
+                              color: Colors.amber.shade900,
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               'IRREGULAR SIL / CRISIS STAFFING',
@@ -127,7 +137,10 @@ class WorkerShiftCard extends StatelessWidget {
                           const SizedBox(height: 4),
                           Text(
                             shift.crisisJustificationNotes!,
-                            style: TextStyle(fontSize: 11, color: Colors.amber.shade900),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.amber.shade900,
+                            ),
                           ),
                         ],
                       ],

@@ -148,7 +148,9 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
     if (_userEmail == null || _userEmail!.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.userEmailNotFound)),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.userEmailNotFound),
+          ),
         );
       }
       return;
@@ -166,7 +168,9 @@ class _ShiftExchangeViewState extends ConsumerState<ShiftExchangeView>
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context)!.shiftClaimedWaitingApproval),
+              content: Text(
+                AppLocalizations.of(context)!.shiftClaimedWaitingApproval,
+              ),
             ),
           );
           _loadData();

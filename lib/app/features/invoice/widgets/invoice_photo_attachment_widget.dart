@@ -281,9 +281,9 @@ class _InvoicePhotoAttachmentWidgetState
       ),
       subtitle: Text(
         subtitle,
-        style: BauhausDesign.getTextTheme(
-          context,
-        ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
       ),
       onTap: onTap,
     );

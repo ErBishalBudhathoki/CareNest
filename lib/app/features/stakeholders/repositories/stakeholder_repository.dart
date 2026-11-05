@@ -72,8 +72,10 @@ class StakeholderRepository {
   }
 
   Future<void> unlinkStakeholder(String clientId, String stakeholderId) async {
-    final response =
-        await _apiMethod.unlinkClientStakeholder(clientId, stakeholderId);
+    final response = await _apiMethod.unlinkClientStakeholder(
+      clientId,
+      stakeholderId,
+    );
     _ensureSuccess(response, 'Failed to unlink stakeholder');
   }
 

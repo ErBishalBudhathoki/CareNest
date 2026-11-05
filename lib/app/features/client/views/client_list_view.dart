@@ -1388,7 +1388,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     if (client.id == null || client.id!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.cannotDeleteClientMissingId),
+          content: Text(
+            AppLocalizations.of(context)!.cannotDeleteClientMissingId,
+          ),
           backgroundColor: BauhausDesign.error,
         ),
       );
@@ -1444,7 +1446,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     if (client.id == null || client.id!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.cannotRestoreClientMissingId),
+          content: Text(
+            AppLocalizations.of(context)!.cannotRestoreClientMissingId,
+          ),
           backgroundColor: BauhausDesign.error,
         ),
       );
@@ -2147,7 +2151,11 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     if (clientId == null || clientId.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.clientIdMissingUnableToOpenFamilyAccess),
+          content: Text(
+            AppLocalizations.of(
+              context,
+            )!.clientIdMissingUnableToOpenFamilyAccess,
+          ),
           backgroundColor: BauhausDesign.error,
         ),
       );
@@ -2169,7 +2177,9 @@ class _ClientListViewState extends ConsumerState<ClientListView> {
     if (clientId == null || clientId.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.clientIdMissingUnableToOpenCareTeam),
+          content: Text(
+            AppLocalizations.of(context)!.clientIdMissingUnableToOpenCareTeam,
+          ),
           backgroundColor: BauhausDesign.error,
         ),
       );

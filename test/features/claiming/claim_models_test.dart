@@ -10,7 +10,10 @@ void main() {
       'fundingType': 'ndia_managed',
       'registrationNumber': '405000123',
       'abn': '12345678901',
-      'period': {'from': '2026-04-01T00:00:00.000Z', 'to': '2026-04-30T00:00:00.000Z'},
+      'period': {
+        'from': '2026-04-01T00:00:00.000Z',
+        'to': '2026-04-30T00:00:00.000Z',
+      },
       'totals': {'lines': 3, 'amount': 1234.56},
     });
 

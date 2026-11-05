@@ -661,11 +661,14 @@ class _EmployeeInvoiceGenerationViewState
                 fontWeight: FontWeight.w800,
               ),
             ),
-            if (widget.organizationName != null && widget.organizationName!.isNotEmpty)
+            if (widget.organizationName != null &&
+                widget.organizationName!.isNotEmpty)
               Text(
                 widget.organizationName!,
                 style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.85),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onPrimary.withValues(alpha: 0.85),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -686,7 +689,10 @@ class _EmployeeInvoiceGenerationViewState
         ),
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onPrimary),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
       ),
       body: _isLoadingEmployees

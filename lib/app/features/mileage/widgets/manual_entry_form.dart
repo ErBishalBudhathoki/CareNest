@@ -92,9 +92,9 @@ class ManualEntryForm extends StatelessWidget {
         if (clients.isEmpty)
           Text(
             'No assigned clients found for this account.',
-            style: BauhausDesign.getTextTheme(
-              context,
-            ).bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            style: BauhausDesign.getTextTheme(context).bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           )
         else
           DropdownButtonFormField<String>(

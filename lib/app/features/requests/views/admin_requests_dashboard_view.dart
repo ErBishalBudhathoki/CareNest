@@ -245,7 +245,9 @@ class _AdminRequestsDashboardViewState
                       ),
                       Text(
                         request.createdAt != null
-                            ? DateFormat('dd/MM/yyyy').format(request.createdAt!)
+                            ? DateFormat(
+                                'dd/MM/yyyy',
+                              ).format(request.createdAt!)
                             : '',
                         style: BauhausDesign.getTextTheme(context).labelSmall
                             ?.copyWith(
