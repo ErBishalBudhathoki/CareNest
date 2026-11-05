@@ -179,16 +179,9 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
           ),
         ),
         const SizedBox(height: 16),
-        Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            boxShadow: [
-              BoxShadow(
-                color: BauhausDesign.shadowColor,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
+        Material(
+          color: Theme.of(context).colorScheme.surface,
+          elevation: 2,
           child: Column(
             children: metrics.map((metric) {
               final name = metric['name'] as String;
@@ -248,16 +241,9 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
           ),
         ),
         const SizedBox(height: 16),
-        Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            boxShadow: [
-              BoxShadow(
-                color: BauhausDesign.shadowColor,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
+        Material(
+          color: Theme.of(context).colorScheme.surface,
+          elevation: 2,
           child: RadioGroup<String>(
             groupValue: _selectedFormat,
             onChanged: (value) {
@@ -307,16 +293,9 @@ class _ReportBuilderViewState extends ConsumerState<ReportBuilderView> {
           ),
         ),
         const SizedBox(height: 16),
-        Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            boxShadow: [
-              BoxShadow(
-                color: BauhausDesign.shadowColor,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
+        Material(
+          color: Theme.of(context).colorScheme.surface,
+          elevation: 2,
           child: RadioGroup<String>(
             groupValue: _selectedPeriod,
             onChanged: (value) {

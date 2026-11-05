@@ -31,7 +31,8 @@ class PdfViewPage extends StatefulWidget {
 }
 
 class _PdfViewPageState extends State<PdfViewPage> {
-  late PdfControllerPinch _pdfController;
+  PdfControllerPinch? _pdfController;
+  String? _pdfError;
   bool _isSharing = false;
   bool _isDownloading = false;
   bool _isOpeningReceipt = false;
@@ -45,15 +46,34 @@ class _PdfViewPageState extends State<PdfViewPage> {
       '📄 PdfViewPage: Receipt URLs count: ${widget.receiptUrls.length}',
     );
     debugPrint('📄 PdfViewPage: Receipt URLs: ${widget.receiptUrls}');
+    _openPdf();
+  }
 
-    _pdfController = PdfControllerPinch(
-      document: PdfDocument.openFile(widget.pdfPath),
-    );
+  Future<void> _openPdf() async {
+    try {
+      final document = await PdfDocument.openFile(widget.pdfPath);
+      if (!mounted) {
+        await document.close();
+        return;
+      }
+      setState(() {
+        _pdfController = PdfControllerPinch(
+          document: Future<PdfDocument>.value(document),
+        );
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _pdfError = e is PlatformNotSupportedException
+            ? 'PDF viewing is not supported on this device or platform.'
+            : 'Could not load this PDF.';
+      });
+    }
   }
 
   @override
   void dispose() {
-    _pdfController.dispose();
+    _pdfController?.dispose();
     super.dispose();
   }
 
@@ -386,6 +406,7 @@ class _PdfViewPageState extends State<PdfViewPage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final pdfController = _pdfController;
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
@@ -514,83 +535,111 @@ class _PdfViewPageState extends State<PdfViewPage> {
                     tooltip: 'Download PDF',
                   ),
           ),
-          PdfPageNumber(
-            controller: _pdfController,
-            builder: (_, loadingState, page, pagesCount) => Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.symmetric(
-                horizontal: BauhausDesign.space3,
-                vertical: 8, // Adjust vertical padding for app bar alignment
-              ),
-              padding: EdgeInsets.symmetric(
-                horizontal: BauhausDesign.space3,
-                vertical: BauhausDesign.space1,
-              ),
-              decoration: BoxDecoration(
-                color: colorScheme.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
-                border: Border.all(
-                  color: colorScheme.primary.withValues(alpha: 0.3),
-                  width: 1,
+          if (_pdfController != null)
+            PdfPageNumber(
+              controller: _pdfController!,
+              builder: (_, loadingState, page, pagesCount) => Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.symmetric(
+                  horizontal: BauhausDesign.space3,
+                  vertical: 8, // Adjust vertical padding for app bar alignment
                 ),
-              ),
-              child: Text(
-                '$page/${pagesCount ?? 0}',
-                style: BauhausDesign.getTextTheme(context).labelLarge?.copyWith(
-                  color: colorScheme.primary,
-                  fontWeight: FontWeight.w600,
+                padding: EdgeInsets.symmetric(
+                  horizontal: BauhausDesign.space3,
+                  vertical: BauhausDesign.space1,
+                ),
+                decoration: BoxDecoration(
+                  color: colorScheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(BauhausDesign.radiusMd),
+                  border: Border.all(
+                    color: colorScheme.primary.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  '$page/${pagesCount ?? 0}',
+                  style: BauhausDesign.getTextTheme(context).labelLarge
+                      ?.copyWith(
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               ),
             ),
-          ),
         ],
       ),
-      body: PdfViewPinch(
-        controller: _pdfController,
-        onDocumentError: (error) {
-          debugPrint('PDF Viewer Error: $error');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error loading PDF: $error'),
-              backgroundColor: colorScheme.error,
-              duration: const Duration(seconds: 5),
+      body: pdfController == null
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _pdfError == null
+                          ? Icons.picture_as_pdf_outlined
+                          : Icons.error_outline,
+                      size: 56,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      _pdfError ?? 'Loading PDF…',
+                      textAlign: TextAlign.center,
+                      style: BauhausDesign.getTextTheme(context).bodyLarge,
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : PdfViewPinch(
+              controller: pdfController,
+              onDocumentError: (error) {
+                debugPrint('PDF Viewer Error: $error');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error loading PDF: $error'),
+                    backgroundColor: colorScheme.error,
+                    duration: const Duration(seconds: 5),
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          FloatingActionButton(
-            heroTag: '-',
-            backgroundColor: colorScheme.surface,
-            foregroundColor: colorScheme.primary,
-            elevation: 2,
-            child: const Icon(Icons.keyboard_arrow_left, size: 28),
-            onPressed: () {
-              _pdfController.previousPage(
-                curve: Curves.ease,
-                duration: const Duration(milliseconds: 100),
-              );
-            },
-          ),
-          SizedBox(width: BauhausDesign.space4),
-          FloatingActionButton(
-            heroTag: '+',
-            backgroundColor: colorScheme.surface,
-            foregroundColor: colorScheme.primary,
-            elevation: 2,
-            child: const Icon(Icons.keyboard_arrow_right, size: 28),
-            onPressed: () {
-              _pdfController.nextPage(
-                curve: Curves.ease,
-                duration: const Duration(milliseconds: 100),
-              );
-            },
-          ),
-        ],
-      ),
+      floatingActionButton: pdfController == null
+          ? null
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                FloatingActionButton(
+                  heroTag: '-',
+                  backgroundColor: colorScheme.surface,
+                  foregroundColor: colorScheme.primary,
+                  elevation: 2,
+                  child: const Icon(Icons.keyboard_arrow_left, size: 28),
+                  onPressed: () {
+                    pdfController.previousPage(
+                      curve: Curves.ease,
+                      duration: const Duration(milliseconds: 100),
+                    );
+                  },
+                ),
+                SizedBox(width: BauhausDesign.space4),
+                FloatingActionButton(
+                  heroTag: '+',
+                  backgroundColor: colorScheme.surface,
+                  foregroundColor: colorScheme.primary,
+                  elevation: 2,
+                  child: const Icon(Icons.keyboard_arrow_right, size: 28),
+                  onPressed: () {
+                    pdfController.nextPage(
+                      curve: Curves.ease,
+                      duration: const Duration(milliseconds: 100),
+                    );
+                  },
+                ),
+              ],
+            ),
     );
   }
 }
