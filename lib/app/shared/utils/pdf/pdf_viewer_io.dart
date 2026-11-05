@@ -51,6 +51,14 @@ class _PdfViewPageState extends State<PdfViewPage> {
 
   Future<void> _openPdf() async {
     try {
+      if (!await hasPdfSupport()) {
+        if (!mounted) return;
+        setState(() {
+          _pdfError =
+              'PDF viewing is not supported on this device or platform.';
+        });
+        return;
+      }
       final document = await PdfDocument.openFile(widget.pdfPath);
       if (!mounted) {
         await document.close();
