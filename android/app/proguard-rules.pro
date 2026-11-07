@@ -1,4 +1,41 @@
+# ---------------------------------------------------------------------------
+# R8 / reflection attributes (release build has minifyEnabled + shrinkResources).
+# Without these, R8 strips generic signatures, annotations and inner-class
+# metadata that Firebase Auth, Play Integrity, Stripe and Kotlin reflection read
+# at runtime. Failures only appear in the signed release build, never in debug.
+#
+# Dart json_serializable / freezed / hive models are AOT-compiled Dart and are
+# NOT touched by R8; the reflection-sensitive models here are the NATIVE SDK
+# ones below.
+# ---------------------------------------------------------------------------
+-keepattributes *Annotation*
+-keepattributes Signature
+-keepattributes InnerClasses
+-keepattributes EnclosingMethod
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
+
 -keep class kotlin.Metadata { *; }
+-keepclassmembers class kotlin.Metadata { public <methods>; }
+-keepclassmembers class **$WhenMappings { <fields>; }
+-keepclassmembers class **$Companion { <methods>; }
+-keepclassmembers class * {
+    @androidx.annotation.Keep <fields>;
+    @androidx.annotation.Keep <methods>;
+}
+
+# Flutter engine / JNI lookup + generated plugin registrant.
+-keep class io.flutter.** { *; }
+-keep class io.flutter.plugins.** { *; }
+-keep class com.dexterous.flutterlocalnotifications.** { *; }
+
+# Play Integrity (com.google.android.play.core is NOT under gms/firebase).
+-keep class com.google.android.play.core.integrity.** { *; }
+-dontwarn com.google.android.play.core.integrity.**
+
+# Native MethodChannel payload helpers live in the app package; keep field and
+# method names so channel arguments survive obfuscation.
+-keep class com.bishal.invoice.** { *; }
 
 # Firebase rules
 -keep class com.google.firebase.** { *; }

@@ -150,6 +150,18 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     }
   }
 
+  /// Admin <-> Employee is a VIEW-MODE switch only.
+  ///
+  /// This method (and _openAdminDashboardMode) changes ONLY the navigation
+  /// arguments consumed by the bottom nav bar. It does not call setRole(), does
+  /// not reissue the Firebase/JWT credential, and does not change the
+  /// server-side role or organisation membership. Consequently it must never
+  /// be treated as an authorization boundary: every admin-only API is enforced
+  /// server-side from the verified token and the resolved organisation
+  /// membership (see backend/middleware/adminSurface.js). The route guard in
+  /// AppPages reads the cached login role, which this switch deliberately
+  /// leaves untouched — an admin viewing the employee dashboard is still an
+  /// admin to both the app and the API.
   Future<void> _openEmployeeDashboardMode() async {
     if (!mounted) return;
 

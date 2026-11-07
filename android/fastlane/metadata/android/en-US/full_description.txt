@@ -1,0 +1,52 @@
+CareNest brings the entire NDIS care operation into one place — scheduling, service delivery, invoicing and claiming — so providers spend less time on administration and more time on care.
+
+Built for Australian NDIS providers, support coordinators, plan managers, support workers and the participants and families they serve.
+
+ONE CLEAR VIEW OF YOUR BUSINESS
+• A live business overview of active clients, staff, invoices and requests
+• Manage multiple organisations with organisation-scoped data
+• Role-based access, so admins, workers, participants and families each see what they need
+• A dedicated Configuration & Finance area for the financial tools only administrators should use
+
+SCHEDULE CARE WITH CONFIDENCE
+• Assign shifts to the right support worker and confirm the booking
+• Recurring schedules, assignment details and shift notes
+• Real-time schedule updates and push notifications
+• Geofenced clock-in reminders — never silent location tracking
+
+NDIS-READY BILLING, END TO END
+• Generate client and employee invoices from actual worked time
+• NDIS support-item pricing with price caps, region rules and price-guide support
+• Review every line against the current NDIS cap before it is billed
+• SIL Rosters of Care, SIL invoice generation and NDIS claiming in dedicated admin workflows
+• myplace-ready bulk payment request (BPR) exports
+• Standard invoicing and SIL claiming are kept separate, so the same hours are never billed twice
+• Bulk invoice generation, PDF invoices, email delivery and payment records
+• Idempotent generation: a retry never produces a duplicate invoice or claim batch
+
+A WORKSPACE YOUR TEAM WILL ACTUALLY USE
+• Clock in and out, with timesheets, weekly targets and daily breakdowns
+• Leave insights, shift history and your own payslips
+• Mileage and expense tracking with reports
+• Training and compliance records with expiry tracking
+• Secure messaging between workers, participants and families
+• An offline queue that syncs when connectivity returns
+• A hands-free voice assistant for common navigation
+• Pay rates, certification requirements and team coordination tools
+
+FOR PARTICIPANTS AND FAMILIES
+• A dedicated client portal with appointments and service history
+• View, approve or dispute invoices
+• Family access with a clear, granular permission matrix
+• Secure messaging and feedback, without exposing other participants' data
+
+SECURITY YOU CAN AUDIT
+• Firebase authentication with email verification
+• Firebase App Check attestation on API requests
+• Tenant-scoped data access and server-verified role checks
+• Financial configuration and claiming restricted to administrator roles
+
+WHO IT IS FOR
+NDIS service providers · disability support workers · support coordinators · plan managers · allied health professionals · care organisation administrators
+
+CareNest replaces the spreadsheet, the whiteboard and the inbox with one reliable system. Give your team the clarity to focus on care.

@@ -1,6 +1,7 @@
 import 'package:carenest/app/features/Appointment/views/schedule_assignment.dart';
 import 'package:carenest/app/features/Appointment/views/select_employee_view.dart';
 import 'package:carenest/app/features/admin/views/admin_dashboard_view.dart';
+import 'package:carenest/app/features/auth/models/user_role.dart';
 import 'package:carenest/app/features/client/views/client_list_view.dart';
 import 'package:carenest/app/features/invoice/views/invoice_list_view.dart';
 import 'package:carenest/app/features/notifications/views/notification_list_view.dart';
@@ -23,6 +24,31 @@ class VoiceAssistantView extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<VoiceAssistantView> createState() => _VoiceAssistantViewState();
+}
+
+/// Voice commands that open an admin-only surface. `_openSuggestedRoute`
+/// builds these destinations with a direct MaterialPageRoute push, which
+/// bypasses AppPages.guardAdminRoute entirely (that guard only wraps named
+/// routes). Without this check an Employee/Client who deep-links into the
+/// voice assistant could reach Invoice Operations / Configuration & Finance
+/// widgets. Backend RBAC still refuses the API calls — this is the UI-side
+/// defence-in-depth half. `notification_center` is intentionally excluded.
+const Set<String> adminOnlyVoiceRoutes = {
+  'client_list',
+  'invoice_list',
+  'schedule_dashboard',
+  'assign_c2e',
+  'assignment_schedule',
+  'admin_dashboard',
+};
+
+/// Pure decision helper so the bypass can be asserted in a unit test without
+/// pumping the speech-to-text plugin. Owner/manager roles resolve to
+/// UserRole.admin (see UserRoleResolver), matching backend ADMIN_ROLE_TAGS.
+bool isVoiceDestinationAllowed(String? suggestedRoute, UserRole? role) {
+  if (suggestedRoute == null || suggestedRoute.isEmpty) return false;
+  if (!adminOnlyVoiceRoutes.contains(suggestedRoute)) return true;
+  return role == UserRole.admin;
 }
 
 class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
@@ -161,6 +187,13 @@ class _VoiceAssistantViewState extends ConsumerState<VoiceAssistantView> {
         : const <String, dynamic>{};
 
     await _prefs.init();
+    if (!isVoiceDestinationAllowed(suggestedRoute, _prefs.getRole())) {
+      _showSnackBar(
+        'This action is available to administrators only.',
+        isError: true,
+      );
+      return;
+    }
     final organizationId = _prefs.getOrganizationId() ?? '';
     final userEmail = await _prefs.getUserEmailFromSharedPreferences() ?? '';
 

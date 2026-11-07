@@ -1,0 +1,20 @@
+appId: ${APP_ID}
+name: Shared login subflow (role supplied by caller)
+# ---------------------------------------------------------------------------
+# Reusable login. Callers supply MAESTRO_LOGIN_USER / MAESTRO_LOGIN_PASS via
+# runFlow env so no credential is ever stored in a flow file.
+# Prerequisite: caller must have launched the app with clearState: true.
+---
+- extendedWaitUntil:
+    visible: ".*email.*|.*Login.*|.*Sign [Ii]n.*"
+    timeout: 20000
+- tapOn: "Enter your email"
+- eraseText: 60
+- inputText: ${MAESTRO_LOGIN_USER}
+- tapOn: "Enter your password"
+- eraseText: 60
+- inputText: ${MAESTRO_LOGIN_PASS}
+- hideKeyboard
+- tapOn: ".*Sign [Ii]n.*"
+- waitForAnimationToEnd:
+    timeout: 15000

@@ -15,13 +15,29 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## Android
 
+### android verify_version_code
+
+```sh
+[bundle exec] fastlane android verify_version_code
+```
+
+Fail unless this build's versionCode is strictly higher than every Google Play track
+
+### android verify_store_metadata
+
+```sh
+[bundle exec] fastlane android verify_store_metadata
+```
+
+Validate Play listing metadata and screenshots without uploading anything
+
 ### android increment_version_code
 
 ```sh
 [bundle exec] fastlane android increment_version_code
 ```
 
-Increment version code
+Increment the build number in pubspec.yaml (the source of truth for Flutter)
 
 ### android capture_screenshots
 
@@ -45,7 +61,7 @@ Deploy development build to internal testing
 [bundle exec] fastlane android deploy_production
 ```
 
-Deploy production build to production track
+Deploy production build to production track (DISABLED - use promote lane)
 
 ### android deploy_internal
 
@@ -61,7 +77,7 @@ Deploy internal build to internal testing
 [bundle exec] fastlane android upload_internal_aab
 ```
 
-Upload existing production AAB to internal testing
+Upload existing production AAB to internal testing (CI path)
 
 ### android upload_production_aab
 
@@ -69,7 +85,15 @@ Upload existing production AAB to internal testing
 [bundle exec] fastlane android upload_production_aab
 ```
 
-Upload existing production AAB to production track
+Upload existing production AAB to production track (DISABLED)
+
+### android promote_internal_to_production
+
+```sh
+[bundle exec] fastlane android promote_internal_to_production
+```
+
+Promote a TESTED internal release to production with listing metadata and screenshots
 
 ----
 

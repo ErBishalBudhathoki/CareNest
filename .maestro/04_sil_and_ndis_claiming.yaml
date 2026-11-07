@@ -1,0 +1,79 @@
+appId: ${APP_ID}
+name: 04 - Configuration & Finance / SIL Management / NDIS Claiming
+# ---------------------------------------------------------------------------
+# Falsification goal: SIL management is reachable only from Configuration &
+# Finance, both the SIL and NDIS claiming screens open, and the SIL surface
+# exposes properties/rosters rather than standard invoice actions.
+#
+# Selector contract (verified against `maestro hierarchy` on the dev build):
+#  * Category headers render uppercase titles, e.g.
+#      "13 ACTIONS\nCONFIGURATION & FINANCE"
+#  * Tapping the header EXPANDS the category, but the actions render BELOW
+#    the fold — the original revision asserted immediately after the tap and
+#    failed. After expanding, each action must be scrolled into view before
+#    it is asserted or tapped.
+#  * Claim GENERATION is deliberately not driven from E2E: it mutates shared
+#    dev data and depends on a published SIL roster with a billable period.
+#    Batch idempotency and BPR export are covered by the backend suites
+#    (see RELEASE_READINESS_AUDIT.md Phase 2 evidence).
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: 00_login.yaml
+    env:
+      MAESTRO_LOGIN_USER: ${MAESTRO_ADMIN_USER}
+      MAESTRO_LOGIN_PASS: ${MAESTRO_ADMIN_PASS}
+- extendedWaitUntil:
+    visible: ".*Business Overview.*|.*Command Desk.*"
+    timeout: 60000
+- waitForAnimationToEnd
+
+# --- Expand Configuration & Finance ----------------------------------------
+- scrollUntilVisible:
+    element:
+      text: ".*CONFIGURATION & FINANCE.*"
+    direction: DOWN
+    timeout: 40000
+    visibilityPercentage: 40
+- tapOn: ".*CONFIGURATION & FINANCE.*"
+- scrollUntilVisible:
+    element:
+      text: ".*SIL Management.*Supported independent living.*"
+    direction: DOWN
+    timeout: 30000
+    visibilityPercentage: 30
+- assertVisible: ".*SIL Management.*"
+- scrollUntilVisible:
+    element:
+      text: ".*NDIS Claiming.*"
+    direction: DOWN
+    timeout: 30000
+    visibilityPercentage: 30
+- assertVisible: ".*NDIS Claiming.*"
+- takeScreenshot: 04_01_configuration_and_finance
+
+# --- SIL Management screen loads --------------------------------------------
+- tapOn: ".*SIL Management.*Supported independent living.*"
+- extendedWaitUntil:
+    visible: ".*Rosters of Care.*"
+    timeout: 30000
+- assertVisible: ".*Properties.*"
+- assertVisible: ".*Quotes.*"
+- assertVisible: ".*Rosters of Care.*"
+- takeScreenshot: 04_02_sil_management
+
+# --- NDIS Claiming screen loads ---------------------------------------------
+- back
+- scrollUntilVisible:
+    element:
+      text: ".*NDIS Claiming.*"
+    direction: DOWN
+    timeout: 40000
+    visibilityPercentage: 30
+- tapOn: ".*NDIS Claiming.*"
+- extendedWaitUntil:
+    visible: ".*Pick period & generate.*"
+    timeout: 30000
+- assertVisible: ".*Batches.*"
+- takeScreenshot: 04_03_ndis_claiming

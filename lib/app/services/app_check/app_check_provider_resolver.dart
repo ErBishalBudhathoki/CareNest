@@ -25,10 +25,14 @@ class AppCheckProviderResolver {
   );
   static const String _playStoreInstallerPackage = 'com.android.vending';
 
-  // Fixed debug token registered in Firebase App Check (dev app). Seeding it
-  // into the native debug store keeps it stable across reinstalls, so the
-  // token never needs re-registration.
-  static const String fixedDebugToken = 'E276BDC2-0B80-417E-9111-0A13765F1120';
+  // An App Check debug token is a CREDENTIAL: anyone holding it can mint valid
+  // App Check tokens for this Firebase project. It must not be compiled into a
+  // shipped binary. Dev/test builds inject it at build time with
+  // --dart-define=APP_CHECK_DEBUG_TOKEN=... ; production builds leave it empty
+  // and use Play Integrity exclusively.
+  static const String fixedDebugToken = String.fromEnvironment(
+    'APP_CHECK_DEBUG_TOKEN',
+  );
 
   static Future<AndroidAppCheckSelection> resolveAndroidSelection() async {
     final isDevelopmentFlavor = AppConfig.appFlavor == Flavor.development;
@@ -52,11 +56,18 @@ class AppCheckProviderResolver {
     final installerPackage = await _getInstallerPackageName();
     final isPlayStoreInstall = installerPackage == _playStoreInstallerPackage;
 
-    if (kReleaseMode && isPlayStoreInstall) {
+    // A release build must NEVER fall back to a debug provider. The previous
+    // implementation did exactly that when the installer package was not
+    // `com.android.vending` (sideloaded AAB, some OEM stores, or a failed
+    // installer lookup), letting a shipped binary mint App Check tokens from a
+    // known debug secret. Fail closed instead: Play Integrity or nothing.
+    if (kReleaseMode) {
       return AndroidAppCheckSelection(
         provider: AndroidPlayIntegrityProvider(),
         label: 'Play Integrity',
-        reason: 'Production release installed from Google Play',
+        reason: isPlayStoreInstall
+            ? 'Release build installed from Google Play'
+            : 'Release build (Play Integrity enforced on every install)',
         installerPackage: installerPackage,
       );
     }
@@ -64,9 +75,7 @@ class AppCheckProviderResolver {
     return AndroidAppCheckSelection(
       provider: AndroidDebugProvider(),
       label: 'Debug',
-      reason: kReleaseMode
-          ? 'Production release installed outside Google Play'
-          : 'Non-release production build',
+      reason: 'Non-release production build',
       installerPackage: installerPackage,
     );
   }
@@ -74,6 +83,11 @@ class AppCheckProviderResolver {
   /// Seeds the fixed debug token into the native App Check debug store so the
   /// same token is used on every install. Must run before activate().
   static Future<void> seedFixedDebugToken() async {
+    if (fixedDebugToken.isEmpty) {
+      // No debug credential was supplied for this build. Never seed a default
+      // one: doing so would recreate the shipped-secret problem.
+      return;
+    }
     try {
       await _channel.invokeMethod<void>('seedDebugSecret', {
         'token': fixedDebugToken,

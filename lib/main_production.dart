@@ -162,7 +162,7 @@ Future<void> _initializeFirebase() async {
     debugPrint('\n=== FCM TOKEN REFRESHED ===');
     debugPrint('Timestamp: ${DateTime.now().toIso8601String()}');
     debugPrint('New Token: ${newToken.substring(0, 20)}...');
-    debugPrint('Full New Token: $newToken');
+    // Never log the full FCM token: it is a bearer credential for push.
     debugPrint('=== END TOKEN REFRESH ===\n');
   });
 
@@ -209,31 +209,13 @@ Future<void> _initializeAppCheck() async {
   );
 
   if (androidSelection.provider is AndroidDebugProvider) {
-    final debugSecret = await AppCheckProviderResolver.getDebugSecret();
-    debugPrint('');
+    // Never print the App Check debug secret: it is a credential that lets a
+    // caller mint valid App Check tokens for this Firebase project. It is
+    // injected at build time (APP_CHECK_DEBUG_TOKEN) and never hardcoded.
     debugPrint(
-      '╔════════════════════════════════════════════════════════════════════════╗',
+      'App Check debug provider active (non-release build only). '
+      'Debug secret is not logged.',
     );
-    debugPrint(
-      '║             🔥 FIREBASE APP CHECK — DEBUG TOKEN INFO 🔥                ║',
-    );
-    debugPrint(
-      '╠════════════════════════════════════════════════════════════════════════╣',
-    );
-    debugPrint(
-      '║ Fixed debug token (already registered; stable across reinstalls):      ║',
-    );
-    debugPrint('║   $debugSecret');
-    debugPrint(
-      '║ If you ever change it, re-register at:                                 ║',
-    );
-    debugPrint(
-      '║   Firebase Console → App Check → Apps → Android → Manage debug tokens ║',
-    );
-    debugPrint(
-      '╚════════════════════════════════════════════════════════════════════════╝',
-    );
-    debugPrint('');
   }
 
   // Attempt to obtain a token to verify activation worked.

@@ -79,6 +79,7 @@ import 'package:carenest/app/features/photo/views/photo_upload_view.dart';
 import 'package:carenest/app/features/requests/views/requests_view.dart';
 import 'package:carenest/app/features/timesheet/views/timesheet_view.dart';
 import 'package:carenest/app/features/offline/views/offline_sync_dashboard.dart';
+import 'package:carenest/app/shared/utils/shared_preferences_utils.dart';
 import 'package:carenest/app/shared/widgets/bottom_nav_bar_widget.dart';
 import 'package:carenest/app/shared/widgets/nav_bar_widget.dart';
 import 'package:carenest/app/shared/widgets/splash_screen_widget.dart';
@@ -97,8 +98,81 @@ class AppPages {
 
   static const initial = Routes.login;
 
+  /// Named routes behind the admin-only "Invoice Operations" and
+  /// "Configuration & Finance" surfaces.
+  ///
+  /// DEFENCE IN DEPTH ONLY — this is not the authorization boundary. The cached
+  /// role is device-local and writable by the device owner, so it can never be
+  /// trusted for access control. Every API behind these screens is re-verified
+  /// from the authenticated token and the resolved organisation membership:
+  /// backend/middleware/adminSurface.js, backend/routes/silRoutes.js and
+  /// backend/routes/ndisClaimRoutes.js. The guard exists so an Employee/Client
+  /// cannot reach a financial screen by deep link or direct named-route push
+  /// (see deep_link_handler.dart, which pushes any registered route name).
+  ///
+  /// `Routes.bankDetails` is deliberately NOT here: BankDetailsView defaults to
+  /// BankDetailsScope.personal, which employees legitimately use to maintain
+  /// their own payout details (employee_home_view.dart, employee invoice
+  /// generation). Organisation-level bank details are a separate write
+  /// (updateOrganizationDetails) and are gated server-side. See the regression
+  /// test "personal bank details stay reachable for employees".
+  ///
+  /// Routes added after the first guard pass were exposed by deep link while
+  /// their screens are reachable only from the admin Command Desk:
+  /// invoiceList/invoiceDetails (all organisation invoices), clientList /
+  /// addClientDetails / assignC2E (client + assignment management),
+  /// noteTemplates, adminRequests, adminFamilyManagement, messagingAudit.
+  static const Set<String> adminOnlyRoutes = {
+    Routes.admin,
+    Routes.enhancedInvoiceGeneration,
+    Routes.automaticInvoiceGeneration,
+    Routes.employeeSelection,
+    Routes.employeeInvoice,
+    Routes.invoiceAI,
+    Routes.invoiceList,
+    Routes.invoiceDetails,
+    Routes.clientList,
+    Routes.addClientDetails,
+    Routes.assignC2E,
+    // AssignmentListView loads *all* assignments for an organisation
+    // (loadOrganizationAssignments) and is only opened from the admin Command
+    // Desk / shift-assignment success flow. BulkActionsView is the admin bulk
+    // operations surface. Neither is part of worker self-service.
+    Routes.assignmentList,
+    Routes.bulkActions,
+    Routes.noteTemplates,
+    Routes.adminRequests,
+    Routes.adminFamilyManagement,
+    Routes.messagingAudit,
+    Routes.silDashboard,
+    Routes.silPropertyDetail,
+    Routes.silRoster,
+    Routes.claimDashboard,
+    Routes.financialIntelligence,
+    Routes.billingAutomation,
+    Routes.cashFlowManagement,
+    Routes.financialAnalytics,
+    Routes.budgetManagement,
+    Routes.paymentProcessing,
+    Routes.financialReporting,
+    Routes.revenueForecasting,
+    Routes.financialCompliance,
+  };
+
+  /// Wrap a route builder so a non-admin sees an access-denied page instead of
+  /// the financial screen. Fails closed when no cached role is available.
+  static WidgetBuilder guardAdminRoute(WidgetBuilder builder) {
+    return (BuildContext context) {
+      final role = SharedPreferencesUtils().getRole();
+      if (role != UserRole.admin) {
+        return const AdminRouteAccessDeniedView();
+      }
+      return builder(context);
+    };
+  }
+
   static Map<String, WidgetBuilder> buildRoutes() {
-    return {
+    final routes = <String, WidgetBuilder>{
       '/': (context) => const SplashScreen(), // Add root route
       Routes.splashScreen: (context) => const SplashScreen(),
       Routes.admin: (context) {
@@ -589,6 +663,18 @@ class AppPages {
       Routes.financialCompliance: (context) =>
           const FinancialIntelligenceDashboard(),
     };
+
+    // Applied to the whole map so every entrypoint (main.dart,
+    // main_development.dart, main_production.dart) and every deep link gets
+    // the same guard. New admin routes only need to be added to
+    // [adminOnlyRoutes]; forgotten entries are ungated, so keep the set in
+    // sync with the two admin dashboard sections.
+    return routes.map(
+      (name, builder) => MapEntry(
+        name,
+        adminOnlyRoutes.contains(name) ? guardAdminRoute(builder) : builder,
+      ),
+    );
   }
 
   // Function-based route for NavBarWidget
@@ -611,6 +697,41 @@ class AppPages {
       organizationId: organizationId,
       organizationName: organizationName,
       organizationCode: organizationCode,
+    );
+  }
+}
+
+/// Shown when a non-admin reaches an admin-only named route (deep link or
+/// direct push). The server remains the real authorization boundary; this page
+/// only prevents the financial UI from being displayed.
+class AdminRouteAccessDeniedView extends StatelessWidget {
+  const AdminRouteAccessDeniedView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Access denied')),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.lock_outline, size: 48),
+              const SizedBox(height: 16),
+              const Text(
+                'This section is only available to organisation administrators.',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: () => Navigator.of(context).maybePop(),
+                child: const Text('Go back'),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1,0 +1,131 @@
+name: Promote Internal to Production (manual)
+
+# Production is ONLY reachable from here. Pushes to main deploy to the
+# `internal` track (flutter_ci_optimized.yml); this workflow_dispatch promotes
+# the exact versionCode that was tested there, together with the Play listing
+# metadata and screenshots committed under android/fastlane/metadata/android/.
+#
+# It never builds a binary: `promote_internal_to_production` sets
+# skip_upload_aab / skip_upload_apk and calls supply's track_promote_to with an
+# explicit version_code, so an untested build cannot be promoted by accident.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_code:
+        description: 'versionCode currently on the INTERNAL track to promote (e.g. 228)'
+        required: true
+        type: number
+      confirmation:
+        description: 'Type PROMOTE to confirm this is the tested internal build'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: play-production-promotion
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  RUBY_VERSION: '3.2'
+
+jobs:
+  promote:
+    name: Promote internal → production
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Configure required reviewers on the `production` environment in GitHub
+    # so a promotion needs a second human approval.
+    environment:
+      name: production
+      url: https://play.google.com/console
+
+    steps:
+      - name: Validate inputs
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+          VERSION_CODE: ${{ inputs.version_code }}
+        run: |
+          if [ "$CONFIRMATION" != "PROMOTE" ]; then
+            echo "::error::Confirmation must be exactly PROMOTE. Refusing to promote."
+            exit 1
+          fi
+          if ! [[ "$VERSION_CODE" =~ ^[0-9]+$ ]] || [ "$VERSION_CODE" -le 0 ]; then
+            echo "::error::version_code must be a positive integer."
+            exit 1
+          fi
+          echo "Promotion requested for internal versionCode $VERSION_CODE"
+
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: false
+
+      - name: Install Fastlane
+        working-directory: android
+        run: |
+          gem install bundler
+          bundle install
+
+      - name: Resolve versionName from pubspec.yaml
+        id: version
+        run: |
+          VERSION_LINE="$(grep -m1 '^version:' pubspec.yaml || true)"
+          VERSION_NAME="$(printf '%s' "$VERSION_LINE" | sed -E 's/^version:[[:space:]]*//; s/\+.*$//')"
+          if [ -z "$VERSION_NAME" ]; then
+            echo "::error::Could not read versionName from pubspec.yaml."
+            exit 1
+          fi
+          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "Listing changelog will be generated from android/release_notes_${VERSION_NAME}.txt"
+
+      - name: Setup Google Play credentials
+        env:
+          GOOGLE_PLAY_API_KEY: ${{ secrets.GOOGLE_PLAY_API_KEY }}
+        run: |
+          if [ -z "$GOOGLE_PLAY_API_KEY" ]; then
+            echo "::error::secrets.GOOGLE_PLAY_API_KEY is not configured."
+            exit 1
+          fi
+          mkdir -p android/fastlane
+          printf '%s' "$GOOGLE_PLAY_API_KEY" > android/fastlane/google-play-service-key.json
+          chmod 600 android/fastlane/google-play-service-key.json
+
+      - name: Validate listing metadata and screenshots (no upload)
+        working-directory: android
+        run: fastlane android verify_store_metadata
+
+      - name: Promote the tested internal release (with listing metadata and screenshots)
+        working-directory: android
+        env:
+          SUPPLY_JSON_KEY: fastlane/google-play-service-key.json
+          VERSION_CODE: ${{ inputs.version_code }}
+          VERSION_NAME: ${{ steps.version.outputs.version_name }}
+        run: fastlane android promote_internal_to_production
+
+      - name: Cleanup sensitive files
+        if: always()
+        run: rm -f android/fastlane/google-play-service-key.json
+
+      - name: Promotion summary
+        if: success()
+        env:
+          VERSION_CODE: ${{ inputs.version_code }}
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<EOF
+          ## Production promotion complete
+
+          **Promoted versionCode:** $VERSION_CODE (from internal)
+          **Commit:** ${{ github.sha }}
+          **Approved by:** ${{ github.actor }}
+
+          Play listing metadata and screenshots from
+          \`android/fastlane/metadata/android/\` were uploaded with the release.
+          EOF

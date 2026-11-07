@@ -155,9 +155,17 @@ assets/icons/ic_launcher1.png
 /android/build/
 /android/.kotlin/
 
-# Fastlane reports and metadata
+# Fastlane reports and generated output.
+# NB: the Play listing metadata under android/fastlane/metadata/android is
+# DELIBERATELY TRACKED. The manual promote_internal_to_production lane uploads
+# that directory (title, descriptions and phoneScreenshots) together with the
+# release, so ignoring it would make every production promotion ship without a
+# listing. Only screengrab's generated HTML and the per-build changelogs stay
+# local: changelogs are regenerated from android/release_notes_<name>.txt by
+# Fastfile#ensure_changelog at promotion time.
 /android/fastlane/report.xml
-/android/fastlane/metadata/
+/android/fastlane/metadata/android/screenshots.html
+/android/fastlane/metadata/android/*/changelogs/
 /ios/fastlane/report.xml
 /ios/fastlane/metadata/
 
@@ -252,6 +260,8 @@ libos/
 .gemini/
 
 # Local mobile automation workspace
+# NB: the release-critical E2E suite is re-included at the end of this file
+# via an explicit allowlist. Everything else here stays local-only.
 .maestro/
 .codex/
 .obsidian/
@@ -478,6 +488,7 @@ next\ step.md
 **/GoogleService-Info.plist
 **/.env
 **/.env.*
+!.env.maestro.example
 
 .agents/
 .agents
@@ -492,6 +503,32 @@ node-compile-cache/
 .venv-cairosvg/
 
 .superpowers/
+
+# ==========================================
+# RELEASE-CRITICAL E2E SUITE (committed)
+# ------------------------------------------
+# .maestro/ and scripts/ are ignored above for local scratch work. These
+# credential-free flows plus their runner are part of the release gate and
+# MUST be tracked so CI can execute them. Anything not allowlisted below
+# (screenshot tours, dumps, tmp_*.yaml, seed bulk flows) stays untracked.
+# ==========================================
+!/.maestro/
+/.maestro/*
+!/.maestro/00_login.yaml
+!/.maestro/01_auth_rbac.yaml
+!/.maestro/02_admin_owner_switch.yaml
+!/.maestro/03_standard_invoicing.yaml
+!/.maestro/04_sil_and_ndis_claiming.yaml
+!/.maestro/README.md
+
+!/scripts/
+/scripts/*
+!/scripts/run_maestro.sh
+!/scripts/prepare_play_screenshots.sh
+!/scripts/check_sensitive_files.sh
+!/scripts/sync_secrets.sh
+!/scripts/generate-firebase-config.js
+
 appstore_screenshots/
 screenshot-generator/
 skills-lock.json

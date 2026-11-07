@@ -223,6 +223,17 @@ class _OrganizationDetailsViewState
   }
 
   Future<void> _sendOrganizationVerificationEmail() async {
+    if (ref.read(app_providers.userRoleProvider) != UserRole.admin) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('This action is available to administrators only.'),
+          ),
+        );
+      }
+      return;
+    }
+
     final organizationId = widget.organizationId;
     if (organizationId == null || _sendingOrganizationVerification) {
       return;
@@ -283,7 +294,11 @@ class _OrganizationDetailsViewState
     }
   }
 
-  Widget _buildVerificationCallout() {
+  /// Organisation contact-email configuration is an admin-only write. The
+  /// backend rejects non-admin writes with 403, so the affordances are hidden
+  /// here as well — otherwise employees/participants see an action that can
+  /// never succeed. The verification *status* stays visible to every member.
+  Widget _buildVerificationCallout({bool canManage = true}) {
     final isVerified = _organizationVerified;
     final l10n = AppLocalizations.of(context)!;
 
@@ -370,8 +385,9 @@ class _OrganizationDetailsViewState
                 fontWeight: FontWeight.w700,
               ),
             ),
-            SizedBox(height: BauhausDesign.space3),
-            Wrap(
+            if (canManage) SizedBox(height: BauhausDesign.space3),
+            if (canManage)
+              Wrap(
               spacing: BauhausDesign.space2,
               runSpacing: BauhausDesign.space2,
               children: [
@@ -497,6 +513,18 @@ class _OrganizationDetailsViewState
   }
 
   void _navigateToEdit() async {
+    // Defence in depth: the backend is the authorization boundary, but a
+    // deep-linked or stale-role caller must not see an edit form that will
+    // always be rejected with 403.
+    if (ref.read(app_providers.userRoleProvider) != UserRole.admin) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('This action is available to administrators only.'),
+        ),
+      );
+      return;
+    }
+
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -924,6 +952,9 @@ $appLink
     final colorScheme = Theme.of(context).colorScheme;
     final userRole = ref.watch(app_providers.userRoleProvider);
     final isEmployee = userRole == UserRole.employee;
+    // Mirrors the server-side `requireAdminSurface` gate on organisation
+    // configuration writes. Owner/manager/moderator resolve to UserRole.admin.
+    final canManageOrganization = userRole == UserRole.admin;
 
     // Data extraction
     final name =
@@ -972,12 +1003,13 @@ $appLink
           color: Theme.of(context).colorScheme.onPrimary,
         ),
         actions: [
-          IconButton(
-            onPressed: _navigateToEdit,
-            icon: const Icon(Icons.edit_outlined),
-            color: Theme.of(context).colorScheme.onPrimary,
-            tooltip: l10n.editOrganization,
-          ),
+          if (canManageOrganization)
+            IconButton(
+              onPressed: _navigateToEdit,
+              icon: const Icon(Icons.edit_outlined),
+              color: Theme.of(context).colorScheme.onPrimary,
+              tooltip: l10n.editOrganization,
+            ),
         ],
       ),
       body: _loading
@@ -1097,7 +1129,9 @@ $appLink
                           alpha: 0.16,
                         ),
                         children: [
-                          _buildVerificationCallout(),
+                          _buildVerificationCallout(
+                            canManage: canManageOrganization,
+                          ),
                           _buildDetailRow(
                             context,
                             l10n.organizationEmailLabel.toUpperCase(),

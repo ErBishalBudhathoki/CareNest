@@ -1,0 +1,63 @@
+appId: ${APP_ID}
+name: 01 - Auth & RBAC (Admin / Employee / Client dashboards)
+# ---------------------------------------------------------------------------
+# Falsification goal: prove each role lands on its own dashboard AND that
+# employee/client accounts cannot see the two admin-only surfaces.
+# Prerequisites: one seeded account per role in .env.maestro; dev backend up.
+#
+# Selector contract (verified against `maestro hierarchy` on the dev build):
+#  * Flutter exposes MERGED accessibility labels, e.g.
+#      "5 ACTIONS\nINVOICE OPERATIONS"
+#      "Employee\nView employee insights, work status & shifts"
+#  * Maestro treats a plain string as an EXACT match, so an exact-text
+#    `assertNotVisible` is vacuous (it can never match a merged label and
+#    therefore always "passes"). Every RBAC denial below is an anchored,
+#    case-insensitive regex so it genuinely scans the rendered hierarchy.
+---
+# --- Admin -----------------------------------------------------------------
+- launchApp:
+    clearState: true
+- runFlow:
+    file: 00_login.yaml
+    env:
+      MAESTRO_LOGIN_USER: ${MAESTRO_ADMIN_USER}
+      MAESTRO_LOGIN_PASS: ${MAESTRO_ADMIN_PASS}
+- extendedWaitUntil:
+    visible: ".*Business Overview.*|.*Command Desk.*|.*Dashboard.*"
+    timeout: 60000
+- assertVisible: ".*Business Overview.*|.*Command Desk.*"
+- takeScreenshot: 01_01_admin_dashboard
+
+# --- Employee --------------------------------------------------------------
+- launchApp:
+    clearState: true
+- runFlow:
+    file: 00_login.yaml
+    env:
+      MAESTRO_LOGIN_USER: ${MAESTRO_EMP_USER}
+      MAESTRO_LOGIN_PASS: ${MAESTRO_EMP_PASS}
+- extendedWaitUntil:
+    visible: ".*Shifts.*|.*Timesheet.*|.*Home.*|.*Dashboard.*"
+    timeout: 60000
+- assertNotVisible: ".*Invoice Operations.*"
+- assertNotVisible: ".*Configuration & Finance.*"
+- assertNotVisible: ".*SIL Management.*"
+- assertNotVisible: ".*Command Desk.*"
+- takeScreenshot: 01_02_employee_dashboard
+
+# --- Client ----------------------------------------------------------------
+- launchApp:
+    clearState: true
+- runFlow:
+    file: 00_login.yaml
+    env:
+      MAESTRO_LOGIN_USER: ${MAESTRO_CLIENT_USER}
+      MAESTRO_LOGIN_PASS: ${MAESTRO_CLIENT_PASS}
+- extendedWaitUntil:
+    visible: ".*Invoices.*|.*Appointments.*|.*Home.*|.*Dashboard.*"
+    timeout: 60000
+- assertNotVisible: ".*Invoice Operations.*"
+- assertNotVisible: ".*Configuration & Finance.*"
+- assertNotVisible: ".*NDIS Claiming.*"
+- assertNotVisible: ".*Command Desk.*"
+- takeScreenshot: 01_03_client_dashboard

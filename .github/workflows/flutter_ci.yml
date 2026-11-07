@@ -5,17 +5,10 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  # CI only. This legacy workflow has no deployment steps: main pushes deploy
+  # to internal via flutter_ci_optimized.yml, and production promotion is the
+  # separate manual promote-to-production.yml workflow_dispatch.
   workflow_dispatch:
-    inputs:
-      deploy_target:
-        description: 'Deploy target (development, production, or internal)'
-        required: true
-        default: 'development'
-        type: choice
-        options:
-          - development
-          - production
-          - internal
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true

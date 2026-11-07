@@ -1,0 +1,86 @@
+appId: ${APP_ID}
+name: 02 - Admin -> Owner Tools -> Employee -> back to Admin
+# ---------------------------------------------------------------------------
+# Falsification goal: the switch must not be a purely cosmetic navigation.
+# After switching, admin-only surfaces must be absent; after switching back
+# they must be present again.
+# NOTE: audit finding P1 — the current implementation only changes the
+# navigation argument (role: UserRole.employee). The admin JWT is unchanged,
+# so the backend still authorises admin-only mutations in employee mode.
+#
+# Selector contract (verified against `maestro hierarchy` on the dev build):
+#  * Settings tiles expose merged labels:
+#      "Employee\nView employee insights, work status & shifts"  (to employee mode)
+#      "Admin Dashboard\nManage organization and app"            (back to admin)
+#    A plain `tapOn: "Employee"` is an EXACT match and fails against the
+#    merged label — the failure that originally broke this flow.
+#  * The section header renders uppercase: "OWNER TOOLS".
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: 00_login.yaml
+    env:
+      MAESTRO_LOGIN_USER: ${MAESTRO_ADMIN_USER}
+      MAESTRO_LOGIN_PASS: ${MAESTRO_ADMIN_PASS}
+- extendedWaitUntil:
+    visible: ".*Business Overview.*|.*Command Desk.*"
+    timeout: 60000
+
+# --- Navigate to Settings -> Owner Tools -> Employee -----------------------
+- scrollUntilVisible:
+    element:
+      text: ".*SETTINGS.*"
+    direction: DOWN
+    timeout: 30000
+- tapOn: ".*SETTINGS.*"
+- extendedWaitUntil:
+    visible: ".*ACCOUNT.*"
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: ".*OWNER TOOLS.*"
+    direction: DOWN
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: ".*Employee.*View employee insights.*"
+    direction: DOWN
+    timeout: 30000
+    visibilityPercentage: 40
+- takeScreenshot: 02_01_owner_tools
+- tapOn: ".*Employee.*View employee insights.*"
+
+# --- Employee dashboard must load -------------------------------------------
+- extendedWaitUntil:
+    visible: ".*Shifts.*|.*Timesheet.*|.*Home.*|.*Dashboard.*"
+    timeout: 45000
+- assertNotVisible: ".*Invoice Operations.*"
+- assertNotVisible: ".*Configuration & Finance.*"
+- assertNotVisible: ".*Command Desk.*"
+- takeScreenshot: 02_02_employee_context
+
+# --- Switch back to Admin ---------------------------------------------------
+- scrollUntilVisible:
+    element:
+      text: ".*SETTINGS.*"
+    direction: DOWN
+    timeout: 30000
+- tapOn: ".*SETTINGS.*"
+- scrollUntilVisible:
+    element:
+      text: ".*OWNER TOOLS.*"
+    direction: DOWN
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: ".*Admin Dashboard.*Manage organization.*"
+    direction: DOWN
+    timeout: 30000
+    visibilityPercentage: 40
+- tapOn: ".*Admin Dashboard.*Manage organization.*"
+- extendedWaitUntil:
+    visible: ".*Business Overview.*|.*Command Desk.*"
+    timeout: 45000
+- assertVisible: ".*Business Overview.*|.*Command Desk.*"
+- takeScreenshot: 02_03_admin_restored

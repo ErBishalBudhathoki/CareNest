@@ -1,0 +1,94 @@
+appId: ${APP_ID}
+name: 03 - Standard Invoice Operations (Client + Employee, SIL excluded)
+# ---------------------------------------------------------------------------
+# Falsification goal: the admin Command Desk's INVOICE OPERATIONS surface
+# exposes Client + Employee invoicing actions, both invoice screens open,
+# and no SIL roster/claim action leaks into the standard surface.
+#
+# Selector contract (verified against `maestro hierarchy` on the dev build):
+#  * Tiles expose merged labels, e.g.
+#      "Employee Invoice\nIndividual employee invoicing"
+#    so every selector is an anchored regex; a plain string is an EXACT
+#    match and can never match a merged label.
+#  * The Command Desk's first category starts EXPANDED
+#    (`_BauhausCommandCenterState._expanded = {0}`) and tapping its header
+#    COLLAPSES it — the original revision of this flow tapped the header,
+#    collapsed the category and then failed. This flow never taps it.
+#  * Action tiles must be repositioned to ~30% visibility before tapping:
+#    a tile resting against the top viewport edge swallows the tap.
+#  * Invoice GENERATION is deliberately not driven from E2E: it mutates
+#    shared dev data and depends on seeded billable appointments. The
+#    generation/idempotency logic is covered by the deterministic backend
+#    suites (see RELEASE_READINESS_AUDIT.md Phase 2 evidence).
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: 00_login.yaml
+    env:
+      MAESTRO_LOGIN_USER: ${MAESTRO_ADMIN_USER}
+      MAESTRO_LOGIN_PASS: ${MAESTRO_ADMIN_PASS}
+- extendedWaitUntil:
+    visible: ".*Business Overview.*|.*Command Desk.*"
+    timeout: 60000
+- waitForAnimationToEnd
+
+# --- Standard invoicing surface: expanded category, header never tapped ----
+- scrollUntilVisible:
+    element:
+      text: ".*INVOICE OPERATIONS.*"
+    direction: DOWN
+    timeout: 40000
+    visibilityPercentage: 40
+- assertVisible: ".*INVOICE OPERATIONS.*"
+- scrollUntilVisible:
+    element:
+      text: ".*Employee Invoice.*Individual employee invoicing.*"
+    direction: DOWN
+    timeout: 30000
+    visibilityPercentage: 30
+- assertVisible: ".*Employee Invoice.*"
+- scrollUntilVisible:
+    element:
+      text: ".*Auto Invoices.*"
+    direction: DOWN
+    timeout: 30000
+- assertVisible: ".*Auto Invoices.*"
+- scrollUntilVisible:
+    element:
+      text: ".*Invoice List.*View all generated invoices.*"
+    direction: DOWN
+    timeout: 30000
+    visibilityPercentage: 30
+- assertVisible: ".*Invoice List.*"
+# SIL / NDIS claiming must not be reachable from the standard surface.
+- assertNotVisible: ".*SIL Management.*"
+- assertNotVisible: ".*NDIS Claiming.*"
+- assertNotVisible: ".*Rosters of Care.*"
+- takeScreenshot: 03_01_invoice_operations
+
+# --- Employee invoice form loads --------------------------------------------
+- tapOn: ".*Employee Invoice.*Individual employee invoicing.*"
+- extendedWaitUntil:
+    visible: ".*CONFIGURE & GENERATE.*"
+    timeout: 30000
+- assertVisible: ".*SELECT EMPLOYEES.*"
+- assertVisible: ".*CONFIGURE & GENERATE.*"
+- takeScreenshot: 03_02_employee_invoice_form
+
+# --- Invoice list (client + employee invoices) loads ------------------------
+- back
+- scrollUntilVisible:
+    element:
+      text: ".*Invoice List.*View all generated invoices.*"
+    direction: DOWN
+    timeout: 30000
+    visibilityPercentage: 30
+- tapOn: ".*Invoice List.*View all generated invoices.*"
+- extendedWaitUntil:
+    visible: ".*All Invoices.*"
+    timeout: 30000
+- assertVisible: ".*Client Invoices.*"
+- assertVisible: ".*Employee Invoices.*"
+- assertVisible: ".*Create Invoice.*"
+- takeScreenshot: 03_03_invoice_list

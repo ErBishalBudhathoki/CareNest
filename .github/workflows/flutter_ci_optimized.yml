@@ -11,17 +11,11 @@ on:
       - '.github/workflows/flutter_ci_optimized.yml'
   pull_request:
     branches: [ main ]
+  # Manual runs of THIS workflow are CI-only. Production is reached exclusively
+  # through the separate promote-to-production.yml workflow_dispatch, which
+  # promotes a versionCode that already exists on the internal track.
   workflow_dispatch:
     inputs:
-      deploy_target:
-        description: 'Deploy target environment'
-        required: true
-        default: 'development'
-        type: choice
-        options:
-          - development
-          - production
-          - internal
       skip_tests:
         description: 'Skip tests (emergency only)'
         required: false
@@ -170,7 +164,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     needs: [security-scan, test]
-    if: always() && (needs.security-scan.result == 'success')
+    # `always()` here used to let a RED test job still produce a release AAB.
+    # A failed test must never be deployable, so require the test gate too.
+    if: >-
+      needs.security-scan.result == 'success' &&
+      (needs.test.result == 'success' || needs.test.result == 'skipped')
     strategy:
       fail-fast: false
       matrix:
@@ -184,6 +182,24 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
+
+      - name: Resolve release version from pubspec.yaml
+        id: release-version
+        run: |
+          VERSION_LINE="$(grep -m1 '^version:' pubspec.yaml || true)"
+          VERSION_NAME="$(printf '%s' "$VERSION_LINE" | sed -E 's/^version:[[:space:]]*//; s/\+.*$//')"
+          VERSION_CODE="$(printf '%s' "$VERSION_LINE" | sed -E 's/^.*\+//')"
+          if ! [[ "$VERSION_CODE" =~ ^[0-9]+$ ]] || [ "$VERSION_CODE" -le 0 ]; then
+            echo "::error::pubspec.yaml needs 'version: <name>+<integer code>'."
+            exit 1
+          fi
+          if [ -z "$VERSION_NAME" ]; then
+            echo "::error::pubspec.yaml version name is empty."
+            exit 1
+          fi
+          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+          echo "Resolved versionName=$VERSION_NAME versionCode=$VERSION_CODE"
 
       - name: Setup Java
         uses: actions/setup-java@v5
@@ -202,15 +218,62 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Restore .env
+      # .env.example deliberately contains DIFFERENT hosts from the real .env.
+      # Falling back to it for a release build used to produce a production AAB
+      # wired to the wrong backend — silently, with no build failure.
+      - name: Restore .env (release requires the real secret)
+        if: matrix.build-type == 'release'
         env:
           ENV_FILE_B64: ${{ secrets.ENV_FILE }}
         run: |
-          if [ -n "$ENV_FILE_B64" ]; then
-            echo "$ENV_FILE_B64" | base64 -d > .env
-          else
-            cp .env.example .env
+          if [ -z "$ENV_FILE_B64" ]; then
+            echo "::error::secrets.ENV_FILE is not configured. Refusing to build a production AAB from .env.example: its PRODUCTION_URL/DEVELOPMENT_URL hosts do not match the deployed backends."
+            exit 1
           fi
+          echo "$ENV_FILE_B64" | base64 -d > .env
+
+      - name: Restore .env (debug builds)
+        if: matrix.build-type != 'release'
+        run: cp .env.example .env
+
+      - name: Validate production API config (values are never printed)
+        if: matrix.build-type == 'release'
+        run: |
+          python3 - <<'PY'
+          import re, sys
+          from pathlib import Path
+          from urllib.parse import urlparse
+
+          def get(key):
+              for line in Path('.env').read_text(errors='replace').splitlines():
+                  m = re.match(r'^\s*' + re.escape(key) + r'\s*=\s*(.*?)\s*$', line)
+                  if m:
+                      return m.group(1).strip().strip('"').strip("'")
+              return None
+
+          def fail(msg):
+              print('::error::' + msg)
+              sys.exit(1)
+
+          prod, dev = get('PRODUCTION_URL'), get('DEVELOPMENT_URL')
+          if not prod:
+              fail('PRODUCTION_URL missing from the restored .env')
+          parsed = urlparse(prod)
+          if parsed.scheme != 'https' or not parsed.netloc:
+              fail('PRODUCTION_URL must be an absolute HTTPS URL')
+          host = (parsed.hostname or '').lower()
+          placeholders = ('example.', 'localhost', '127.0.0.1', '10.0.2.2',
+                          'your-', 'placeholder', '<')
+          if any(p in host for p in placeholders):
+              fail('PRODUCTION_URL looks like a placeholder or local host')
+          if not dev:
+              fail('DEVELOPMENT_URL missing from the restored .env')
+          if (urlparse(dev).hostname or '').lower() == host:
+              fail('PRODUCTION_URL and DEVELOPMENT_URL must not share a host')
+          if (get('ENABLE_DEV_SUBSCRIPTION_RESET') or '').lower() in ('true', '1', 'yes'):
+              fail('Developer-only subscription reset must be off in a release build')
+          print('Production API config validated: HTTPS, non-placeholder, distinct from development.')
+          PY
 
       - name: Restore google-services.json
         run: |
@@ -262,7 +325,14 @@ jobs:
           done
 
           if [ "${{ matrix.build-type }}" == "release" ]; then
-            flutter build appbundle --release --flavor production --build-number=${{ github.run_number }} "${DEFINES[@]}"
+            # versionCode comes from pubspec.yaml, NOT github.run_number: the
+            # latter is a per-workflow counter that can be lower than a code
+            # already published on any Play track (internal currently holds
+            # 227). fastlane re-verifies this against all live tracks.
+            flutter build appbundle --release --flavor production \
+              --build-name=${{ steps.release-version.outputs.version_name }} \
+              --build-number=${{ steps.release-version.outputs.version_code }} \
+              "${DEFINES[@]}"
           else
             flutter build apk --debug --flavor production --target-platform android-arm64 "${DEFINES[@]}"
           fi
@@ -306,15 +376,22 @@ jobs:
           rm -f android/app/keystore.jks
           rm -f android/key.properties
 
-  # Deploy to Google Play
+  # Deploy to Google Play — INTERNAL ONLY, on pushes to main.
+  # Production is a separate manual workflow_dispatch that promotes an
+  # already-tested internal versionCode; see promote-to-production.yml.
   deploy-android:
-    name: Deploy to Google Play (${{ github.event.inputs.deploy_target || 'development' }})
+    name: Deploy to Google Play (internal)
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    needs: build-android
-    if: github.event_name == 'workflow_dispatch'
+    needs: [security-scan, test, build-android]
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      needs.security-scan.result == 'success' &&
+      (needs.test.result == 'success' || needs.test.result == 'skipped') &&
+      needs.build-android.result == 'success'
     environment:
-      name: ${{ github.event.inputs.deploy_target || 'development' }}
+      name: internal
       url: https://play.google.com/console
     
     steps:
@@ -356,46 +433,35 @@ jobs:
           # Set restrictive permissions
           chmod 600 android/fastlane/google-play-service-key.json
 
-      - name: Validate deployment target
-        id: validate-target
+      - name: Resolve release version from pubspec.yaml
+        id: deploy-version
         run: |
-          TARGET="${{ github.event.inputs.deploy_target || 'development' }}"
-          
-          # Validate target is one of the allowed values
-          if [[ ! "$TARGET" =~ ^(development|production|internal)$ ]]; then
-            echo "::error::Invalid deployment target: $TARGET"
+          VERSION_LINE="$(grep -m1 '^version:' pubspec.yaml || true)"
+          VERSION_NAME="$(printf '%s' "$VERSION_LINE" | sed -E 's/^version:[[:space:]]*//; s/\+.*$//')"
+          VERSION_CODE="$(printf '%s' "$VERSION_LINE" | sed -E 's/^.*\+//')"
+          if ! [[ "$VERSION_CODE" =~ ^[0-9]+$ ]] || [ "$VERSION_CODE" -le 0 ]; then
+            echo "::error::pubspec.yaml needs 'version: <name>+<integer code>'."
             exit 1
           fi
-                    
-          # Require manual approval for production
-          if [ "$TARGET" == "production" ]; then
-            echo "::warning::Deploying to PRODUCTION - this requires manual approval"
-          fi
-          
-          echo "target=$TARGET" >> $GITHUB_OUTPUT
+          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+          echo "Deploying versionName=$VERSION_NAME versionCode=$VERSION_CODE to internal"
 
-      - name: Deploy with Fastlane
+      - name: Fail if versionCode is not strictly higher than every Play track
         working-directory: android
         env:
           SUPPLY_JSON_KEY: fastlane/google-play-service-key.json
-        run: |
-          TARGET="${{ steps.validate-target.outputs.target }}"
-          case "$TARGET" in
-            production)
-              TARGET_LANE="upload_production_aab"
-              ;;
-            *)
-              TARGET_LANE="upload_internal_aab"
-              ;;
-          esac
-          echo "Deploying via Fastlane lane: $TARGET_LANE"
+          VERSION_CODE: ${{ steps.deploy-version.outputs.version_code }}
+          VERSION_NAME: ${{ steps.deploy-version.outputs.version_name }}
+        run: fastlane android verify_version_code
 
-          # Pass version info to Fastlane (local.properties is gitignored and absent in CI)
-          export VERSION_CODE="${{ github.run_number }}"
-          export VERSION_NAME="$(grep -m1 '^version:' ../pubspec.yaml | awk -F: '{gsub(/[[:space:]]/,"",$2); split($2,v,"+"); print v[1]}')"
-          echo "VERSION_NAME=$VERSION_NAME VERSION_CODE=$VERSION_CODE"
-
-          fastlane $TARGET_LANE
+      - name: Deploy to INTERNAL with Fastlane
+        working-directory: android
+        env:
+          SUPPLY_JSON_KEY: fastlane/google-play-service-key.json
+          VERSION_CODE: ${{ steps.deploy-version.outputs.version_code }}
+          VERSION_NAME: ${{ steps.deploy-version.outputs.version_name }}
+        run: fastlane android upload_internal_aab
 
       - name: Cleanup sensitive files
         if: always()
@@ -406,17 +472,18 @@ jobs:
         if: success()
         run: |
           cat >> $GITHUB_STEP_SUMMARY <<EOF
-          ## 🚀 Deployment Successful
-          
-          **Target:** ${{ steps.validate-target.outputs.target }}
-          **Build Number:** ${{ github.run_number }}
+          ## 🚀 Internal deployment successful
+
+          **Track:** internal
+          **Version:** ${{ steps.deploy-version.outputs.version_name }}+${{ steps.deploy-version.outputs.version_code }}
           **Commit:** ${{ github.sha }}
           **Deployed by:** ${{ github.actor }}
-          
+
           ### Next Steps
-          - Monitor crash reports
-          - Check analytics
-          - Verify functionality in Play Console
+          - Test this exact versionCode on the internal track.
+          - Run the manual **Promote to Production** workflow with that versionCode
+            once testing passes. Nothing in this workflow can reach production.
+          - Monitor crash reports and analytics.
           EOF
 
   notify-failure:
