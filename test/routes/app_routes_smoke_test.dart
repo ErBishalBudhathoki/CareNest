@@ -158,14 +158,19 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
     }
 
-    testWidgets('an admin reaches the SIL and NDIS claiming screens',
-        (tester) async {
+    testWidgets('an admin reaches the SIL and NDIS claiming screens', (
+      tester,
+    ) async {
       expect(SharedPreferencesUtils().getRole(), UserRole.admin);
       await pumpRoute(tester, Routes.silDashboard);
       expect(find.byType(AdminRouteAccessDeniedView), findsNothing);
     });
 
-    for (final blockedRole in [UserRole.employee, UserRole.client, UserRole.family]) {
+    for (final blockedRole in [
+      UserRole.employee,
+      UserRole.client,
+      UserRole.family,
+    ]) {
       testWidgets(
         'a ${blockedRole.name} is denied Invoice Operations and Configuration & Finance routes',
         (tester) async {
@@ -211,14 +216,17 @@ void main() {
       expect(find.byType(AdminRouteAccessDeniedView), findsOneWidget);
     });
 
-    testWidgets('non-admin routes stay reachable for employees', (tester) async {
+    testWidgets('non-admin routes stay reachable for employees', (
+      tester,
+    ) async {
       await SharedPreferencesUtils().setRole(UserRole.employee);
       await pumpRoute(tester, Routes.timesheet);
       expect(find.byType(AdminRouteAccessDeniedView), findsNothing);
     });
 
-    testWidgets('personal bank details stay reachable for employees',
-        (tester) async {
+    testWidgets('personal bank details stay reachable for employees', (
+      tester,
+    ) async {
       // BankDetailsView defaults to BankDetailsScope.personal. Employees use it
       // to maintain their own payout details, so it must NOT be admin-gated.
       await SharedPreferencesUtils().setRole(UserRole.employee);
@@ -227,8 +235,9 @@ void main() {
       expect(AppPages.adminOnlyRoutes.contains(Routes.bankDetails), isFalse);
     });
 
-    testWidgets('every admin-only named route is denied to an employee',
-        (tester) async {
+    testWidgets('every admin-only named route is denied to an employee', (
+      tester,
+    ) async {
       await SharedPreferencesUtils().setRole(UserRole.employee);
       for (final routeName in AppPages.adminOnlyRoutes) {
         await pumpRoute(tester, routeName);
@@ -245,7 +254,11 @@ void main() {
     test('every admin-only route constant is actually registered', () {
       final routes = AppPages.buildRoutes();
       for (final name in AppPages.adminOnlyRoutes) {
-        expect(routes.containsKey(name), isTrue, reason: '$name is not registered');
+        expect(
+          routes.containsKey(name),
+          isTrue,
+          reason: '$name is not registered',
+        );
       }
     });
   });

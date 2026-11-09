@@ -388,58 +388,25 @@ class _OrganizationDetailsViewState
             if (canManage) SizedBox(height: BauhausDesign.space3),
             if (canManage)
               Wrap(
-              spacing: BauhausDesign.space2,
-              runSpacing: BauhausDesign.space2,
-              children: [
-                OutlinedButton.icon(
-                  onPressed: _navigateToEdit,
-                  icon: Icon(Icons.edit_outlined, size: 16),
-                  label: Text(
-                    (_organizationContactEmail == null
-                            ? l10n.setOrganizationEmail
-                            : l10n.editContactDetails)
-                        .toUpperCase(),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Theme.of(context).colorScheme.onSurface,
-                    backgroundColor: Theme.of(context).colorScheme.surface,
-                    side: BorderSide(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      width: 2,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: BauhausDesign.space3,
-                      vertical: BauhausDesign.space2,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        BauhausDesign.radiusMd,
-                      ),
-                    ),
-                  ),
-                ),
-                if (_hasDedicatedOrganizationEmail && !_organizationVerified)
-                  FilledButton.icon(
-                    onPressed: _sendingOrganizationVerification
-                        ? null
-                        : _sendOrganizationVerificationEmail,
-                    icon: Icon(
-                      _organizationVerificationSentAt == null
-                          ? Icons.mark_email_read_outlined
-                          : Icons.refresh_rounded,
-                      size: 16,
-                    ),
+                spacing: BauhausDesign.space2,
+                runSpacing: BauhausDesign.space2,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: _navigateToEdit,
+                    icon: Icon(Icons.edit_outlined, size: 16),
                     label: Text(
-                      (_organizationVerificationSentAt == null
-                              ? l10n.sendVerification
-                              : l10n.resendVerification)
+                      (_organizationContactEmail == null
+                              ? l10n.setOrganizationEmail
+                              : l10n.editContactDetails)
                           .toUpperCase(),
                     ),
-                    style: FilledButton.styleFrom(
-                      foregroundColor: BauhausDesign.readableOnColor(
-                        BauhausDesign.accent,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.onSurface,
+                      backgroundColor: Theme.of(context).colorScheme.surface,
+                      side: BorderSide(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        width: 2,
                       ),
-                      backgroundColor: BauhausDesign.accent,
                       padding: const EdgeInsets.symmetric(
                         horizontal: BauhausDesign.space3,
                         vertical: BauhausDesign.space2,
@@ -451,8 +418,41 @@ class _OrganizationDetailsViewState
                       ),
                     ),
                   ),
-              ],
-            ),
+                  if (_hasDedicatedOrganizationEmail && !_organizationVerified)
+                    FilledButton.icon(
+                      onPressed: _sendingOrganizationVerification
+                          ? null
+                          : _sendOrganizationVerificationEmail,
+                      icon: Icon(
+                        _organizationVerificationSentAt == null
+                            ? Icons.mark_email_read_outlined
+                            : Icons.refresh_rounded,
+                        size: 16,
+                      ),
+                      label: Text(
+                        (_organizationVerificationSentAt == null
+                                ? l10n.sendVerification
+                                : l10n.resendVerification)
+                            .toUpperCase(),
+                      ),
+                      style: FilledButton.styleFrom(
+                        foregroundColor: BauhausDesign.readableOnColor(
+                          BauhausDesign.accent,
+                        ),
+                        backgroundColor: BauhausDesign.accent,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: BauhausDesign.space3,
+                          vertical: BauhausDesign.space2,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            BauhausDesign.radiusMd,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
           ],
         ),
       ),

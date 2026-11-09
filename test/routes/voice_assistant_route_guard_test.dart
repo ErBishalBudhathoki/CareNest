@@ -7,7 +7,12 @@ import 'package:flutter_test/flutter_test.dart';
 /// cannot see. These tests assert the pure decision helper that gates it.
 void main() {
   test('every admin-only voice destination is refused for non-admin roles', () {
-    for (final role in [null, UserRole.employee, UserRole.client, UserRole.family]) {
+    for (final role in [
+      null,
+      UserRole.employee,
+      UserRole.client,
+      UserRole.family,
+    ]) {
       for (final destination in adminOnlyVoiceRoutes) {
         expect(
           isVoiceDestinationAllowed(destination, role),
