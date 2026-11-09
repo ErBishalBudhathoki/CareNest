@@ -2,7 +2,7 @@
 
 **Mode:** Falsification-first. Every assertion below was verified by code inspection or by executing a test/command; statuses marked `FIXED` were changed in the working tree, not merely recommended.
 **Scope:** existing Google Play Store listing (`com.bishal.invoice`), architectural overhaul (Standard Invoicing ↔ SIL/NDIS Claiming split, Temporal workflows, R2/Valkey, Maestro E2E, Fastlane release).
-**Repositories:** two independent git repos — app root and `backend/` (the root repo gitignores `backend/`). Both were committed separately: backend `dev` (`f0e37a8`, `8ce154f`) was pushed and deployed; app `main` (`c5054343`) is committed locally and deliberately **NOT** pushed (a `main` push triggers a Play `internal` release). This report was amended after those commits to record the post-deploy verification.
+**Repositories:** two independent git repos — app root and `backend/` (the root repo gitignores `backend/`). Both were committed separately: backend `dev` (`f0e37a8`, `8ce154f`) was pushed and deployed; app `main` (`c5054343`, `090a6c1f`, `75c16540`, `006ad634`) was pushed on user approval and shipped `4.9.9+228` to the Play `internal` track (run `42577732810`). This report was amended after those commits to record the post-deploy verification, the internal release and the App Store screenshot set (§8).
 **Constraint honoured:** no `.env` value and no credential is printed anywhere in this report. Maestro "before" values are redacted.
 
 ---
@@ -11,8 +11,9 @@
 
 | Track | Verdict |
 |---|---|
-| **Google Play `internal`** | **GO** — all deterministic automated gates pass, including the 4-flow Maestro release suite on the emulator. |
-| **Google Play `production` (promotion)** | **NO-GO until internal testing completes** — by design. Every automated gate is now green: `verify_store_metadata!` (8 screenshots + premium listing), Maestro 4/4 on the emulator, backend `dev` deployed with smoke tests passing, and **14/14 live tenant-isolation probes** against the deployed service. The only remaining gates are human: push app `main` to produce the internal-track AAB, test that build, then a manual `promote-to-production.yml` dispatch with the tested `versionCode`. |
+| **Google Play `internal`** | **SHIPPED** — `flutter_ci_optimized.yml` run **`42577732810`: success** on commit `006ad634`; `4.9.9+228` uploaded to the `internal` track (`Successfully finished the upload to Google Play`, `fastlane.tools finished successfully`). All 5 jobs green; `Notify on Failure` skipped. |
+| **Google Play `production` (promotion)** | **NO-GO until internal testing completes** — by design. Every automated gate is green: `verify_store_metadata!` (8 screenshots + premium listing), Maestro 4/4 on the emulator, backend `dev` deployed with smoke tests passing, **14/14 live tenant-isolation probes**, signed `productionRelease` AAB, and the internal-track upload. The only remaining gate is human: test the `internal` build for `versionCode 228`, then dispatch the manual `promote-to-production.yml` with that exact code and `confirmation: PROMOTE`. |
+| **Apple App Store (separate submission)** | **NOT SUBMITTED** — 18 design-complete, PII-redacted screenshots exist for all three required display sizes (§8.2), but there is no `deliver` lane and no real iOS/iPad captures. App Review-safe assets are a prerequisite. |
 
 **Blocking is deliberate and enforced in code**, not just advisory: `android/fastlane/Fastfile` calls `verify_store_metadata!` inside `promote_internal_to_production`, and the promotion lane refuses a `versionCode` that is not already on the `internal` track. Production cannot be reached by a push to `main` (`assert_no_direct_production!`).
 
@@ -52,6 +53,8 @@
 | 28 | **Maestro E2E flows executed on a device/emulator** | **PASS (executed this audit)** | Fresh development APK built from current source and installed on `emulator-5554`. See §6 for the full run log: 4/4 flows green with true exit-code capture |
 | 29 | **Backend changes deployed and smoke-verified** | **PASS (executed this audit)** | `backend` `dev` pushed (`f0e37a8`, `8ce154f`) → `backend-deploy-dev-hybrid.yml` run **`42358925144`: success** (Security & Quality Checks, Run Tests, Build Docker Image, Deploy to Cloud Run (Dev) all success; `Smoke tests passed via secure proxy` on attempt 1/8). The first run `42358291314` failed on 4 stale rate-limit assertions, fixed in `8ce154f` — see §5 |
 | 30 | **Live tenant isolation on the deployed dev service** | **PASS (executed this audit)** | `node scripts/verify-tenant-isolation.js --seed --base-url <dev-url>/api` → **`14/14 probes behaved correctly`**, `PROBE_EXIT=0`: forged token 401; cross-tenant revenue/forecast/workforce/payslip/payroll/bank-details/timesheet-approval and member-SIL reads all 403; own-org admin controls 200. See §7 |
+| 31 | **Signed `productionRelease` AAB builds under R8/minify** | **PASS (fixed this audit)** | CI run `42574947232` failed at `:app:minifyProductionReleaseWithR8` with "Missing classes detected" for Play Core split-install classes. `android/app/proguard-rules.pro` now carries the three `-dontwarn` rules AGP generates in `missing_rules.txt`; the app uses no deferred components, so the paths are unreachable. Local `flutter build appbundle --release --flavor production --build-name=4.9.9 --build-number=228` → exit 0, 116.4 MB AAB. See §8 |
+| 32 | **App Store screenshot set for all required display sizes** | **PASS (created this audit)** | 18 RGB PNGs (6 slides × iPhone 6.9" `1320×2868`, iPhone 6.5" `1284×2778`, iPad 13" `2064×2752`), PII redacted and OCR-verified, deliver-staged. Every size maps to exactly one fastlane 2.231.1 display type. See §8 |
 
 ---
 
@@ -417,17 +420,19 @@ New `.github/workflows/promote-to-production.yml`: `workflow_dispatch` with requ
 Completed during this audit:
 
 1. ~~Add 2–8 store-approved phone screenshots~~ — **DONE** (8 premium screenshots + listing copy; `fastlane android verify_store_metadata` exits 0).
-2. ~~Commit both repos, push `backend` `dev` only~~ — **DONE**: backend `f0e37a8` + `8ce154f` pushed; app `main` `c5054343` committed but deliberately **NOT** pushed (a `main` push = a Play `internal` release).
+2. ~~Commit both repos, push `backend` `dev` only~~ — **DONE**: backend `f0e37a8` + `8ce154f` pushed; app commits `c5054343`, `090a6c1f`, `75c16540`, `006ad634` were held until the user approved the internal release, then pushed (`main` = a Play `internal` release).
 3. ~~Deploy backend to dev and smoke-verify~~ — **DONE**: run `42358925144` succeeded, smoke tests passed.
 4. ~~Run the live tenant-isolation probe~~ — **DONE**: `14/14 probes behaved correctly`, `PROBE_EXIT=0` (§7). The seeded probe tenant is marked subscribed, so `ENTITLEMENT_GATE=true` could not answer 402 and masquerade as authorization.
+5. ~~Push app `main` to produce an internal-track AAB~~ — **DONE / SHIPPED** on user approval. The first two CI runs failed (formatting, then R8 missing classes); both were fixed. Run `42577732810` succeeded and uploaded `4.9.9+228` to the `internal` track (`Successfully finished the upload to Google Play`). See §8.1 for the revision/run table and the full Fastlane output.
 
 Still required (human gates):
 
-5. **Push app `main`** when an internal release is intended. This produces the AAB on the `internal` track; no release artifact has been built from revision `c5054343` yet (the working tree was verified via a locally-built development APK + the 4-flow Maestro suite).
-6. **Complete human internal-track testing** of that AAB, then dispatch `promote-to-production.yml` with the exact tested `versionCode` (currently 228) and `confirmation: PROMOTE`.
+6. **Complete human internal-track testing** of the shipped `versionCode 228` build, then dispatch `promote-to-production.yml` with that exact code and `confirmation: PROMOTE`. Production remains deliberately unreachable by a push to `main` (`assert_no_direct_production!`).
 7. **Known pre-existing, non-blocking**: GitHub Dependabot reports 169 vulnerabilities on the backend default branch (1 critical / 65 high) — not introduced by this work; needs its own remediation pass.
+8. **App Store submission (separate track)**: no `deliver` lane exists; real iOS/iPad captures and App Review-safe framing are still needed before an App Store Connect upload. The 18 staged screenshots are a design-complete draft, not a submission.
 
-`docs/` and `.workbuddy-ai/memory/` are intentionally not committed.
+`docs/` and `.workbuddy-ai/memory/` are intentionally not committed. `ios/fastlane/screenshots/`
+and `ios/fastlane/metadata/` are gitignored local staging only (§8.2).
 
 ---
 
@@ -462,6 +467,18 @@ Still required (human gates):
 | `gcloud run services list --project invoice-660f3` | `backend-dev` in `australia-southeast1`; used to derive the probe base URL without reading or printing any `.env` value |
 | `node scripts/verify-tenant-isolation.js --seed --base-url <dev-url>/api` | `14/14 probes behaved correctly.`, `PROBE_EXIT=0`; no `EXPOSED` or `REGRESSED` lines. First attempt used a non-existent `DEVELOPMENT_URL` variable → empty base → `/api` → `Invalid URL` for every probe; the only URL-bearing Maestro var is `API_BASE_URL`. See §7 |
 | Both repos' pre-commit secret scans | `No secrets detected. Proceeding with commit.` (backend), `No sensitive files or secrets detected.` (app) |
+| `dart format` on 3 audit-edited files + CI format gate | `0 changed`; `flutter analyze` → `No issues found!`; `flutter test` → `804/804` (`75c16540`) |
+| `gh run view 42574947232 --log-failed` | `ERROR: Missing classes detected while running R8` — 11 missing `com.google.android.play.core.splitcompat/splitinstall/tasks` classes; `:app:minifyProductionReleaseWithR8` failed, `Deploy to Google Play (internal)` skipped |
+| Deferred-components audit | `pubspec.yaml`: no `deferred-components`; `android/**/*.gradle`: no `com.google.android.play:core`; `AndroidManifest.xml`: `android:name="${applicationName}"` → engine paths unreachable, `-dontwarn` is the correct fix |
+| `flutter build appbundle --release --flavor production --build-name=4.9.9 --build-number=228` (local, dart-defines from `.env`, values never printed) | `✓ Built .../app-production-release.aab (116.4MB)`, `LOCAL_BUILD_EXIT=0`; only benign `kotlin.Metadata 2.3.0` `Info:` lines |
+| `git push origin main` (`75c16540..006ad634`) | success; `flutter_ci_optimized.yml` run `42577732810` triggered. `paths:` filter confirmed so a docs/screenshots-only commit cannot re-upload `versionCode 228` |
+| `gh run view 42577732810` | `conclusion: success`; all 5 jobs `success`, `Notify on Failure` `skipped`; `WATCH_EXIT=0` |
+| `fastlane android upload_internal_aab` (deploy step log) | `versionCode 228 > highest published 227 (internal)`; `Updating track 'internal'...`; `Updating changelog for '228'`; `Successfully finished the upload to Google Play`; `fastlane.tools finished successfully 🎉` |
+| CI deployment summary | `## 🚀 Internal deployment successful` — Track `internal`, Version `4.9.9+228`, Commit `006ad6342078bdf551736b368d85bc26e1ecaa6f` |
+| App Store screenshot render (`--full`) | 18 PNGs, `RENDER_EXIT=0`; every file exact size and `RGB` (alpha stripped); total 15.6 MB |
+| Tesseract OCR over 6 cleaned sources + all 18 final images | `NO_PII_PATTERN_HITS` / `NO_PII_PATTERN_HITS_IN_FINAL_IMAGES` (demo names, handles, `@mailinator.com`); visual crops of slides 1/2/4/6 clean |
+| fastlane 2.231.1 `DEVICE_RESOLUTIONS` cross-check | `1320×2868 → APP_IPHONE_67`, `1284×2778 → APP_IPHONE_65`, `2064×2752 → APP_IPAD_PRO_3GEN_129`; each size has exactly one owner → `FASTLANE_RESOLUTION_VALIDATION=PASS` |
+| `git check-ignore -v` on iOS staging paths | `ios/fastlane/screenshots/en-US/01.png` → `.gitignore:399 screenshots/`; `ios/fastlane/metadata/...` → `.gitignore:170`; both local-only, `store-screenshots/` is trackable |
 
 ---
 
@@ -529,4 +546,129 @@ Two interpretation caveats, verified in `scripts/verify-tenant-isolation.js` rat
 - The script exits non-zero **only** when an `EXPOSED` (should-have-been-refused) probe fails. A `REGRESSED` probe (legitimate request wrongly denied) would still exit 0. The summary line was read explicitly: `14/14`, with no `EXPOSED` or `REGRESSED` lines. No 402 appeared, confirming the entitlement gate did not mask any result.
 - The probe sets `X-Platform: ios` to bypass App Check. App Check is client-integrity only, never authorization; the 401 forged-token and 403 role/tenancy refusals above come from the auth and `adminSurface` middleware, so bypassing it does not weaken these conclusions.
 
-This closes the last automated gate. Production promotion remains gated on the two human steps in §4.
+This closed the last pre-deploy automated gate. The internal-track build has since shipped
+(run `42577732810`, §8.1); production promotion is now gated on the single human step in §4:
+test `versionCode 228` on the `internal` track, then dispatch `promote-to-production.yml`.
+
+---
+
+## 8. INTERNAL RELEASE PUSH + APP STORE SCREENSHOT SET
+
+### 8.1 Pushing `main` — two CI failures, both diagnosed and fixed
+
+The user approved the internal release ("Go -for internal"). App `main` was pushed; the workflow
+`flutter_ci_optimized.yml` is the **only** push-triggered workflow that can upload to Play, and its
+`paths:` filter is `lib/**`, `android/**`, `ios/**`, `pubspec.yaml` and the workflow file itself.
+This matters: a later commit touching only `RELEASE_READINESS_AUDIT.md` and `store-screenshots/`
+does **not** re-trigger it, so it cannot cause a duplicate upload of `versionCode 228` after a
+successful internal release. `flutter_ci.yml`, `codeql.yml` and `secret-scan.yml` run on every
+`main` push but are CI-only.
+
+| Revision pushed | CI run | Failure | Fix |
+|---|---|---|---|
+| `090a6c1f` | `42574045737` | `Check formatting` — `dart format --output=none --set-exit-if-changed lib test integration_test` flagged 3 audit-edited files | `75c16540`: formatter-only changes; local `flutter analyze` → `No issues found!`, `flutter test` → `804/804` |
+| `75c16540` | `42574947232` | `Build Android (release)` — `:app:minifyProductionReleaseWithR8`, `ERROR: Missing classes detected while running R8` | `006ad634`: three `-dontwarn` rules in `android/app/proguard-rules.pro` |
+| `006ad634` | `42577732810` | **none — `success`** | Shipped `4.9.9+228` to the `internal` track |
+
+`gh run view 42577732810`: `conclusion: success`, jobs `Security & Quality Checks`, `Run Tests`,
+`Build Android (debug)`, `Build Android (release)`, `Deploy to Google Play (internal)` all `success`;
+`Notify on Failure` `skipped`. Fastlane lane `android upload_internal_aab` output:
+
+```
+Found '158' version codes in track 'production'
+Found '227' version codes in track 'internal'
+versionCode 228 > highest published 227 (internal).
+Using release notes: .../android/release_notes_4.9.9.txt
+Updating track 'internal'...
+Updating changelog for '228' and language 'en-US'...
+Successfully finished the upload to Google Play
+fastlane.tools finished successfully 🎉
+```
+
+CI deployment summary: `## 🚀 Internal deployment successful`, **Track:** `internal`,
+**Version:** `4.9.9+228`, **Commit:** `006ad6342078bdf551736b368d85bc26e1ecaa6f`, with the
+reminder to test that exact versionCode before promoting. Nothing in this workflow can reach
+production.
+
+The R8 error named `SplitCompatApplication`, `SplitInstallManager`, `SplitInstallRequest`,
+`OnSuccessListener`, `Task` and friends, all under `com.google.android.play.core.splitcompat`,
+`.splitinstall` and `.tasks`. These come from the Flutter engine's
+`FlutterPlayStoreSplitApplication` and `PlayStoreDeferredComponentManager`. Verified by reading the
+project, **not** assumed: there is no `deferred-components` block in `pubspec.yaml`, no
+`com.google.android.play:core` dependency in any Gradle file, and the manifest uses Flutter's
+default `android:name="${applicationName}"`. Those code paths are unreachable, so the correct fix is
+the `-dontwarn` entries AGP itself writes to
+`build/app/outputs/mapping/productionRelease/missing_rules.txt` — **not** adding the deprecated
+Play Core artifact. Added to `android/app/proguard-rules.pro` next to the existing Play Integrity
+rules:
+
+```proguard
+-dontwarn com.google.android.play.core.splitcompat.**
+-dontwarn com.google.android.play.core.splitinstall.**
+-dontwarn com.google.android.play.core.tasks.**
+```
+
+Verified locally before pushing (same command CI runs, dart-defines read from `.env` without
+printing values):
+
+```
+flutter build appbundle --release --flavor production --build-name=4.9.9 --build-number=228
+✓ Built build/app/outputs/bundle/productionRelease/app-production-release.aab (116.4MB)
+LOCAL_BUILD_EXIT=0
+```
+
+Only three non-fatal `Info: ... kotlin.Metadata ... version 2.3.0` lines remain (R8 metadata
+warnings from third-party SDKs), not errors.
+
+### 8.2 App Store screenshots (18 images)
+
+Generated with the external `store-screenshots` skill workflow: copy draft + one sample slide shown
+to the user and approved, then the full render. Design matches the premium Google Play set (dark
+navy gradient, red accent bar, `CARENEST · NDIS OPERATIONS` eyebrow, benefit chips, bottom-right
+device bleed, `NN / 06` counter). Six auto-picked features: Business Overview, Rostering, NDIS
+pricing, Invoicing, Timesheets, Client & family portal.
+
+| Set | Folder | Size | Files | fastlane 2.231.1 display type |
+|---|---|---|---|---|
+| iPhone 6.9" | `store-screenshots/appstore-iphone-69/` | `1320×2868` | 6 | `APP_IPHONE_67` |
+| iPhone 6.5" | `store-screenshots/appstore-iphone-65/` | `1284×2778` | 6 | `APP_IPHONE_65` |
+| iPad 13" | `store-screenshots/appstore-ipad-13/` | `2064×2752` | 6 | `APP_IPAD_PRO_3GEN_129` |
+
+All 18 are PNG, **RGB with no alpha**, exact pixel size, 15.6 MB total. Validation was done against
+the installed `fastlane-2.231.1/deliver/lib/deliver/app_screenshot.rb` `DEVICE_RESOLUTIONS` table:
+each of our three sizes resolves to **exactly one** display type (no conflicting resolution). Note
+that `deliver` detects device type from **image resolution**, not folder name, and reads a **flat**
+`ios/fastlane/screenshots/<locale>/*.png` — `Loader#file_paths` does not recurse into device
+subfolders. Staging therefore uses flat filenames `01_iphone69.png` … `06_ipad13.png`.
+
+A visual review of the first iPad render found `object-fit: cover` cropping both portrait phone
+captures left/right inside the 3:4 tablet frame, slicing UI text mid-word (`usiness Overview`,
+`ack your …`). The tablet CSS was changed to `object-fit: contain` with a dark `#101014` letterbox
+so both complete app screens are visible; the full 18-image set was re-rendered and visually
+re-checked.
+
+**PII.** Raw Maestro dev captures contained demo names/handles (`Pratiksha Tiwari`, `Harry James`,
+`Deverbishal331`, `Bishalkc331`, `@mailinator.com` addresses). Five source images were redacted
+with Pillow before rendering. A first render left two partially-visible usernames, a sliced date
+(`2026-05-26`) and a mismatched beige fill; all three were fixed by widening boxes to cover the
+whole text line and using the sampled card colours (`#EAF0FC`, `#E8EBF5`, `#FFFFFF`), then the full
+set was re-rendered. Verified by OCR (tesseract 5.5.3) over the 6 cleaned sources **and** all 18
+final images: zero hits for demo names, handles or emails. Visual crops of slides 1, 2, 4 and 6
+were inspected; no leftover names, no sliced text, fills blend.
+
+**Staging.** 18 deliver-ready flat files in `ios/fastlane/screenshots/en-US/` plus 18 organised
+copies in `ios/fastlane/metadata/en-US/images/{iphone69,iphone65,ipad13}/`. Both paths are
+gitignored (`.gitignore:399` `screenshots/`, `.gitignore:170` `/ios/fastlane/metadata/`) and are
+deliberately **not committed** — a committed `ios/**` change would re-trigger the Play internal
+release. The canonical, trackable output is `store-screenshots/`.
+
+**Remaining caveats (accepted by the user, none block the Play internal release):**
+- Sources are Android dev-build captures shown inside CSS-drawn iPhone/iPad frames; this is a
+  potential App Review risk for a real App Store submission.
+- The iPad 13" set composites two phone captures side-by-side; there are no real iPad Simulator
+  captures. `TARGETED_DEVICE_FAMILY = "1,2"` requires iPad screenshots, so the set is provided.
+- `ios/fastlane/Fastfile` has no `deliver` / screenshot-upload lane, so upload to App Store Connect
+  is not yet wired; the staged files are ready for a future lane.
+- Ruby 4.0 + fastlane cannot `require "deliver"` locally (`Could not find 'sysrandom'` from
+  `fastlane-sirp`), so display-type validation used the gem's own resolution table rather than the
+  Ruby validator.
