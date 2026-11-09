@@ -33,6 +33,19 @@
 -keep class com.google.android.play.core.integrity.** { *; }
 -dontwarn com.google.android.play.core.integrity.**
 
+# Flutter's engine ships FlutterPlayStoreSplitApplication and
+# PlayStoreDeferredComponentManager, which reference the OLD Play Core split
+# install / splitcompat APIs. This app does NOT use deferred components (no
+# `deferred-components` block in pubspec.yaml, no `com.google.android.play:core`
+# dependency, default ${applicationName} in the manifest), so those code paths
+# are unreachable. AGP's "Missing classes detected while running R8" check still
+# fails the release bundle unless we explicitly acknowledge them. These are the
+# same -dontwarn entries AGP writes to missing_rules.txt; do NOT add the
+# deprecated com.google.android.play:core artifact just to silence them.
+-dontwarn com.google.android.play.core.splitcompat.**
+-dontwarn com.google.android.play.core.splitinstall.**
+-dontwarn com.google.android.play.core.tasks.**
+
 # Native MethodChannel payload helpers live in the app package; keep field and
 # method names so channel arguments survive obfuscation.
 -keep class com.bishal.invoice.** { *; }
