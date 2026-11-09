@@ -2,7 +2,7 @@
 
 **Mode:** Falsification-first. Every assertion below was verified by code inspection or by executing a test/command; statuses marked `FIXED` were changed in the working tree, not merely recommended.
 **Scope:** existing Google Play Store listing (`com.bishal.invoice`), architectural overhaul (Standard Invoicing ↔ SIL/NDIS Claiming split, Temporal workflows, R2/Valkey, Maestro E2E, Fastlane release).
-**Repositories:** two independent git repos — app root and `backend/` (the root repo gitignores `backend/`). Nothing in this audit has been committed.
+**Repositories:** two independent git repos — app root and `backend/` (the root repo gitignores `backend/`). Both were committed separately: backend `dev` (`f0e37a8`, `8ce154f`) was pushed and deployed; app `main` (`c5054343`) is committed locally and deliberately **NOT** pushed (a `main` push triggers a Play `internal` release). This report was amended after those commits to record the post-deploy verification.
 **Constraint honoured:** no `.env` value and no credential is printed anywhere in this report. Maestro "before" values are redacted.
 
 ---
@@ -12,7 +12,7 @@
 | Track | Verdict |
 |---|---|
 | **Google Play `internal`** | **GO** — all deterministic automated gates pass, including the 4-flow Maestro release suite on the emulator. |
-| **Google Play `production` (promotion)** | **NO-GO until internal testing completes** — by design. `verify_store_metadata!` now passes (8 screenshots + premium listing), but promotion requires: backend changes deployed to dev and probe-verified, then a manual `promote-to-production.yml` dispatch with the tested `versionCode`. |
+| **Google Play `production` (promotion)** | **NO-GO until internal testing completes** — by design. Every automated gate is now green: `verify_store_metadata!` (8 screenshots + premium listing), Maestro 4/4 on the emulator, backend `dev` deployed with smoke tests passing, and **14/14 live tenant-isolation probes** against the deployed service. The only remaining gates are human: push app `main` to produce the internal-track AAB, test that build, then a manual `promote-to-production.yml` dispatch with the tested `versionCode`. |
 
 **Blocking is deliberate and enforced in code**, not just advisory: `android/fastlane/Fastfile` calls `verify_store_metadata!` inside `promote_internal_to_production`, and the promotion lane refuses a `versionCode` that is not already on the `internal` track. Production cannot be reached by a push to `main` (`assert_no_direct_production!`).
 
@@ -50,7 +50,8 @@
 | 26 | Promotion ships Play listing metadata + screenshots | **PASS (wiring)** | `Fastfile:427-438` `skip_upload_metadata/images/screenshots: false`, `metadata_path: metadata_root`; `.gitignore` no longer ignores `android/fastlane/metadata/android` |
 | 27 | **2–8 store-approved phone screenshots present** | **PASS (fixed this audit)** | 8 premium 1080×1920 screenshots generated from raw Maestro captures via the externally-installed screenshot skill and staged in `android/fastlane/metadata/android/en-US/images/phoneScreenshots/`; premium `title.txt` (27/30), `short_description.txt` (74/80), `full_description.txt` (2939/4000). `fastlane android verify_store_metadata` → `Play listing metadata and 8 screenshots validated.`, exit 0. A macOS case-insensitive `Dir.glob` double-count bug in `verify_store_metadata!` (8 files counted as 16) was found and fixed with `.uniq { |path| path.downcase }` |
 | 28 | **Maestro E2E flows executed on a device/emulator** | **PASS (executed this audit)** | Fresh development APK built from current source and installed on `emulator-5554`. See §6 for the full run log: 4/4 flows green with true exit-code capture |
-| 29 | **Backend changes deployed and smoke-verified** | **PENDING (backend `dev` push)** | All backend changes are local working-tree edits in the `backend/` repo. Push to `backend` `dev` triggers `backend-deploy-dev-hybrid.yml`; then run `node scripts/verify-tenant-isolation.js --seed --base-url <url>/api` against the deployed service |
+| 29 | **Backend changes deployed and smoke-verified** | **PASS (executed this audit)** | `backend` `dev` pushed (`f0e37a8`, `8ce154f`) → `backend-deploy-dev-hybrid.yml` run **`42358925144`: success** (Security & Quality Checks, Run Tests, Build Docker Image, Deploy to Cloud Run (Dev) all success; `Smoke tests passed via secure proxy` on attempt 1/8). The first run `42358291314` failed on 4 stale rate-limit assertions, fixed in `8ce154f` — see §5 |
+| 30 | **Live tenant isolation on the deployed dev service** | **PASS (executed this audit)** | `node scripts/verify-tenant-isolation.js --seed --base-url <dev-url>/api` → **`14/14 probes behaved correctly`**, `PROBE_EXIT=0`: forged token 401; cross-tenant revenue/forecast/workforce/payslip/payroll/bank-details/timesheet-approval and member-SIL reads all 403; own-org admin controls 200. See §7 |
 
 ---
 
@@ -87,7 +88,7 @@
 | P2-3 | Maestro | Flows were authored but not executed on a device. | `.maestro/01…04_*.yaml` | **RESOLVED.** Full suite executed on `emulator-5554` against a fresh build of the current source — see §6 |
 | P2-4 | Backend / RBAC | Pre-existing financial/config routers had auth + tenancy but no role gate: `accounting.routes.js`, `billing/billingRoutes.js`, `paymentRoutes.js`, `v1/organization.js` (broad `$set` organisation writes), plus the already-gated `v1/pricing.js` and `client.js` plan route. | `backend/routes/*` | **FIXED with deliberate exemptions.** Gated: accounting router-level, all 8 payment endpoints, billing management routes, 4 organisation write routes (`PUT /:organizationId`, `PUT /:organizationId/branding`, both contact-email verification routes) via a new `requireMatchingOrganizationNoBodyPin` (raw `$set: req.body` update payloads must not get `organizationId` injected). Deliberately left open: personal bank details (employee self-service), Cloud Scheduler machine-auth, signature-verified webhooks, entitlement verify/status (`subscription_guard.dart` pushes `SubscriptionView` to any member on 402), public participant checkout, `POST /organization/:organizationId/switch`, organisation reads/create/verify-code/`my-list`. `OrganizationDetailsView` hides edit/verification affordances for non-admins (defence in depth). NDIS Plan button and custom-pricing writes already sit behind `adminOnlyRoutes` surfaces, so no further UI change was needed |
 | P2-4b | Backend / billing boundary | Orphaned `silShiftId` rows (links to deleted/non-SIL shifts, or missing the field) were silently dropped by standard billing exclusions — a silent revenue-loss path. | `backend/utils/silBillingBoundary.js`, `backend/services/invoiceGenerationService.js` | **FIXED.** `findOrphanSilWorkedTimeIds(...)` recovers orphaned rows in `getWorkedTimeData()`; genuine SIL links and irregular SIL stay excluded; `tests/services/silBillingBoundary.test.js` (10 tests) |
-| P2-5 | Backend / config | `ENTITLEMENT_GATE=true` on dev returns 402 for unsubscribed orgs on `/api/payroll*`, `/api/invoices`, `/api/bulk`, … A 402 can masquerade as "authorization worked". `subscriptionGate` fails open unless the flag is set, and `requireEntitlement` also fails open. | `backend/middleware/billing/subscriptionGate.js:80-82,115-121`, `backend/middleware/billing/requireEntitlement.js:16-18` | **OPEN — known.** Do not treat entitlement gating as authorization; probe tenants must be marked subscribed or isolation results are meaningless |
+| P2-5 | Backend / config | `ENTITLEMENT_GATE=true` on dev returns 402 for unsubscribed orgs on `/api/payroll*`, `/api/invoices`, `/api/bulk`, … A 402 can masquerade as "authorization worked". `subscriptionGate` fails open unless the flag is set, and `requireEntitlement` also fails open. | `backend/middleware/billing/subscriptionGate.js:80-82,115-121`, `backend/middleware/billing/requireEntitlement.js:16-18` | **OPEN — known, mitigated in the probe.** Do not treat entitlement gating as authorization; probe tenants must be marked subscribed or isolation results are meaningless. §7 seeded a subscribed tenant and no 402 appeared across 14 probes |
 | P2-6 | Backend / dead code | `backend/routes/pricePrompt.js` defines absolute `/api/price-prompts/*` routes but is never mounted (`routes/index.js:96` mounts `routes/v1/pricePrompt.js` instead). Also `routes/priceValidation.js` is unmounted. | as listed | **OPEN — cleanup** |
 | P2-7 | Fastlane | `deploy_production` / `upload_production_aab` lanes still exist and can be reached with `ALLOW_DIRECT_PRODUCTION=true`; `capture_screenshots` lane name collides with a built-in fastlane action (warning observed). | `android/fastlane/Fastfile:271, 315, 373` | **OPEN — accepted escape hatch**, guarded and unused by CI |
 | P2-8 | Tests | `tests/middleware/responseCache.test.js` "a cache read failure degrades to an uncached response" intermittently returned 404 when run alongside the full-app authorization suite; passes **16/16 in isolation** and passed on re-run of the full sweep. | `backend/tests/middleware/responseCache.test.js:247-260` | **OPEN — order-sensitive flake**, not a regression |
@@ -413,11 +414,20 @@ New `.github/workflows/promote-to-production.yml`: `workflow_dispatch` with requ
 
 ## 4. REQUIRED ACTIONS BEFORE PRODUCTION PROMOTION
 
+Completed during this audit:
+
 1. ~~Add 2–8 store-approved phone screenshots~~ — **DONE** (8 premium screenshots + listing copy; `fastlane android verify_store_metadata` exits 0).
-2. **Commit both repos and push `backend` `dev` only** (app `main` push = an internal Play release; do it only when that is intended). The push triggers `backend-deploy-dev-hybrid.yml`.
-3. **After the dev deploy, run `node scripts/verify-tenant-isolation.js --seed --base-url <url>/api`** against the deployed service and confirm the new gates return 403 for employee/client tokens. Remember: probe tenants must be marked subscribed or `ENTITLEMENT_GATE=true` answers 402 and the result is meaningless.
-4. **Promote only after internal testing**: dispatch `promote-to-production.yml` with the exact tested `versionCode` (currently 228) and `confirmation: PROMOTE`.
-5. The two repos are independent git repos (18 app paths + 45 backend paths changed/untracked). `docs/` and `.workbuddy-ai/memory/` are intentionally not committed.
+2. ~~Commit both repos, push `backend` `dev` only~~ — **DONE**: backend `f0e37a8` + `8ce154f` pushed; app `main` `c5054343` committed but deliberately **NOT** pushed (a `main` push = a Play `internal` release).
+3. ~~Deploy backend to dev and smoke-verify~~ — **DONE**: run `42358925144` succeeded, smoke tests passed.
+4. ~~Run the live tenant-isolation probe~~ — **DONE**: `14/14 probes behaved correctly`, `PROBE_EXIT=0` (§7). The seeded probe tenant is marked subscribed, so `ENTITLEMENT_GATE=true` could not answer 402 and masquerade as authorization.
+
+Still required (human gates):
+
+5. **Push app `main`** when an internal release is intended. This produces the AAB on the `internal` track; no release artifact has been built from revision `c5054343` yet (the working tree was verified via a locally-built development APK + the 4-flow Maestro suite).
+6. **Complete human internal-track testing** of that AAB, then dispatch `promote-to-production.yml` with the exact tested `versionCode` (currently 228) and `confirmation: PROMOTE`.
+7. **Known pre-existing, non-blocking**: GitHub Dependabot reports 169 vulnerabilities on the backend default branch (1 critical / 65 high) — not introduced by this work; needs its own remediation pass.
+
+`docs/` and `.workbuddy-ai/memory/` are intentionally not committed.
 
 ---
 
@@ -447,6 +457,11 @@ New `.github/workflows/promote-to-production.yml`: `workflow_dispatch` with requ
 | `flutter build apk --debug --flavor development` + install | `REBUILD_EXIT=0`, installed on `emulator-5554` |
 | Redaction-safe secret scan over 22 app + 50 backend commit candidates | only false positives (test-fixture emails like `c@x.com`, assignment statements); `.env.maestro` confirmed ignored; test Mongo URI = `mongodb://test` placeholder (no userinfo) |
 | `./scripts/run_maestro.sh` (all four flows, one run) | `4/4 Flows Passed in 5m 29s`, `MAESTRO_FULL_EXIT=0` |
+| Backend push → `backend-deploy-dev-hybrid.yml` | First run `42358291314` **failed** in the CI test job: 2 stale suites (`tests/rateLimitFix.test.js`, `tests/rateLimitReset.test.js`) still asserted legacy **unscoped** rate-limit prefixes (`rl:login:`, `rl:verify:<email>`) after the envScope change — 4 tests red, 1223 green. Fixed by deriving expectations from `scopeKey()`; local `npm run test:unit` then **109 suites / 1227 tests green**; fix pushed (`8ce154f`). **Lesson:** a touched-suite sweep misses stale assertions elsewhere — always run what CI runs before pushing backend |
+| `gh run view 42358925144` (post-fix dev deploy) | `success` — Security & Quality Checks, Run Tests, Build Docker Image, Deploy to Cloud Run (Dev) all `success`; `##[notice]Smoke tests passed via secure proxy` on attempt 1/8 |
+| `gcloud run services list --project invoice-660f3` | `backend-dev` in `australia-southeast1`; used to derive the probe base URL without reading or printing any `.env` value |
+| `node scripts/verify-tenant-isolation.js --seed --base-url <dev-url>/api` | `14/14 probes behaved correctly.`, `PROBE_EXIT=0`; no `EXPOSED` or `REGRESSED` lines. First attempt used a non-existent `DEVELOPMENT_URL` variable → empty base → `/api` → `Invalid URL` for every probe; the only URL-bearing Maestro var is `API_BASE_URL`. See §7 |
+| Both repos' pre-commit secret scans | `No secrets detected. Proceeding with commit.` (backend), `No sensitive files or secrets detected.` (app) |
 
 ---
 
@@ -481,3 +496,37 @@ MAESTRO_FULL_EXIT=0
 ```
 
 Scope note: flows 03/04 verify surface separation, reachability and screen loads (employee invoice form, invoice list with Client/Employee tabs, SIL properties/quotes/rosters, NDIS "Pick period & generate" + batches). Invoice/claim **generation** is deliberately not driven from E2E because it mutates shared dev data and depends on seeded billable periods; that logic is covered by the deterministic backend suites (P0-2, P0-4, P1-4 evidence above).
+
+---
+
+## 7. POST-DEPLOY TENANT-ISOLATION VERIFICATION (deployed dev service)
+
+Executed after `backend-deploy-dev-hybrid.yml` run `42358925144` succeeded. Target is the **deployed** `backend-dev` Cloud Run service, not a local server. The base URL was derived from `gcloud run services describe backend-dev` and suffixed with `/api` (`call()` builds `new URL(base + route)`); no `.env` value was read or printed. `--seed` created a subscribed probe tenant so `ENTITLEMENT_GATE=true` could not answer 402 and masquerade as authorization.
+
+```
+14/14 probes behaved correctly.    PROBE_EXIT=0
+```
+
+| Probe | Actor | HTTP | Verdict |
+|---|---|---|---|
+| `control/admin-can-read-own-sil` | probeOwner | 200 | PASS |
+| `control/member-cannot-read-sil` | probeMember | 403 | PASS |
+| `A1/cross-tenant-revenue-trends` | probeMember | 403 | PASS |
+| `A1/cross-tenant-revenue-forecast` | probeMember | 403 | PASS |
+| `A2/cross-tenant-workforce-analytics` | probeMember | 403 | PASS |
+| `A3/cross-tenant-payslip` | probeMember | 403 | PASS |
+| `A3/same-tenant-colleague-payslip` | bystander | 403 | PASS |
+| `A3/control-own-payslip` | victim | 200 | PASS |
+| `control/admin-payslip-read-target` | probeOwner | 200 | PASS |
+| `A4/member-reads-org-payroll-summary` | bystander | 403 | PASS |
+| `A4/member-exports-org-payroll` | bystander | 403 | PASS |
+| `A5/member-reads-invoice-bank-details` | bystander | 403 | PASS |
+| `A9/member-approves-all-timesheets` | bystander | 403 | PASS |
+| `control/forged-token-rejected` | forged | 401 | PASS |
+
+Two interpretation caveats, verified in `scripts/verify-tenant-isolation.js` rather than assumed:
+
+- The script exits non-zero **only** when an `EXPOSED` (should-have-been-refused) probe fails. A `REGRESSED` probe (legitimate request wrongly denied) would still exit 0. The summary line was read explicitly: `14/14`, with no `EXPOSED` or `REGRESSED` lines. No 402 appeared, confirming the entitlement gate did not mask any result.
+- The probe sets `X-Platform: ios` to bypass App Check. App Check is client-integrity only, never authorization; the 401 forged-token and 403 role/tenancy refusals above come from the auth and `adminSurface` middleware, so bypassing it does not weaken these conclusions.
+
+This closes the last automated gate. Production promotion remains gated on the two human steps in §4.
