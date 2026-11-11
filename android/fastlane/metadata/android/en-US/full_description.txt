@@ -1,52 +1,29 @@
-CareNest brings the entire NDIS care operation into one place — scheduling, service delivery, invoicing and claiming — so providers spend less time on administration and more time on care.
+CareNest is the operating system for NDIS care providers. Plan the roster, deliver the shift, invoice the hours and lodge the claim — without chasing spreadsheets, screenshots or paper timesheets.
 
-Built for Australian NDIS providers, support coordinators, plan managers, support workers and the participants and families they serve.
+Built for Australian disability support providers, support coordinators, plan managers, support workers, and the participants and families they support.
 
-ONE CLEAR VIEW OF YOUR BUSINESS
-• A live business overview of active clients, staff, invoices and requests
-• Manage multiple organisations with organisation-scoped data
-• Role-based access, so admins, workers, participants and families each see what they need
-• A dedicated Configuration & Finance area for the financial tools only administrators should use
+SEE THE WHOLE BUSINESS
+One live dashboard shows active clients, staff, shifts, invoices and requests. Switch between organisations without ever mixing their data, and give every role — admin, worker, participant, family — exactly the screens they need. Financial tools live in a dedicated Configuration & Finance area that only administrators can reach.
 
-SCHEDULE CARE WITH CONFIDENCE
-• Assign shifts to the right support worker and confirm the booking
-• Recurring schedules, assignment details and shift notes
-• Real-time schedule updates and push notifications
-• Geofenced clock-in reminders — never silent location tracking
+BOOK CARE IN SECONDS
+Assign a shift, add recurring schedules and shift notes, and let staff see their whole day on their phone. Clock in and out with geofenced reminders (never silent location tracking), then review timesheets, weekly targets, overtime and shift history. Leave balances, expense reports, mileage and payslips live in the same workspace.
 
-NDIS-READY BILLING, END TO END
-• Generate client and employee invoices from actual worked time
-• NDIS support-item pricing with price caps, region rules and price-guide support
-• Review every line against the current NDIS cap before it is billed
-• SIL Rosters of Care, SIL invoice generation and NDIS claiming in dedicated admin workflows
-• myplace-ready bulk payment request (BPR) exports
-• Standard invoicing and SIL claiming are kept separate, so the same hours are never billed twice
-• Bulk invoice generation, PDF invoices, email delivery and payment records
-• Idempotent generation: a retry never produces a duplicate invoice or claim batch
+BILL NDIS, CORRECTLY
+Generate invoices from actual worked time and check every line against current NDIS support-item price caps, region rules and the price guide. Standard invoicing and SIL claiming stay strictly separate, so the same hours can never be billed twice. Produce PDFs in bulk, email them, record payments, and retry safely — idempotent generation prevents duplicate invoices or claim batches.
 
-A WORKSPACE YOUR TEAM WILL ACTUALLY USE
-• Clock in and out, with timesheets, weekly targets and daily breakdowns
-• Leave insights, shift history and your own payslips
-• Mileage and expense tracking with reports
-• Training and compliance records with expiry tracking
-• Secure messaging between workers, participants and families
-• An offline queue that syncs when connectivity returns
-• A hands-free voice assistant for common navigation
-• Pay rates, certification requirements and team coordination tools
+SIL, SORTED
+Manage Supported Independent Living in dedicated workflows: properties, quotes, Rosters of Care, rostering, SIL invoice generation, invoice dispatch and NDIS claiming batches. Export myplace-ready bulk payment requests (BPR), and see at a glance what is generated, partially paid, paid and outstanding.
 
-FOR PARTICIPANTS AND FAMILIES
-• A dedicated client portal with appointments and service history
-• View, approve or dispute invoices
-• Family access with a clear, granular permission matrix
-• Secure messaging and feedback, without exposing other participants' data
+STAY AUDIT-READY
+Track NDIS Worker Checks, certificates, training and expiry dates. Keep price caps, pay rates and compliance records current. Tenant-scoped data access, Firebase authentication, App Check attestation and server-verified role checks keep claiming and financial configuration in administrator hands.
 
-SECURITY YOU CAN AUDIT
-• Firebase authentication with email verification
-• Firebase App Check attestation on API requests
-• Tenant-scoped data access and server-verified role checks
-• Financial configuration and claiming restricted to administrator roles
+KEEP FAMILIES CLOSE
+A dedicated client portal shows appointments, service history and invoices. Participants and families can view, approve or dispute an invoice, message their team and set granular family-access permissions — without ever seeing another participant's data.
+
+BUILT FOR REAL SHIFTS
+An offline queue syncs when connectivity returns, push notifications keep everyone informed, and a hands-free voice assistant handles common navigation.
 
 WHO IT IS FOR
 NDIS service providers · disability support workers · support coordinators · plan managers · allied health professionals · care organisation administrators
 
-CareNest replaces the spreadsheet, the whiteboard and the inbox with one reliable system. Give your team the clarity to focus on care.
+CareNest replaces the whiteboard, the inbox and the spreadsheet with one reliable system — so your team spends its time on care, not administration.
