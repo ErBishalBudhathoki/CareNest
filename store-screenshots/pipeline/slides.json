@@ -1,0 +1,90 @@
+{
+  "brand": {
+    "background": "#FFF9E6",
+    "headline": "#1A1A1A",
+    "bezel": "#18181B",
+    "inner_border": "#27272A",
+    "font": "Inter"
+  },
+  "source_dir": ".maestro/screenshots/screenshots",
+  "slides": [
+    {
+      "number": "01",
+      "slug": "business-overview",
+      "label": "Operations",
+      "image": "appstore-01-admin-dashboard.png",
+      "screen": "Admin Business Overview: active businesses, total clients, invoice count, Get Started",
+      "headline": "Run your whole care business",
+      "subline": "Clients, shifts, invoices and staff in one view"
+    },
+    {
+      "number": "02",
+      "slug": "schedule-care",
+      "label": "Scheduling",
+      "image": "appstore-03-admin-schedule-assignment.png",
+      "screen": "Schedule Assignment: employee, client, date/time and NDIS support item selection",
+      "headline": "Schedule care in seconds",
+      "subline": "Match the right worker to every shift"
+    },
+    {
+      "number": "03",
+      "slug": "worker-tools",
+      "label": "Workforce",
+      "image": "appstore-02b-employee-home.png",
+      "screen": "Employee Home: upcoming shifts, clock in, time clock and leave insights",
+      "headline": "Every shift in your pocket",
+      "subline": "Clock in, check rosters and manage leave"
+    },
+    {
+      "number": "04",
+      "slug": "invoices",
+      "label": "Billing",
+      "image": "appstore-27-clinet-invoice-detail-approve-disapprove.png",
+      "screen": "Invoice detail with totals and Approve / Dispute actions",
+      "headline": "Approve invoices in seconds",
+      "subline": "NDIS-ready billing without the paperwork"
+    },
+    {
+      "number": "05",
+      "slug": "sil-rosters",
+      "label": "SIL",
+      "image": "appstore-29-sil-rosters-of-care.png",
+      "safe_top": 0.033,
+      "status_fix": true,
+      "screen": "SIL Rosters of Care: active rosters, supports, review cadence, plan and invoice actions",
+      "headline": "Manage SIL rosters in one place",
+      "subline": "Properties, rosters and staffing together"
+    },
+    {
+      "number": "06",
+      "slug": "sil-invoice",
+      "label": "SIL Billing",
+      "image": "appstore-30-sil-invoice-dialog.png",
+      "safe_top": 0.033,
+      "status_fix": true,
+      "screen": "SIL invoice dialog: billing period, optional due date, generate action",
+      "headline": "Invoice SIL in seconds",
+      "subline": "Pick a period and bill instantly"
+    },
+    {
+      "number": "07",
+      "slug": "ndis-claiming",
+      "label": "NDIS",
+      "image": "appstore-31-ndis-claiming.png",
+      "safe_top": 0.033,
+      "status_fix": true,
+      "screen": "NDIS Claiming batches: generated, partial, paid and outstanding amounts",
+      "headline": "NDIS claims under control",
+      "subline": "Track batches, payments and outstanding claims"
+    },
+    {
+      "number": "08",
+      "slug": "family-access",
+      "label": "Family Access",
+      "image": "appstore-13-client-dashboards.png",
+      "screen": "Client Dashboard: family access controls, today's appointments, worker location",
+      "headline": "Keep families in the loop",
+      "subline": "Share care updates without the phone calls"
+    }
+  ]
+}

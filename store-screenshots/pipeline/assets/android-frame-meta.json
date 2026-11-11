@@ -1,0 +1,13 @@
+{
+  "frame": "android-frame.png",
+  "frame_w": 714,
+  "frame_h": 1474,
+  "cut_x": 27,
+  "cut_y": 20,
+  "cut_w": 660,
+  "cut_h": 1434,
+  "bezel": 20,
+  "inner_r": 44,
+  "outer_r": 64,
+  "punch_r": 20
+}

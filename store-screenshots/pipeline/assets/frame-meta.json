@@ -1,0 +1,13 @@
+{
+  "frame": "iphone-18-pro-max-black.png",
+  "frame_w": 1470,
+  "frame_h": 3000,
+  "cut_x": 75,
+  "cut_y": 66,
+  "cut_w": 1320,
+  "cut_h": 2868,
+  "bezel": 53,
+  "inner_r": 194,
+  "outer_r": 247,
+  "mask_pixels": 3724409
+}

@@ -1,0 +1,67 @@
+{
+  "brand": {
+    "background": "#FFF9E6",
+    "headline": "#1A1A1A",
+    "bezel": "#18181B",
+    "inner_border": "#27272A",
+    "font": "Inter"
+  },
+  "source_dir": ".maestro/screenshots/screenshots",
+  "total": 14,
+  "slides": [
+    {
+      "number": "09",
+      "slug": "compliance-certifications",
+      "label": "Compliance",
+      "image": "appstore-08-certification-requirements.png",
+      "screen": "Certification Requirements: NDIS Worker Check, Cert III/IV, First Aid with ACTIVE badges",
+      "headline": "Keep every certificate current",
+      "subline": "NDIS checks and qualifications in one place"
+    },
+    {
+      "number": "10",
+      "slug": "expense-reports",
+      "label": "Expenses",
+      "image": "appstore-02d-employee-expense-management-dashboard-reports.png",
+      "screen": "Expense Management Reports: totals, approvals, rejections and category breakdown",
+      "headline": "Track every dollar spent",
+      "subline": "Approvals, categories and reports without spreadsheets"
+    },
+    {
+      "number": "11",
+      "slug": "timesheet-history",
+      "label": "Timesheets",
+      "image": "appstore-18a-employee-timesheet-history.png",
+      "screen": "Timesheet History: weekly totals, shift calendar and per-shift durations",
+      "headline": "Every shift, accounted for",
+      "subline": "Weekly hours and shift history at a glance"
+    },
+    {
+      "number": "12",
+      "slug": "ndis-price-caps",
+      "label": "NDIS Pricing",
+      "image": "appstore-11-client-pricing-review.png",
+      "screen": "Client pricing review: NDIS price caps, current rates, custom price status",
+      "headline": "Price care within NDIS caps",
+      "subline": "Validate support items against current price limits"
+    },
+    {
+      "number": "13",
+      "slug": "leave-insights",
+      "label": "Leave",
+      "image": "appstore-25-employee-leave-insights.png",
+      "screen": "Leave Insights: annual, personal and long-service balances, projected accrual",
+      "headline": "Leave balances, always clear",
+      "subline": "Forecast accruals and request time off"
+    },
+    {
+      "number": "14",
+      "slug": "client-dashboard",
+      "label": "Client Portal",
+      "image": "appstore-22-client-dashboard-invoices.png",
+      "screen": "Client Dashboard: invoices with payment status, upcoming appointments, service history",
+      "headline": "Give clients a clear view",
+      "subline": "Invoices, appointments and care history together"
+    }
+  ]
+}

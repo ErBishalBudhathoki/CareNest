@@ -546,3 +546,34 @@ vm_logic.txt
 riverpod_3_migration_plan.md
 .kimchi/
 .perch/
+
+# ==========================================
+# STORE SCREENSHOT PIPELINE (committed inputs)
+# ------------------------------------------
+# store-screenshots/pipeline/render.py reads raw app captures from
+# .maestro/screenshots/screenshots/. Allowlist only the captures referenced
+# by slides.json / slides-extras.json so a clean clone can re-render every
+# store screenshot deterministically. All other Maestro scratch stays local.
+# ==========================================
+!/.maestro/screenshots/
+/.maestro/screenshots/*
+!/.maestro/screenshots/screenshots/
+/.maestro/screenshots/screenshots/*
+!/.maestro/screenshots/screenshots/appstore-01-admin-dashboard.png
+!/.maestro/screenshots/screenshots/appstore-02b-employee-home.png
+!/.maestro/screenshots/screenshots/appstore-02d-employee-expense-management-dashboard-reports.png
+!/.maestro/screenshots/screenshots/appstore-03-admin-schedule-assignment.png
+!/.maestro/screenshots/screenshots/appstore-08-certification-requirements.png
+!/.maestro/screenshots/screenshots/appstore-11-client-pricing-review.png
+!/.maestro/screenshots/screenshots/appstore-13-client-dashboards.png
+!/.maestro/screenshots/screenshots/appstore-18a-employee-timesheet-history.png
+!/.maestro/screenshots/screenshots/appstore-22-client-dashboard-invoices.png
+!/.maestro/screenshots/screenshots/appstore-25-employee-leave-insights.png
+!/.maestro/screenshots/screenshots/appstore-27-clinet-invoice-detail-approve-disapprove.png
+!/.maestro/screenshots/screenshots/appstore-29-sil-rosters-of-care.png
+!/.maestro/screenshots/screenshots/appstore-30-sil-invoice-dialog.png
+!/.maestro/screenshots/screenshots/appstore-31-ndis-claiming.png
+
+# Python bytecode produced by the pipeline scripts
+__pycache__/
+*.pyc
